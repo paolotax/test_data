@@ -1,0 +1,10 @@
+.DS_Store
+.repl_history
+build
+resources/*.nib
+resources/*.momd
+resources/*.storyboardc
+resources/*/*.storyboardc
+ib.xcodeproj
+*.storyboardc
+vendor/Pods/*
