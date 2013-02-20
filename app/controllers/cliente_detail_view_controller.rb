@@ -53,7 +53,7 @@ class ClienteDetailViewController < UIViewController
 
   def sorted_appunti
     @sorted_appunti = []
-    orderAppunti = NSSortDescriptor.sortDescriptorWithKey("remote_id", ascending:false)
+    orderAppunti = NSSortDescriptor.sortDescriptorWithKey("created_at", ascending:false)
     @sorted_appunti = @cliente.appunti.sortedArrayUsingDescriptors([orderAppunti])
     @sorted_appunti
   end
@@ -118,6 +118,7 @@ class ClienteDetailViewController < UIViewController
             a.ClienteId = @cliente.ClienteId
             a.cliente_nome = @cliente.nome
             a.status = "da_fare"
+            a.created_at = Time.now
           end 
           segue.destinationViewController.visibleViewController.appunto = appunto
         end

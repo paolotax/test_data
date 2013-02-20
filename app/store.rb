@@ -4,7 +4,7 @@ class Store
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga]
   
   #BASE_URL = "http://youpropa.com"
-  BASE_URL = "http://localhost:3000"
+  BASE_URL = "http://192.168.1.132:3000"
 
   USERNAME = 'paolotax'
   PASSWORD = 'sisboccia'
@@ -20,7 +20,7 @@ class Store
 
   # login
 
-  def login(block)
+  def login(&block)
     data = {
       grant_type: 'password',
       client_id: APP_ID,
@@ -129,14 +129,18 @@ class Store
     url = NSURL.URLWithString(BASE_URL)
     @backend = RKObjectManager.managerWithBaseURL(url)
 
+    formatter = NSDateFormatter.new
+    formatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ssz")
+    RKObjectMapping.addDefaultDateFormatter(formatter)
+
     @store = RKManagedObjectStore.alloc.initWithManagedObjectModel(@model)
     @backend.managedObjectStore = @store
     @backend.requestSerializationMIMEType = RKMIMETypeJSON
 
     store_path = RKApplicationDataDirectory().stringByAppendingPathComponent("Libri.sqlite")
 
-    # error = Pointer.new(:object)
-    # NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
+    error = Pointer.new(:object)
+    NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
 
     error_ptr = Pointer.new(:object)
     unless @store.addSQLitePersistentStoreAtPath(store_path,
@@ -155,8 +159,8 @@ class Store
     @persistent_context = @store.persistentStoreManagedObjectContext
     @context = @store.mainQueueManagedObjectContext
 
-    #RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
-    #RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
+    RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
+    RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
 
     MappingProvider.shared.init_mappings(@store, @backend)
   end

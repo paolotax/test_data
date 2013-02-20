@@ -13,8 +13,8 @@ class Appunto < NSManagedObject
     { name: 'note',         type: NSStringAttributeType,    default: '',  optional: true, transient: false, indexed: false},
     { name: 'telefono',     type: NSStringAttributeType,    default: '',  optional: true, transient: false, indexed: false},
     { name: 'email',        type: NSStringAttributeType,    default: '',  optional: true, transient: false, indexed: false},
-    { name: 'created_at',   type: NSStringAttributeType,    default: '',  optional: true, transient: false, indexed: false},
-    { name: 'updated_at',   type: NSStringAttributeType,    default: '',  optional: true, transient: false, indexed: false},
+    { name: 'created_at',   type: NSDateAttributeType,    default: nil,  optional: true, transient: false, indexed: false},
+    { name: 'updated_at',   type: NSDateAttributeType,    default: nil,  optional: true, transient: false, indexed: false},
     { name: 'totale_copie', type: NSInteger32AttributeType, default: 0,   optional: true, transient: false, indexed: false},
     { name: 'totale_importo', type: NSDecimalAttributeType, default: 0.0, optional: true, transient: false, indexed: false}
   ]

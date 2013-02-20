@@ -37,7 +37,7 @@ class ClienteAppuntoCell < UICollectionViewCell
          cell.contentView.addSubview(label)
       end
 
-      @data_label = UILabel.alloc.initWithFrame([[120, 5], [45, 15]]).tap do |label|
+      @data_label = UILabel.alloc.initWithFrame([[110, 5], [55, 15]]).tap do |label|
          #label.translatesAutoresizingMaskIntoConstraints = false
          label.numberOfLines = 0
          label.font          = UIFont.systemFontOfSize(11.0)
@@ -73,7 +73,7 @@ class ClienteAppuntoCell < UICollectionViewCell
     if @appunto
       @destinatario_label.text = @appunto.destinatario
       @note_label.text = format_appunto
-      @importo_label.text = @appunto.righe.count == 0 ? "" : "#{appunto.totale_copie} copie #{@appunto.importo} €" 
+      @importo_label.text = @appunto.righe.count == 0 ? "" : "#{appunto.totale_copie} copie #{@appunto.totale_importo} €" 
       @data_label.text = format_date @appunto.created_at
       @status_image.setImage UIImage.imageNamed("task-#{@appunto.status}")
       # if @appunto.totale_copie == 0
@@ -90,12 +90,14 @@ class ClienteAppuntoCell < UICollectionViewCell
 
   private
 
-    def format_date(date_str)
+    def format_date(date)
       formatter = NSDateFormatter.alloc.init
       formatter.setLocale(NSLocale.alloc.initWithLocaleIdentifier("it_IT"))
-      formatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ssz")
-      date = formatter.dateFromString(date_str)
-      formatter.setDateFormat("d MMM")
+      if date.year == Time.now.year
+        formatter.setDateFormat("d MMM")
+      else
+        formatter.setDateFormat("MMM yy")
+      end
       date_str = formatter.stringFromDate(date)
       date_str
     end

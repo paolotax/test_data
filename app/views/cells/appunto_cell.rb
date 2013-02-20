@@ -39,7 +39,7 @@ class AppuntoCell < UITableViewCell
     @clienteLabel.frame      = CGRectMake(48, 8, 185, 21)
     @destinatarioLabel.frame = CGRectMake(48, 35, 231, 21)
     @noteLabel.frame         = CGRectMake(48, 60, 231, 21)
-    @dataLabel.frame         = CGRectMake(246, 8, 42, 21) 
+    @dataLabel.frame         = CGRectMake(240, 8, 48, 21) 
     @customBadge.frame = CGRectMake(288 - @customBadge.frame.size.width, 34, @customBadge.frame.size.width, @customBadge.frame.size.height)
   end
 
@@ -55,12 +55,14 @@ class AppuntoCell < UITableViewCell
 
   private
 
-    def format_date(date_str)
+    def format_date(date)
       formatter = NSDateFormatter.alloc.init
       formatter.setLocale(NSLocale.alloc.initWithLocaleIdentifier("it_IT"))
-      formatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ssz")
-      date = formatter.dateFromString(date_str)
-      formatter.setDateFormat("d MMM")
+      if date.year == Time.now.year
+        formatter.setDateFormat("d MMM")
+      else
+        formatter.setDateFormat("MMM yy")
+      end
       date_str = formatter.stringFromDate(date)
       date_str
     end

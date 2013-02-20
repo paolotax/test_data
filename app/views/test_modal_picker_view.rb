@@ -37,27 +37,22 @@ class TestModalPickerView < UIViewController
   end
 
   def login
-    Store.shared.login(lambda do
-      puts "logged in"
-    end)
+    Store.shared.login {}
   end
 
   def importa
     Store.shared.clear
-    Store.shared.login( 
-      lambda do
-        puts "loggato"
-        Store.shared.backend.getObjectsAtPath("api/v1/clienti",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Clienti: #{result.array.count}"
-                                                  self.addAppunti
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-      end
-    )
+    Store.shared.login do
+      Store.shared.backend.getObjectsAtPath("api/v1/clienti",
+                              parameters: nil,
+                              success: lambda do |operation, result|
+                                                puts "Clienti: #{result.array.count}"
+                                                self.addAppunti
+                                              end,
+                              failure: lambda do |operation, error|
+                                                puts error
+                                               end)
+   end
   end
 
   def addAppunti

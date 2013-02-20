@@ -42,7 +42,7 @@ class ClientiTableViewController < UITableViewController
     Store.shared.backend.getObjectsAtPath("api/v1/clienti",
                                 parameters: nil,
                                 success: lambda do |operation, result|
-                                                  @clienti = result.array
+                                                  Cliente.reset
                                                   tableView.reloadData
                                                   doneReloadingTableViewData
                                                   SVProgressHUD.dismiss

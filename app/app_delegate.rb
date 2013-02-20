@@ -10,9 +10,9 @@ class AppDelegate
 
     AFNetworkActivityIndicatorManager.sharedManager.enabled = true
 
-    Store.shared.login(lambda do
+    Store.shared.login do
       puts "logged in"
-    end)
+    end
 
     if Device.ipad?
       storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
