@@ -1007,12 +1007,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" id="Nix-XJ-7mW">
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="DIu-eC-wkK">
                             <rect key="frame" x="0.0" y="0.0" width="1024" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <textInputTraits key="textInputTraits"/>
                             <connections>
-                                <outlet property="delegate" destination="G59-di-2Be" id="Bqa-7e-PES"/>
+                                <outlet property="delegate" destination="G59-di-2Be" id="pz5-y1-J2z"/>
                             </connections>
                         </searchBar>
                         <prototypes>
@@ -1051,10 +1051,20 @@
                     <navigationItem key="navigationItem" id="21e-Sc-uPh"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackTranslucent"/>
                     <connections>
-                        <outlet property="searchBar" destination="Nix-XJ-7mW" id="6V8-Tf-D0V"/>
+                        <outlet property="searchBar" destination="DIu-eC-wkK" id="GFJ-cf-Cut"/>
+                        <outlet property="searchDisplayController" destination="ja0-ym-Hku" id="bOm-yH-z9g"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KCK-Vc-N5P" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="ja0-ym-Hku">
+                    <connections>
+                        <outlet property="delegate" destination="G59-di-2Be" id="iR8-Gh-fke"/>
+                        <outlet property="searchBar" destination="DIu-eC-wkK" id="bik-cP-xvy"/>
+                        <outlet property="searchContentsController" destination="G59-di-2Be" id="y1e-1M-zwX"/>
+                        <outlet property="searchResultsDataSource" destination="G59-di-2Be" id="dc4-Qy-C0M"/>
+                        <outlet property="searchResultsDelegate" destination="G59-di-2Be" id="22j-Uf-FHH"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1689" y="1439"/>
         </scene>
@@ -1612,7 +1622,7 @@
                 <relationship kind="outlet" name="callButton"/>
                 <relationship kind="outlet" name="cittaLabel"/>
                 <relationship kind="outlet" name="classiCollectionView"/>
-                <relationship kind="outlet" name="docentiCollectionView" candidateClass="UICollectionView"/>
+                <relationship kind="outlet" name="docentiCollectionView"/>
                 <relationship kind="outlet" name="emailButton"/>
                 <relationship kind="outlet" name="indirizzoLabel"/>
                 <relationship kind="outlet" name="navigaButton"/>
@@ -1833,6 +1843,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="TVU-RH-YM1"/>
         <segue reference="uFg-dF-0cp"/>
-        <segue reference="DVk-3C-5sN"/>
+        <segue reference="va2-9R-MUh"/>
     </inferredMetricsTieBreakers>
 </document>

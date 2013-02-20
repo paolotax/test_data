@@ -12,7 +12,7 @@ class MappingProvider
 
     add_response_mapping(libro_mapping, "libro")
     add_response_mapping(libro_mapping, "libri")
-    add_request_mapping(inverse_libro_mapping.inverseMapping, "libro", Libro)
+    add_request_mapping(request_libro_mapping.inverseMapping, "libro", Libro)
     add_route_set(Libro,   "api/v1/libri",   "api/v1/libri/:LibroId")
 
     add_response_mapping(cliente_mapping, "cliente")
@@ -22,12 +22,12 @@ class MappingProvider
 
     add_response_mapping(appunto_mapping, "appunto")
     add_response_mapping(appunto_mapping, "appunti")
-    add_request_mapping(inverse_appunto_mapping.inverseMapping, "appunto", Appunto)
+    add_request_mapping(request_appunto_mapping.inverseMapping, "appunto", Appunto)
     add_route_set(Appunto, "api/v1/appunti", "api/v1/appunti/:remote_id")
 
     add_response_mapping(riga_mapping, "riga")
     add_response_mapping(riga_mapping, "righe")
-    add_request_mapping(inverse_riga_mapping.inverseMapping, "riga", Riga)
+    add_request_mapping(request_riga_mapping.inverseMapping, "riga", Riga)
     add_route_set(Riga,
                   "api/v1/appunti/:remote_appunto_id/righe",
                   "api/v1/appunti/:remote_appunto_id/righe/:remote_id")
@@ -96,8 +96,8 @@ class MappingProvider
     end
   end
 
-  def inverse_libro_mapping
-    @inverse_libro_mapping ||= begin
+  def request_libro_mapping
+    @request_libro_mapping ||= begin
       mapping = RKEntityMapping.mappingForEntityForName("Libro",
                                        inManagedObjectStore:@store)
       mapping.addAttributeMappingsFromDictionary(titolo: "titolo",
@@ -155,19 +155,20 @@ class MappingProvider
                                                  )
       mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("cliente", 
                                       toKeyPath:"cliente", withMapping:cliente_mapping))
-
+      # togliere e mettere
       #mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("righe", toKeyPath:"righe", withMapping:riga_mapping))
     end 
   end
 
-  def inverse_appunto_mapping
-    @inverse_appunto_mapping ||= begin
+  def request_appunto_mapping
+    @request_appunto_mapping ||= begin
       mapping = RKEntityMapping.mappingForEntityForName("Appunto", inManagedObjectStore:@store)
       mapping.addAttributeMappingsFromDictionary(destinatario: "destinatario",
                                                  note: "note",
                                                  status: "status",
                                                  telefono: "telefono",
                                                  cliente_id: "ClienteId")
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("righe_attributes", toKeyPath:"righe", withMapping:request_riga_mapping))
     end
   end
 
@@ -186,15 +187,16 @@ class MappingProvider
                                              sconto: "sconto",
                                             importo: "importo"
                                            )
-      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunto", 
-                                      toKeyPath:"appunto", withMapping:appunto_mapping))
+      # togliere e mettere
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunto",toKeyPath:"appunto", withMapping:appunto_mapping))
+      
       mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("libro", 
                                       toKeyPath:"libro", withMapping:libro_mapping))
     end
   end
 
-  def inverse_riga_mapping
-    @inverse_riga_mapping ||= begin
+  def request_riga_mapping
+    @request_riga_mapping ||= begin
       mapping = RKEntityMapping.mappingForEntityForName("Riga", inManagedObjectStore:@store)
       mapping.addAttributeMappingsFromDictionary(
                                            libro_id: "libro_id",

@@ -1759,6 +1759,7 @@
                 <relationship kind="action" name="openCliente:"/>
                 <relationship kind="action" name="sendEmail:"/>
                 <relationship kind="action" name="shouldAutorotateToInterfaceOrientation:"/>
+                <relationship kind="action" name="sorted_appunti"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="action" name="viewWillAppear:"/>
                 <relationship kind="outlet" name="appuntiCollectionView"/>
@@ -1856,8 +1857,10 @@
         <class className="LibriTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LibriTableViewController.h"/>
             <relationships>
+                <relationship kind="action" name="fetchControllerForTableView:"/>
                 <relationship kind="action" name="filterLibriForTerm:"/>
                 <relationship kind="action" name="loadFromBackend"/>
+                <relationship kind="action" name="numberOfSectionsInTableView:"/>
                 <relationship kind="action" name="shouldAutorotateToInterfaceOrientation:"/>
                 <relationship kind="action" name="viewDidAppear:"/>
                 <relationship kind="action" name="viewDidLoad"/>
@@ -1906,6 +1909,9 @@
         <class className="TestModalPickerView" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TestModalPickerView.h"/>
             <relationships>
+                <relationship kind="action" name="addAppunti"/>
+                <relationship kind="action" name="addLibri"/>
+                <relationship kind="action" name="addRighe"/>
                 <relationship kind="action" name="importa"/>
                 <relationship kind="action" name="killApp"/>
                 <relationship kind="action" name="login"/>

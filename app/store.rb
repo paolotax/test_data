@@ -139,8 +139,8 @@ class Store
 
     store_path = RKApplicationDataDirectory().stringByAppendingPathComponent("Libri.sqlite")
 
-    error = Pointer.new(:object)
-    NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
+    # error = Pointer.new(:object)
+    # NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
 
     error_ptr = Pointer.new(:object)
     unless @store.addSQLitePersistentStoreAtPath(store_path,

@@ -83,26 +83,19 @@ class RigaFormViewController < UITableViewController
   def save(sender)
     
     Store.shared.save
-    Store.shared.persist
+    # Store.shared.persist
 
-    puts @riga.remote_id
-    self.riga.save_to_backend  
-    puts @riga.remote_id
-    if Device.ipad?
-      self.dismissViewControllerAnimated(true, completion:nil)
-    else
-      self.navigationController.popViewControllerAnimated(true)
-    end 
+    # puts @riga.remote_id
+    # self.riga.save_to_backend  
+    # puts @riga.remote_id
+    self.navigationController.popViewControllerAnimated(true)
+    # end 
   end
 
 
   def cancel(sender)
-    Store.shared.context.reset
-    if Device.ipad?
-      self.dismissViewControllerAnimated(true, completion:nil)
-    else
-      self.navigationController.popViewControllerAnimated(true)
-    end
+    @riga.remove
+    self.navigationController.popViewControllerAnimated(true)
   end
 
       

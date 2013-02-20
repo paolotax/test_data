@@ -20,6 +20,9 @@ class RigheTableViewController < UITableViewController
     elsif segue.identifier.isEqualToString("editRiga") 
       indexPath = self.tableView.indexPathForCell(sender)
       @riga = self.tableView.cellForRowAtIndexPath(indexPath).riga
+      if @riga.remote_appunto_id != @appunto.remote_id 
+        @riga.remote_appunto_id = @appunto.remote_id 
+      end
       segue.destinationViewController.riga = @riga
     end
     segue.destinationViewController.appunto = @appunto
