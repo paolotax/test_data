@@ -34,10 +34,19 @@ class AppDelegate
     @window
   end
 
+  def applicationWillEnterForeground(application)
+  end
+
   def applicationDidEnterBackground(application)
     puts "Did Enter Background"
     saveContext
   end 
+
+  def applicationDidBecomeActive(application)
+    Store.shared.login do
+      puts "logged in"
+    end
+  end
 
   def applicationWillTerminate(application)
     puts "Will Terminate"

@@ -179,6 +179,7 @@ class MappingProvider
       mapping.addAttributeMappingsFromDictionary(id: "remote_id",
                                          appunto_id: "remote_appunto_id",
                                            libro_id: "libro_id",
+                                         fattura_id: "fattura_id",
                                              titolo: "titolo",
                                     prezzo_unitario: "prezzo_unitario",
                                    prezzo_copertina: "prezzo_copertina",
@@ -200,6 +201,7 @@ class MappingProvider
       mapping = RKEntityMapping.mappingForEntityForName("Riga", inManagedObjectStore:@store)
       mapping.addAttributeMappingsFromDictionary(
                                            libro_id: "libro_id",
+                                        fattura_id: "fattura_id",
                                     prezzo_unitario: "prezzo_unitario",
                                            quantita: "quantita",
                                              sconto: "sconto")

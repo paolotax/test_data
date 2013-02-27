@@ -41,7 +41,7 @@ SPEC CHECKSUMS:
   RestKit/Network: ccca19640fcc3031f82ad4250c44061e2e2ddce7
   RestKit/ObjectMapping: ccca19640fcc3031f82ad4250c44061e2e2ddce7
   RestKit/Support: ccca19640fcc3031f82ad4250c44061e2e2ddce7
-  SOCKit: 179515c1a621dd5652a60e9be02ea4adcd25bc9b
+  SOCKit: ed67aeeca4a697b63a933229e53f4670d5b9300f
   SVProgressHUD: 98935fbafaf0031df4a9cafca3c66eaf3da06967
 
 COCOAPODS: 0.16.2

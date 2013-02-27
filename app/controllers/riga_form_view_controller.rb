@@ -81,15 +81,7 @@ class RigaFormViewController < UITableViewController
   
 
   def save(sender)
-    
-    Store.shared.save
-    # Store.shared.persist
-
-    # puts @riga.remote_id
-    # self.riga.save_to_backend  
-    # puts @riga.remote_id
     self.navigationController.popViewControllerAnimated(true)
-    # end 
   end
 
 

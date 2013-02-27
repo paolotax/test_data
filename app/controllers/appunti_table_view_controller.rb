@@ -17,13 +17,25 @@ class AppuntiTableViewController < UITableViewController
 
   def viewDidAppear(animated)
     super
-    Appunto.reset
-    view.reloadData
   end
 
   def viewWillAppear(animated)
     super
-    #loadFromBackend
+    Appunto.reset
+    view.reloadData
+    
+    "reload_appunti_list".add_observer(self, :reload)
+  end
+
+  def viewWillDisappear(animated)
+    super
+    "reload_appunti_list".remove_observer(self, :reload)
+  end
+  
+  def reload
+    Appunto.reset
+    view.reloadData
+    puts "Notificato"
   end
 
   # Storyboard methods

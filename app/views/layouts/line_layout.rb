@@ -6,7 +6,7 @@ class LineLayout < UICollectionViewFlowLayout
     super.tap do
       iPad = UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
       self.scrollDirection = UICollectionViewScrollDirectionHorizontal
-      self.itemSize = CGSize.new(170, 200)
+      self.itemSize = CGSize.new(200, 230)
       self.sectionInset = UIEdgeInsetsMake(iPad ? 225 : 0, 35, iPad ? 225 : 0, 35)
       self.minimumLineSpacing = 30.0
       self.minimumInteritemSpacing = 200

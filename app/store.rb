@@ -3,8 +3,8 @@ class Store
   DB = 'Libri.sqlite'
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga]
   
-  #BASE_URL = "http://youpropa.com"
-  BASE_URL = "http://192.168.1.132:3000"
+  BASE_URL = "http://198.211.124.102"
+  #BASE_URL = "http://localhost:3000"
 
   USERNAME = 'paolotax'
   PASSWORD = 'sisboccia'
@@ -120,6 +120,9 @@ class Store
   private
 
   def initialize
+
+    #url_cache = NSURLCache.alloc.initWithMemoryCapacity(4 * 1024 * 1024, diskCapacity:20 * 1024 * 1024, diskPath:nil)
+    #NSURLCache.setSharedURLCache(url_cache)
     
     @model ||= NSManagedObjectModel.alloc.init.tap do |m|
       m.entities = ManagedObjectClasses.collect {|c| c.entity}
@@ -137,8 +140,9 @@ class Store
     @backend.managedObjectStore = @store
     @backend.requestSerializationMIMEType = RKMIMETypeJSON
 
-    store_path = RKApplicationDataDirectory().stringByAppendingPathComponent("Libri.sqlite")
+    store_path = RKApplicationDataDirectory().stringByAppendingPathComponent(DB)
 
+    #elimina il db
     # error = Pointer.new(:object)
     # NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
 
@@ -159,8 +163,8 @@ class Store
     @persistent_context = @store.persistentStoreManagedObjectContext
     @context = @store.mainQueueManagedObjectContext
 
-    RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
-    RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
+    #RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
+    #RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
 
     MappingProvider.shared.init_mappings(@store, @backend)
   end

@@ -19,6 +19,7 @@ class ClientiTableViewController < UITableViewController
 
   def viewWillAppear(animated)
     super
+    Cliente.reset
     view.reloadData
   end
 
@@ -38,24 +39,27 @@ class ClientiTableViewController < UITableViewController
   end
 
   def loadFromBackend
-    SVProgressHUD.show
     Store.shared.backend.getObjectsAtPath("api/v1/clienti",
                                 parameters: nil,
                                 success: lambda do |operation, result|
+
+                                                  Store.shared.save
+                                                  Store.shared.persist
+
                                                   Cliente.reset
                                                   tableView.reloadData
                                                   doneReloadingTableViewData
-                                                  SVProgressHUD.dismiss
                                                 end,
                                 failure: lambda do |operation, error|
-                                                  SVProgressHUD.showErrorWithStatus("#{error.localizedDescription}")
+                                                  puts error.localizedDescription
                                                 end)
   end
 
   # Storyboard methods
   def prepareForSegue(segue, sender:sender)
-
+    puts segue.identifier
     if segue.identifier.isEqualToString("displayCliente")
+
       if (self.searchDisplayController.isActive)
         indexPath = self.searchDisplayController.searchResultsTableView.indexPathForCell(sender)
         view.endEditing(true)
@@ -65,10 +69,9 @@ class ClientiTableViewController < UITableViewController
         cliente = self.tableView.cellForRowAtIndexPath(indexPath).cliente
       end  
       if Device.ipad?
-        segue.destinationViewController.visibleViewController.listController = self
-        segue.destinationViewController.visibleViewController.openCliente(cliente)
+        segue.destinationViewController.visibleViewController.cliente = cliente
       else
-        segue.destinationViewController.openCliente(cliente)
+        segue.destinationViewController.cliente = cliente
       end  
     end
   end
@@ -101,21 +104,6 @@ class ClientiTableViewController < UITableViewController
                                             reuseIdentifier:"ClienteCell")
     
     cell.cliente = self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath)
-
-    # if (tableView == self.tableView)
-    #   cell.cliente = @clienti[indexPath.row]
-    # else
-    #   cell.cliente = @searchResults[indexPath.row]
-    # end
-    return cell
-
-
-
-    # cell = tableView.dequeueReusableCellWithIdentifier(CellID) || UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:CellID).tap do |c|
-    #   c.accessoryType = UIDevice.ipad? ? UITableViewCellAccessoryNone : UITableViewCellAccessoryDisclosureIndicator
-    # end
-    
-    # cell.textLabel.text = self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).nome
     cell
   end
 
@@ -128,52 +116,6 @@ class ClientiTableViewController < UITableViewController
     #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
     # end
   end
-  
-
-  # UITableViewController methods
-
-  # def tableView(tableView, numberOfRowsInSection:section)
-  #   if (tableView == self.tableView)
-  #     @clienti.count
-  #   else
-  #     @searchResults.count;
-  #   end
-  # end
-
-  # def tableView(tableView, cellForRowAtIndexPath:indexPath)
-  #   cell = self.tableView.dequeueReusableCellWithIdentifier("ClienteCell")
-  #   cell ||= ClienteCell.alloc.initWithStyle(UITableViewCellStyleDefault,
-  #                                           reuseIdentifier:"ClienteCell")
-  #   if (tableView == self.tableView)
-  #     cell.cliente = @clienti[indexPath.row]
-  #   else
-  #     cell.cliente = @searchResults[indexPath.row]
-  #   end
-  #   return cell
-  # end
-
-
-  # # UISearchBar UISearchDisplayController methods
-  # def searchDisplayController(controller, shouldReloadTableForSearchString:searchString)
-  #   self.filterClientiForTerm(searchString);
-  #   true
-  # end
-
-  # def searchDisplayControllerDidEndSearch(controller)
-  #   view.reloadData
-  #   #loadFromBackend
-  # end
-
-  # def filterClientiForTerm(text)
-  #   @searchResults = @clienti.select do |c|
-  #     index = "#{c.nome} #{c.comune} #{c.frazione}".downcase  
-  #     condition = text.downcase
-  #     index.include?( condition )
-  #   end  
-  #   view.reloadData
-  # end
-
-
 
 
   ## PullToRefresh 
