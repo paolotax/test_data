@@ -13,7 +13,7 @@ class SpringboardLayout < UICollectionViewFlowLayout
   def isDeletionModeOn
 
     # correggere conformsToProtocol con respond_to?
-
+    puts "SpringboardLayout isDeletionModeOn"
     # if (self.collectionView.delegate.class.conformsToProtocol(SpringboardLayoutDelegate)
       return self.collectionView.delegate.isDeletionModeActiveForCollectionView(self.collectionView, layout:self)
     # end      

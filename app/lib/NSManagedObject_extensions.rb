@@ -27,7 +27,7 @@ class NSManagedObject
       Store.shared.backend.postObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
 
-                                    "reload_appunti_list".post_notification
+                                    "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
 
                                     puts self.remote_id         
@@ -39,7 +39,7 @@ class NSManagedObject
       Store.shared.backend.putObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
                                     Store.shared.persist      
-                                    "reload_appunti_list".post_notification
+                                    "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification   
                                   end, 
                           failure:lambda do |operation, error|

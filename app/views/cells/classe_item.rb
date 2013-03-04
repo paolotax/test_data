@@ -85,13 +85,13 @@ class ClasseItem < UICollectionViewCell
   def classe=(classe)
     @classe = classe
     if @classe
-      @classe_label.text = "#{@classe.classe} #{@classe.sezione}"
+      @classe_label.text = "#{@classe.num_classe} #{@classe.sezione}"
       @alunni_label.text = "#{@classe.nr_alunni}b"
 
       
-      unless @classe.adozioni.empty?
+      unless @classe.adozioni.count == 0
         @adozione_image.hidden = false
-        @adozione_image.setImage UIImage.imageNamed("#{@classe.adozioni[0].sigla}.jpeg")
+        @adozione_image.setImage UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(0).sigla}.jpeg")
       else
         @adozione_image.hidden = true
       end

@@ -228,7 +228,7 @@ class AppuntoFormViewController < UITableViewController
     puts @appunto.remote_id
     self.appunto.save_to_backend  
 
-    "reload_appunti_list".post_notification
+    "appuntiListDidLoadBackend".post_notification
     "reload_appunti_collections".post_notification
 
     if Device.ipad?

@@ -51,7 +51,6 @@ class ClienteAppuntoCell < UICollectionViewCell
       @destinatario_label = UILabel.alloc.initWithFrame([[15, 35], [170, 20]]).tap do |label|
          #label.translatesAutoresizingMaskIntoConstraints = false
          label.numberOfLines = 1
-
          label.setFont(UIFont.fontWithName("Trebuchet MS-Bold", size:13.0))
          label.textAlignment = UITextAlignmentCenter
          label.backgroundColor = UIColor.clearColor
@@ -60,27 +59,25 @@ class ClienteAppuntoCell < UICollectionViewCell
          insetView.addSubview(label)
       end
 
-      @note_label = UILabel.alloc.initWithFrame([[15, 55], [170, 120]]).tap do |label|
-         #label.translatesAutoresizingMaskIntoConstraints = false
-         label.numberOfLines = 0
-         label.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
-         label.textAlignment = UITextAlignmentLeft
-         label.backgroundColor = UIColor.clearColor
-         label.textColor = UIColor.darkGrayColor
-         label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
-         insetView.addSubview(label)
+      @note_text = UITextView.alloc.initWithFrame([[5, 55], [180, 120]]).tap do |text|
+        text.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
+        text.setUserInteractionEnabled(false)
+        # text.editable = false  #   preserva lo scroll ma sbaglia tap
+        text.textAlignment = UITextAlignmentLeft
+        text.backgroundColor = UIColor.clearColor
+        text.textColor = UIColor.darkGrayColor
+        text.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
+        insetView.addSubview(text)
       end
 
       @data_label = UILabel.alloc.initWithFrame([[15, 5], [170, 15]]).tap do |label|
-         #label.translatesAutoresizingMaskIntoConstraints = false
-         label.numberOfLines = 0
-         label.setFont(UIFont.fontWithName("Trebuchet MS", size:11.0))
-         label.textColor     = UIColor.colorWithWhite(0.45, alpha:1.0)
-         label.textAlignment = UITextAlignmentRight
-         # label.shadowColor = UIColor.whiteColor
-         # label.shadowOffset = CGSizeMake(0, 1);
-         label.backgroundColor = UIColor.clearColor
-         insetView.addSubview(label)
+        #label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.setFont(UIFont.fontWithName("Trebuchet MS", size:11.0))
+        label.textColor     = UIColor.colorWithWhite(0.45, alpha:1.0)
+        label.textAlignment = UITextAlignmentRight
+        label.backgroundColor = UIColor.clearColor
+        insetView.addSubview(label)
       end
 
       @importo_label = UILabel.alloc.initWithFrame([[15, 180], [170, 15]]).tap do |label|
@@ -120,9 +117,9 @@ class ClienteAppuntoCell < UICollectionViewCell
     if @appunto
       @destinatario_label.text = @appunto.destinatario
       
-      @note_label.frame.width = 170
-      @note_label.text = format_appunto
-      @note_label.sizeToFit
+      #@note_text.frame.width = 170
+      @note_text.text = format_appunto
+      #@note_text.sizeToFit
       
       @importo_label.text = @appunto.righe.count == 0 ? "" : "copie #{appunto.totale_copie} € #{@appunto.totale_importo.string_with_style(:currency)}" 
       @data_label.text = format_date @appunto.created_at

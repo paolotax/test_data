@@ -1,9 +1,9 @@
 class Store
   
   DB = 'Libri.sqlite'
-  ManagedObjectClasses = [Libro, Cliente, Appunto, Riga]
+  ManagedObjectClasses = [Libro, Cliente, Appunto, Riga, Classe, Adozione]
   
-  BASE_URL = "http://198.211.124.102"
+  BASE_URL = "http://youpropa.com"
   #BASE_URL = "http://localhost:3000"
 
   USERNAME = 'paolotax'
@@ -43,7 +43,8 @@ class Store
 
         block.call
       else
-        puts result.error
+        "errorLogin".post_notification
+        App.alert("Attenzione.\n Non riesco connettermi al server. \nPuoi comunque aggiornare i dati offline, il server dovrà essere aggiornato a manoni")
       end
     end
   end

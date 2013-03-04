@@ -32,11 +32,11 @@ class MappingProvider
                   "api/v1/appunti/:remote_appunto_id/righe",
                   "api/v1/appunti/:remote_appunto_id/righe/:remote_id")
 
-    # add_response_mapping(classe_mapping, "classe")
-    # add_response_mapping(classe_mapping, "classi")
+    add_response_mapping(classe_mapping, "classe")
+    add_response_mapping(classe_mapping, "classi")
 
-    # add_response_mapping(adozione_mapping, "adozione")
-    # add_response_mapping(adozione_mapping, "adozioni")
+    add_response_mapping(adozione_mapping, "adozione")
+    add_response_mapping(adozione_mapping, "adozioni")
 
     # add_response_mapping(docente_mapping, "docente")
     # add_response_mapping(docente_mapping, "docenti")
@@ -189,11 +189,39 @@ class MappingProvider
                                             importo: "importo"
                                            )
       # togliere e mettere
-      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunto",toKeyPath:"appunto", withMapping:appunto_mapping))
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunto", toKeyPath:"appunto", withMapping:appunto_mapping))
       
-      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("libro", 
-                                      toKeyPath:"libro", withMapping:libro_mapping))
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("libro", toKeyPath:"libro", withMapping:libro_mapping))
     end
+  end
+
+  def classe_mapping
+    @classe_mapping ||= begin
+      mapping = RKEntityMapping.mappingForEntityForName("Classe", inManagedObjectStore:@store)
+      mapping.identificationAttributes = [ "remote_id" ]
+      mapping.addAttributeMappingsFromDictionary(id: "remote_id",
+                                                 classe: "num_classe",
+                                                 sezione: "sezione",
+                                                 nr_alunni: "nr_alunni",
+                                                 cliente_id: "remote_cliente_id",
+                                                 )
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("cliente", toKeyPath:"cliente", withMapping:cliente_mapping))
+    end 
+  end
+
+  def adozione_mapping
+    @adozione_mapping ||= begin
+      mapping = RKEntityMapping.mappingForEntityForName("Adozione", inManagedObjectStore:@store)
+      mapping.identificationAttributes = [ "remote_id" ]
+      mapping.addAttributeMappingsFromDictionary(id: "remote_id",
+                                                 libro_id: "remote_libro_id",
+                                                 classe_id: "remote_classe_id",
+                                                 sigla: "sigla"
+                                                )
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("libro", toKeyPath:"libro", withMapping:libro_mapping))
+      mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("classe", toKeyPath:"classe", withMapping:classe_mapping))
+
+    end 
   end
 
   def request_riga_mapping

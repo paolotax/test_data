@@ -15,6 +15,7 @@ class Libro < NSManagedObject
 
   @relationships = [
     { name: 'libro_righe', destination: 'Riga', inverse: 'libro', json: 'righe', optional: true, transient: false, indexed: false, ordered: true, min: 0, max: NSIntegerMax, del: NSCascadeDeleteRule },
+    { name: 'libro_adozioni', destination: 'Adozione', inverse: 'libro', json: 'adozioni', optional: true, transient: false, indexed: false, ordered: true, min: 0, max: NSIntegerMax, del: NSCascadeDeleteRule }
   ]
 
   # def addPlayersObject(value)

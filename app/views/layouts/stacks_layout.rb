@@ -1,9 +1,9 @@
 class StacksLayout < UICollectionViewLayout
   
-  MINIMUM_INTERSTACK_SPACING_IPAD   = 50.0
-  MINIMUM_INTERSTACK_SPACING_IPHONE = 20.0
+  MINIMUM_INTERSTACK_SPACING_IPAD   = 10.0
+  MINIMUM_INTERSTACK_SPACING_IPHONE = 10.0
   STACKS_LEFT_MARGIN   = 35.0
-  STACKS_TOP_MARGIN    = 0.0
+  STACKS_TOP_MARGIN    = 20.0
   STACKS_RIGHT_MARGIN  = 0.0
   STACKS_BOTTOM_MARGIN = 0.0
   STACK_WIDTH      = 230.0
@@ -12,7 +12,7 @@ class StacksLayout < UICollectionViewLayout
   ITEM_SIZE = 230.0
   MIN_PINCH_SCALE = 1.0
   MAX_PINCH_SCALE = 4.0
-  FADE_PROGRESS = 0.75
+  FADE_PROGRESS = 0.20
   STACK_FOOTER_HEIGHT     = 0.0
   VISIBLE_ITEMS_PER_STACK = 3
   
@@ -25,25 +25,19 @@ class StacksLayout < UICollectionViewLayout
       iPad = UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
       
       @min_inter_stack_spacing = iPad ? MINIMUM_INTERSTACK_SPACING_IPAD : MINIMUM_INTERSTACK_SPACING_IPHONE
-      
       @min_line_spacing = @min_inter_stack_spacing
-      
+
       @stacks_insets = UIEdgeInsets.new(STACKS_TOP_MARGIN, STACKS_LEFT_MARGIN, STACKS_BOTTOM_MARGIN, STACKS_RIGHT_MARGIN)
-      
       @stack_size = CGSize.new(STACK_WIDTH, STACK_HEIGHT)
-      
       @number_of_stack_rows = @number_of_stacks_across = 0
       
       @content_size = CGSize.new
-      
       @pinched_stack_scale = @pinched_stack_index = -1
     end
   end
 
   def isDeletionModeOn
-
     # correggere conformsToProtocol con respond_to?
-
     # if (self.collectionView.delegate.class.conformsToProtocol(SpringboardLayoutDelegate)
     return self.collectionView.delegate.isDeletionModeActiveForCollectionView(self.collectionView, layout:self)
     # end      
@@ -91,10 +85,10 @@ class StacksLayout < UICollectionViewLayout
       end
 
       stack_frame = @stack_frames[path.section].CGRectValue
-     
+      
       attrs.size = CGSize.new(ITEM_SIZE, ITEM_SIZE)
       attrs.center = CGPoint.new(CGRectGetMidX(stack_frame), CGRectGetMidY(stack_frame))
-      
+        
       angle = if path.item == 1
                 5
               elsif path.item == 2
@@ -109,35 +103,36 @@ class StacksLayout < UICollectionViewLayout
       attrs.hidden = @collapsing ? false : path.item >= VISIBLE_ITEMS_PER_STACK
       #attrs.shadowOpacity = path.item >= VISIBLE_ITEMS_PER_STACK ? 0 : 0.5
     
-      if self.pinching?
-        # convert pinch scale to progress: 0 to 1
-      
-        progress = calc_progress
+      # if self.pinching?
+      #   # convert pinch scale to progress: 0 to 1
+      #   puts "pinching"
+      #   progress = calc_progress
         
-        if path.section == @pinched_stack_index
-          item_count = @item_frames.count
-          puts "item count #{item_count}"
-          if path.item < item_count
-            item_frame = @item_frames[path.item].CGRectValue
-            new_x = attrs.center.x * (1 - progress) + CGRectGetMidX(item_frame) * progress
-            new_y = attrs.center.y * (1 - progress) + CGRectGetMidY(item_frame) * progress
-            puts "x #{new_x}"
-            puts "y #{new_y}"
-            puts "progress #{progress}"
-            attrs.center = CGPoint.new(new_x, new_y)
-            angle *= (1 - progress)
-            attrs.transform3D = CATransform3DMakeRotation(angle * Math::PI / 180, 0, 0, 1)
-            attrs.alpha = 1
-            attrs.zIndex = item_count + VISIBLE_ITEMS_PER_STACK - path.item
-            attrs.hidden = false
-            attrs.shadowOpacity = 0.5 * progress if path.item >= VISIBLE_ITEMS_PER_STACK
-          end
-        else
-          unless attrs.hidden?
-            attrs.alpha = progress >= FADE_PROGRESS ? 0 : 1 - (progress / FADE_PROGRESS)
-          end
-        end
-      end
+      #   if path.section == @pinched_stack_index
+      #     item_count = @item_frames.count
+          
+      #     if path.item < item_count
+      #       item_frame = @item_frames[path.item].CGRectValue
+
+      #       new_x = attrs.center.x * (1 - progress) + CGRectGetMidX(item_frame) * progress
+      #       new_y = attrs.center.y * (1 - progress) + CGRectGetMidY(item_frame) * progress
+            
+      #       attrs.center = CGPoint.new(new_x, new_y)
+
+      #       angle *= (1 - progress)
+      #       attrs.transform3D = CATransform3DMakeRotation(angle * Math::PI / 180, 0, 0, 1)
+            
+      #       attrs.alpha = 1
+      #       attrs.zIndex = item_count + VISIBLE_ITEMS_PER_STACK - path.item
+      #       attrs.hidden = false
+      #       attrs.shadowOpacity = 0.5 * progress if path.item >= VISIBLE_ITEMS_PER_STACK
+      #     end
+      #   else
+      #     unless attrs.hidden?
+      #       attrs.alpha = progress >= FADE_PROGRESS ? 0 : 1 - (progress / FADE_PROGRESS)
+      #     end
+      #   end
+      # end
     end
   end
   
@@ -225,11 +220,8 @@ class StacksLayout < UICollectionViewLayout
               (@stack_size.height + STACK_FOOTER_GAP + STACK_FOOTER_HEIGHT)) + 
               ((@number_of_stack_rows - 1) * @min_line_spacing) + @stacks_insets.bottom].max
 
-    puts "@page_size w:#{@page_size.width} h:#{@page_size.height}"
-    puts "@stacks_insets l:#{@stacks_insets.left} t:#{@stacks_insets.top} b:#{@stacks_insets.bottom} r:#{@stacks_insets.right}"
-    puts "height #{height}"
+
     @content_size = CGSize.new(@page_size.width, height)
-    puts "@content_size #{@content_size}"
   end
   
   def prepareItemsLayout
@@ -239,15 +231,18 @@ class StacksLayout < UICollectionViewLayout
     avail_width = @page_size.width - (@grid_layout.sectionInset.left + @grid_layout.sectionInset.right)
     number_of_items_across = ((avail_width + @grid_layout.minimumInteritemSpacing) / 
                               (@grid_layout.itemSize.width + @grid_layout.minimumInteritemSpacing)).floor
+    
     spacing = ((avail_width - (number_of_items_across * @grid_layout.itemSize.width)) / (number_of_items_across - 1))
     
     column = row = 0
     left = @grid_layout.sectionInset.left
     top  = @grid_layout.sectionInset.top
+    
     number_of_items.times do |item|
+
       item_frame = CGRect.new([left, top + self.collectionView.contentOffset.y], @grid_layout.itemSize)
       @item_frames << NSValue.valueWithCGRect(item_frame)
-      
+
       left += @grid_layout.itemSize.width + spacing
       column += 1
       
@@ -255,7 +250,7 @@ class StacksLayout < UICollectionViewLayout
         left = @grid_layout.sectionInset.left
         top += @grid_layout.itemSize.height + @grid_layout.minimumLineSpacing
         column = 0
-        row += 1
+        @row += 1
       end
       break if top >= @page_size.height
     end

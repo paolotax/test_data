@@ -1,36 +1,29 @@
-class ClienteDetailViewController < UIViewController
+class AppuntiCollectionController < UIViewController
+
+
+  KMinScale = 1.0
+  KMaxScale = 3.0
 
   extend IB
 
-  attr_accessor :cliente, :popoverViewController, :appunti_in_corso, :appunti_completati, :isDeletionModeActive
+  attr_accessor :cliente, 
+                :appunti_in_corso, 
+                :appunti_completati, 
+                :isDeletionModeActive,
+                :currentPinchCollectionView,
+                :currentPinchedItem
 
-  outlet :nomeLabel
-  outlet :indirizzoLabel
-  outlet :cittaLabel
-  outlet :nuovoAppuntoButton
-  outlet :navigaButton
-  outlet :emailButton
-  outlet :callButton
+
+
+
 
   outlet :appuntiCollectionView
-  outlet :classiCollectionView
-  outlet :docentiCollectionView
+  outlet :completatiCollectionView
+
+  outlet :collectionViewContainer
 
   def viewDidLoad
     super
-
-    self.nuovoAppuntoButton.text = "Nuovo Appunto"
-    self.nuovoAppuntoButton.textColor = UIColor.whiteColor
-    self.nuovoAppuntoButton.textShadowColor = UIColor.darkGrayColor
-    self.nuovoAppuntoButton.tintColor = UIColor.colorWithRed(0.45, green:0, blue:0, alpha:1)
-    self.nuovoAppuntoButton.highlightedTintColor = UIColor.colorWithRed(0.75, green:0, blue:0, alpha:1)
-
-    self.navigaButton.text = "Naviga"
-    self.emailButton.text  = "Email"
-    self.callButton.text   = "Chiama"
-
-
-
     if Device.ipad?
 
       self.isDeletionModeActive = false
@@ -53,22 +46,20 @@ class ClienteDetailViewController < UIViewController
       self.view.addGestureRecognizer(touch)
 
       # classiView CON STACK Appunti
-      self.classiCollectionView.registerClass(ClienteAppuntoCell, forCellWithReuseIdentifier:"clienteAppuntoCell")
-      self.classiCollectionView.collectionViewLayout = StacksLayout.alloc.init
-      self.classiCollectionView.setShowsHorizontalScrollIndicator(false)
-      self.classiCollectionView.setShowsVerticalScrollIndicator(false)
+      self.completatiCollectionView.registerClass(ClienteAppuntoCell, forCellWithReuseIdentifier:"clienteAppuntoCell")
+      self.completatiCollectionView.collectionViewLayout = StacksLayout.alloc.init
+      
+      self.completatiCollectionView.setShowsHorizontalScrollIndicator(false)
+      self.completatiCollectionView.setShowsVerticalScrollIndicator(false)
 
-      pinch = UIPinchGestureRecognizer.alloc.initWithTarget(self, action:'handlePinch:')
-      self.classiCollectionView.addGestureRecognizer(pinch)
+      pinch = UIPinchGestureRecognizer.alloc.initWithTarget(self, action:'handlePinchOut:')
+      self.completatiCollectionView.addGestureRecognizer(pinch)
 
       UISwipeGestureRecognizer.alloc.initWithTarget(self, action:'handleSwipeUp:').tap do |swipeUp|
         swipeUp.direction = UISwipeGestureRecognizerDirectionDown;
         self.appuntiCollectionView.addGestureRecognizer(swipeUp)
       end 
 
-      # self.docentiCollectionView.registerClass(DocenteItem, forCellWithReuseIdentifier:"docenteItem")
-      # self.docentiCollectionView.setShowsHorizontalScrollIndicator(false)
-      # self.docentiCollectionView.setShowsVerticalScrollIndicator(false)
     end
   end
 
@@ -76,8 +67,7 @@ class ClienteDetailViewController < UIViewController
     super
     "reload_appunti_collections".add_observer(self, :reload)
     puts "observing reload_appunti_collections"
-
-    display_cliente if @cliente
+    reload
   end
 
   def viewWillDisappear(animated)
@@ -91,30 +81,9 @@ class ClienteDetailViewController < UIViewController
     Appunto.reset
     if Device.ipad?
       self.appuntiCollectionView.reloadData
-      self.classiCollectionView.reloadData
+      self.completatiCollectionView.reloadData
     end
     puts "Notificato"
-  end
-
-
-  def display_cliente
-
-    self.nomeLabel.text = cliente.nome
-    self.indirizzoLabel.text = cliente.indirizzo
-    self.cittaLabel.text = "#{cliente.cap} #{cliente.citta} #{cliente.provincia}"
-
-    if cliente.telefono.blank?
-      self.callButton.enabled = false
-      #callButton.alpha = 0.5
-    end
-    if cliente.email.blank?
-      self.emailButton.enabled = false
-      #emailButton.alpha = 0.5
-    end
-  
-    if self.popoverViewController
-      self.popoverViewController.dismissPopoverAnimated(true)
-    end  
   end
 
   def appunti_in_corso
@@ -140,24 +109,20 @@ class ClienteDetailViewController < UIViewController
   #  segues
 
   def prepareForSegue(segue, sender:sender)
-    
+
     puts segue.identifier
 
     if segue.identifier.isEqualToString("showForm")
       segue.destinationViewController.cliente = @cliente
-    end
-    
-    
-    if segue.identifier.isEqualToString("nuovoAppunto")
+  
+    elsif segue.identifier.isEqualToString("nuovoAppunto")
 
       if Device.ipad?
         controller = segue.destinationViewController.visibleViewController
         controller.presentedAsModal = true
-        #segue.destinationViewController.visibleViewController.sourceController = self
       else
         controller = segue.destinationViewController
       end  
-
       if Device.ipad? && sender.class == Appunto_Appunto_
         appunto = sender
       else
@@ -173,27 +138,31 @@ class ClienteDetailViewController < UIViewController
       controller.appunto = appunto
       controller.cliente = @cliente
     end
+
+    
+    # if segue.identifier.isEqualToString("modalAppunto")
+    #   if Device.ipad?
+    #     controller = segue.destinationViewController.visibleViewController
+    #     controller.presentedAsModal = true
+    #   else
+    #     controller = segue.destinationViewController
+    #   end  
+    #   if Device.ipad? && sender.class == Appunto_Appunto_
+    #     appunto = sender
+    #   end
+    #   controller.appunto = appunto
+    #   controller.cliente = @cliente
+    # end
   end
 
 
   # actions
 
-  def navigate(sender)
-    url = NSURL.URLWithString("http://maps.apple.com/maps?q=#{@cliente.latitude},#{@cliente.longitude}")
-    UIApplication.sharedApplication.openURL(url);
-  end  
-
-  def makeCall(sender)
-    url = NSURL.URLWithString("tel://#{@cliente.telefono.split(" ").join}")
-    UIApplication.sharedApplication.openURL(url);
-  end  
-
-  def sendEmail(sender)
-    url = NSURL.URLWithString("mailto://#{@cliente.email}")
-    UIApplication.sharedApplication.openURL(url);
-  end  
-
   def delete(sender)
+
+    puts sender
+    sender.superview.superview
+    
     indexPath = self.appuntiCollectionView.indexPathForCell(sender.superview.superview)
     puts indexPath
     appunto = @appunti_in_corso.objectAtIndex(indexPath.row)
@@ -203,70 +172,84 @@ class ClienteDetailViewController < UIViewController
     # delete from backround
   end
 
-  def changeToLayout(layout, animated:animated)
-    reload_data = false
-    delayed_reload = false
-    new_layout = SpringboardLayout.alloc.init
-                 # when LAYOUT_GRID
-                 #   GridLayout.alloc.init
-                 # when LAYOUT_LINE
-                 #   delayed_reload = true
-                 #   CoverFlowLayout.alloc.init
-                 # when LAYOUT_COVERFLOW
-                 #   delayed_reload = true
-                 #   LineLayout.alloc.init
-                 # when LAYOUT_STACKS
-                 #   reload_data = true
-                 #   StacksLayout.alloc.init
-                 # when LAYOUT_SPIRAL
-                 #   SpiralLayout.alloc.init
-                 # end
+  def handlePinchOut(recognizer)
 
-    new_layout.invalidateLayout
-    @layout_style = layout
-    flag = (animated && !reload_data)
+    if recognizer.state == UIGestureRecognizerStateBegan
+      pinchPoint = recognizer.locationInView(self.completatiCollectionView)
+      pinchedItem = self.completatiCollectionView.indexPathForItemAtPoint(pinchPoint)
+      
+      if (pinchedItem)
+        self.currentPinchedItem = pinchedItem;
 
-    self.classiCollectionView.setCollectionViewLayout(new_layout, animated:true)
+        layout = PinchLayout.alloc.init
+        layout.itemSize = CGSizeMake(230, 230)
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 0
+        layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        #layout.headerReferenceSize = CGSizeMake(0.0f, 90.0f);
+        layout.pinchedStackScale = 0
+        
+        self.currentPinchCollectionView = UICollectionView.alloc.initWithFrame(self.completatiCollectionView.frame, collectionViewLayout:layout)
+        self.currentPinchCollectionView.backgroundColor = UIColor.clearColor
+        self.currentPinchCollectionView.delegate = self
+        self.currentPinchCollectionView.dataSource = self
+        self.currentPinchCollectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+        self.currentPinchCollectionView.setShowsHorizontalScrollIndicator(false)
+        self.currentPinchCollectionView.setShowsVerticalScrollIndicator(false)
+        self.currentPinchCollectionView.registerClass(ClienteAppuntoCell, forCellWithReuseIdentifier:"clienteAppuntoCell") 
+        self.collectionViewContainer.addSubview(self.currentPinchCollectionView)
+
+        recognizer = UIPinchGestureRecognizer.alloc.initWithTarget(self, action:"handlePinchInGesture:")
+        @currentPinchCollectionView.addGestureRecognizer(recognizer)
+      end
     
-    if reload_data
-      self.classiCollectionView.reloadData
-    elsif delayed_reload
-      Dispatch::Queue.main.after(0.5) { self.collectionView.reloadData }
+    elsif (recognizer.state == UIGestureRecognizerStateChanged) && (self.currentPinchedItem) 
+
+      theScale = recognizer.scale
+      theScale = [theScale, KMaxScale].min
+      theScale = [theScale, KMinScale].max
+          
+      theScalePct = (theScale - KMinScale) / (KMaxScale - KMinScale);
+          
+      layout = @currentPinchCollectionView.collectionViewLayout
+      layout.pinchedStackScale = theScalePct
+      layout.pinchedStackCenter = recognizer.locationInView(self.completatiCollectionView)
+
+      self.completatiCollectionView.alpha = 1.0 - theScalePct
+    
+    elsif (self.currentPinchedItem)
+
+      layout = @currentPinchCollectionView.collectionViewLayout
+      layout.pinchedStackScale = 1.0
+      self.completatiCollectionView.alpha = 0.0
     end
     
-  end 
+  end
 
-  def handlePinch(gesture)
-    #return nil unless @layout_style == LAYOUT_STACKS
-    stacks_layout = self.classiCollectionView.collectionViewLayout
-    
-    if gesture.state == UIGestureRecognizerStateBegan
-      initial_pinch_point = gesture.locationInView(self.classiCollectionView)
-      pinched_cell_path   = self.classiCollectionView.indexPathForItemAtPoint(initial_pinch_point)
-      stacks_layout.pinchedStackIndex = pinched_cell_path.section if pinched_cell_path
+
+  def handlePinchInGesture(recognizer)
+    if (recognizer.state == UIGestureRecognizerStateBegan)
+      self.completatiCollectionView.alpha = 0
+
+    elsif (recognizer.state == UIGestureRecognizerStateChanged) 
+      theScale = 1.0 / recognizer.scale
+        
+      theScale = [theScale, KMaxScale].min
+      theScale = [theScale, KMinScale].max
+
+      theScalePct = 1.0 - ((theScale - KMinScale) / (KMaxScale - KMinScale))
       
-    elsif gesture.state == UIGestureRecognizerStateChanged
-      stacks_layout.pinchedStackScale  = gesture.scale
-      stacks_layout.pinchedStackCenter = gesture.locationInView(self.classiCollectionView)
-      
+      layout = self.currentPinchCollectionView.collectionViewLayout
+      layout.pinchedStackScale = theScalePct
+      layout.pinchedStackCenter = recognizer.locationInView(self.completatiCollectionView)
+
+      #self.completatiCollectionView.alpha = 1.0 - theScalePct
     else
-      if (stacks_layout.pinchedStackIndex >= 0)
-        if stacks_layout.pinchedStackScale > 2.5
-          self.changeToLayout("LAYOUT_SPRING", animated:true) # switch to GridLayout
-        else
-          # Find all the supplementary views
-          #small_header_to_remove = self.collectionView.subviews.select { |subview| subview.is_a?(SmallConferenceHeader) } 
-          stacks_layout.collapsing = true
-          self.classiCollectionView.performBatchUpdates(-> {
-            stacks_layout.pinchedStackIndex = -1
-            stacks_layout.pinchedStackScale = 1.0
-          }, completion:-> _ {
-            stacks_layout.collapsing = false
-            # remove them from the view hierarchy
-            #small_header_to_remove.map(&:removeFromSuperview)
-          })
-        end
-      end
+      self.completatiCollectionView.alpha = 1.0
+        
+      self.currentPinchCollectionView.removeFromSuperview
+      self.currentPinchCollectionView = nil
+      self.currentPinchedItem = nil
     end
   end
 
@@ -286,8 +269,7 @@ class ClienteDetailViewController < UIViewController
       appunto.updated_at = Time.now
       appunto.update
       self.appuntiCollectionView.deleteItemsAtIndexPaths([cell_path])
-      self.classiCollectionView.reloadData
-
+      self.completatiCollectionView.reloadData
       # if appunti.deleteAppuntoAtIndex(cell_path)        
       #   if appunti_count <= 1
       #     puts " reload"
@@ -297,38 +279,9 @@ class ClienteDetailViewController < UIViewController
       #     self.appuntiCollectionView.deleteItemsAtIndexPaths([cell_path])
       #   end
       # end
-      puts "Swipissimo"
     end
   end
 
-  # def handleSwipeUp(gesture)
-  #   #return unless self.layoutSupportsDelete
-  #   start_point = gesture.locationInView(self.appuntiCollectionView)
-  #   cell_path   = self.appuntiCollectionView.indexPathForItemAtPoint(start_point)
-    
-  #   if cell_path
-
-  #     appunti = self.appuntiCollectionView.dataSource
-  #     appunti_count = self.appuntiCollectionView.numberOfItemsInSection(cell_path.section)
-  #     puts "SWIPEDOWN"
-
-  #     # if appunti.deleteAppuntoAtIndex(cell_path)        
-  #     #   if appunti_count <= 1
-  #     #     puts " reload"
-  #     #     #self.appuntiCollectionView.reloadData
-  #     #   else
-  #     #     puts "delete"
-  #     #     #self.appuntiCollectionView.deleteItemsAtIndexPaths([cell_path])
-  #     #   end
-  #     # end
-  #   end
-  # end
-
-  # def deleteAppuntoAtIndex(idx)
-  #   return false if idx >= @appunti_in_corso.count
-  #   @deletedSpeakers << @speakers.delete_at(idx)
-  #   true
-  # end
 
 
   # # collectionView delegates
@@ -341,18 +294,12 @@ class ClienteDetailViewController < UIViewController
       else
         0
       end
-    elsif collectionView == self.classiCollectionView
+    elsif collectionView == self.completatiCollectionView || collectionView == self.currentPinchCollectionView
       if @cliente
         self.appunti_completati.count
       else
         0
       end      
-    # elsif collectionView == self.docentiCollectionView
-    #   if @cliente && @cliente.docenti
-    #     @cliente.docenti.count
-    #   else
-    #     0
-    #   end      
     else
       0
     end
@@ -367,18 +314,12 @@ class ClienteDetailViewController < UIViewController
         cell.appunto =  @appunti_in_corso[indexPath.row]
         cell.deleteButton.addTarget(self, action:"delete:", forControlEvents:UIControlEventTouchUpInside)
       end
-    elsif collectionView == self.classiCollectionView
+    elsif collectionView == self.completatiCollectionView || collectionView == self.currentPinchCollectionView
       if indexPath.section == 0
         cell = collectionView.dequeueReusableCellWithReuseIdentifier("clienteAppuntoCell",
                                                                       forIndexPath:indexPath)
         cell.appunto =  @appunti_completati[indexPath.row]
       end   
-    # elsif collectionView == self.docentiCollectionView
-    #   if indexPath.section == 0
-    #     cell = collectionView.dequeueReusableCellWithReuseIdentifier("docenteItem",
-    #                                                                   forIndexPath:indexPath)
-    #     cell.docente =  @cliente.docenti[indexPath.row]
-    #   end   
     end
 
     cell
@@ -397,25 +338,18 @@ class ClienteDetailViewController < UIViewController
   def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
     if collectionView == self.appuntiCollectionView && !isDeletionModeActive
       appunto = @appunti_in_corso[indexPath.row]
-
-      puts "TAPPED"
-
-      self.performSegueWithIdentifier("nuovoAppunto", sender:appunto)
-    elsif collectionView == self.classiCollectionView
-
-      puts "TAPPED"
-
+    elsif collectionView == self.completatiCollectionView || collectionView == self.currentPinchCollectionView
       appunto = @appunti_completati[indexPath.row]
-      self.performSegueWithIdentifier("nuovoAppunto", sender:appunto)
     end
+    self.performSegueWithIdentifier("nuovoAppunto", sender:appunto)
   end
 
-  # SpringboardLayoutDelegate
+  # Custom LayoutDelegate
 
   def isDeletionModeActiveForCollectionView(collectionView, layout:collectionViewLayout)
     if collectionView == self.appuntiCollectionView
       return isDeletionModeActive
-    elsif collectionView == self.classiCollectionView
+    elsif collectionView == self.completatiCollectionView || collectionView == self.currentPinchCollectionView
       return false
     end
   end
@@ -427,10 +361,19 @@ class ClienteDetailViewController < UIViewController
     return false
   end
 
-
-
+  # def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
+  #   barButtonItem.title = "Menu"
+  #   self.navigationItem.setLeftBarButtonItem(barButtonItem)
+  #   self.popoverViewController = pc
+  # end
+  
+  # def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
+  #   self.navigationItem.setLeftBarButtonItems([], animated:false)
+  #   self.popoverViewController = nil
+  # end
 
   def gestureRecognizer(gestureRecognizer, shouldReceiveTouch:touch)
+    puts "toccato"
     touchPoint = touch.locationInView(self.appuntiCollectionView)
     indexPath = self.appuntiCollectionView.indexPathForItemAtPoint(touchPoint)
     if (indexPath && gestureRecognizer.isKindOfClass(UITapGestureRecognizer))

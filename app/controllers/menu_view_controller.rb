@@ -59,10 +59,33 @@ class MenuViewController < UITableViewController
                                 parameters: nil,
                                 success: lambda do |operation, result|
                                                   puts "Righe: #{result.array.count}"
+                                                  self.addClassi
                                                 end,
                                 failure: lambda do |operation, error|
                                                   puts error
                                                 end)
   end
 
+  def addClassi
+    Store.shared.backend.getObjectsAtPath("api/v1/classi",
+                                parameters: nil,
+                                success: lambda do |operation, result|
+                                                  puts "Classi: #{result.array.count}"
+                                                  self.addAdozioni
+                                                end,
+                                failure: lambda do |operation, error|
+                                                  puts error
+                                                end)
+  end
+
+  def addAdozioni
+    Store.shared.backend.getObjectsAtPath("api/v1/adozioni",
+                                parameters: nil,
+                                success: lambda do |operation, result|
+                                                  puts "Adozioni: #{result.array.count}"
+                                                end,
+                                failure: lambda do |operation, error|
+                                                  puts error
+                                                end)
+  end
 end
