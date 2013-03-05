@@ -455,17 +455,17 @@
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="O6V-K5-iC7">
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gMm-k6-6YK">
-                                    <size key="itemSize" width="160" height="75"/>
+                                    <size key="itemSize" width="160" height="80"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="20" minY="10" maxX="20" maxY="10"/>
+                                    <inset key="sectionInset" minX="20" minY="20" maxX="20" maxY="20"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="tIm-aw-6ut">
-                                        <rect key="frame" x="20" y="10" width="160" height="75"/>
+                                        <rect key="frame" x="20" y="20" width="160" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="160" height="75"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="160" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -1166,7 +1166,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="965" y="1439"/>
+            <point key="canvasLocation" x="864" y="890"/>
         </scene>
         <!--Riga Form View Controller-->
         <scene sceneID="Neh-AG-3Zh">
@@ -1534,10 +1534,12 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="vgB-7t-rjk" firstAttribute="leading" secondItem="deX-Bl-kdn" secondAttribute="leading" constant="592" id="KKE-Ar-VRc"/>
+                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="vgB-7t-rjk" secondAttribute="trailing" constant="51" type="user" id="5b3-wW-3px"/>
                                             <constraint firstItem="vgB-7t-rjk" firstAttribute="baseline" secondItem="EHk-Ab-Qdd" secondAttribute="baseline" type="default" id="O3S-Ac-dmc"/>
                                             <constraint firstItem="EHk-Ab-Qdd" firstAttribute="leading" secondItem="deX-Bl-kdn" secondAttribute="leading" constant="43" id="gJP-Dg-613"/>
-                                            <constraint firstItem="vgB-7t-rjk" firstAttribute="top" secondItem="deX-Bl-kdn" secondAttribute="top" constant="8" id="oKe-E5-tHd"/>
+                                            <constraint firstItem="EHk-Ab-Qdd" firstAttribute="top" secondItem="deX-Bl-kdn" secondAttribute="top" constant="11" id="jee-JT-KRB"/>
+                                            <constraint firstAttribute="trailing" secondItem="vgB-7t-rjk" secondAttribute="trailing" constant="51" id="k2C-q0-3xm"/>
+                                            <constraint firstItem="vgB-7t-rjk" firstAttribute="centerY" secondItem="deX-Bl-kdn" secondAttribute="centerY" type="default" id="khc-KM-daQ"/>
                                         </constraints>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="rfL-p2-2x3">
@@ -1569,10 +1571,11 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="nm8-ai-e1Y" secondAttribute="trailing" constant="51" id="43t-mi-qMt"/>
                                             <constraint firstItem="nm8-ai-e1Y" firstAttribute="baseline" secondItem="Eb6-03-cyd" secondAttribute="baseline" type="default" id="FUl-sJ-udU"/>
+                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nm8-ai-e1Y" secondAttribute="trailing" constant="51" type="user" id="JsI-kh-Vad"/>
                                             <constraint firstItem="Eb6-03-cyd" firstAttribute="centerY" secondItem="rfL-p2-2x3" secondAttribute="centerY" type="default" id="nRm-Rz-Ujv"/>
                                             <constraint firstItem="Eb6-03-cyd" firstAttribute="leading" secondItem="rfL-p2-2x3" secondAttribute="leading" constant="43" id="qQ1-il-QgD"/>
-                                            <constraint firstItem="nm8-ai-e1Y" firstAttribute="leading" secondItem="rfL-p2-2x3" secondAttribute="leading" constant="592" id="xFw-zb-aCU"/>
                                         </constraints>
                                     </tableViewCell>
                                 </cells>
@@ -2065,6 +2068,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="pVf-dx-cW1"/>
         <segue reference="wcb-VN-LAR"/>
-        <segue reference="BBE-gs-1UB"/>
+        <segue reference="TVU-RH-YM1"/>
     </inferredMetricsTieBreakers>
 </document>
