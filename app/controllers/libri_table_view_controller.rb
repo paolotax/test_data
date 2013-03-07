@@ -57,7 +57,7 @@ class LibriTableViewController < UITableViewController
   end
 
   def fetchControllerForTableView(tableView)
-    if tableView == self.tableView then Libro.controller else Libro.searchController(@searchString) end
+    if tableView == self.tableView then Libro.controller else Libro.searchController(@searchString, nil) end
   end
 
   # UITableViewDelegate

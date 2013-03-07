@@ -73,7 +73,7 @@ class ClientiController < UIViewController
   end
 
   def fetchControllerForTableView(tableView)
-    if tableView == self.clientiTableView then Cliente.controller else Cliente.searchController(@searchString) end
+    if tableView == self.clientiTableView then Cliente.controller else Cliente.searchController(@searchString, nil) end
   end
 
   def numberOfSectionsInTableView(tableView)
