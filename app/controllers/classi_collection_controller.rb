@@ -2,30 +2,35 @@ class ClassiCollectionController < UIViewController
 
   extend IB
 
-  attr_accessor :cliente, :classi_prime, :classi_seconde, :classi_terze, :classi_quarte, :classi_quinte
+  attr_accessor :cliente, :classi_prime, :classi_seconde, :classi_terze, :classi_quarte, :classi_quinte, :selected_classi
   
   outlet :classiCollectionView
 
   def viewDidLoad
     super
+
     self.classiCollectionView.registerClass(ClasseItem, forCellWithReuseIdentifier:"classeItem")
     self.classiCollectionView.setShowsHorizontalScrollIndicator(false)
     self.classiCollectionView.setShowsVerticalScrollIndicator(false)
+    self.classiCollectionView.setAllowsMultipleSelection(true)
   end
 
   def viewWillAppear(animated)
     super
+    "reload_classi_collections".add_observer(self, :reload)
     reload
   end
 
   def viewWillDisappear(animated)
     super
+    "reload_classi_collections".remove_observer(self, :reload)
   end
  
   def reload
     Cliente.reset
     Classe.reset
     Adozione.reset
+    self.selected_classi = []
     self.classiCollectionView.reloadData
   end
 
@@ -116,5 +121,42 @@ class ClassiCollectionController < UIViewController
     cell
   end
 
+  def collectionView(collectionView, didSelectItemAtIndexPath:indexPath)
+    
+    case indexPath.section
+    when 0
+      classe = classi_prime[indexPath.row]
+    when 1
+      classe = classi_seconde[indexPath.row]
+    when 2
+      classe = classi_terze[indexPath.row]
+    when 3
+      classe = classi_quarte[indexPath.row]
+    when 4
+      classe = classi_quinte[indexPath.row]
+    end
+
+    self.selected_classi << classe
+  end
+
+  def collectionView(collectionView, didDeselectItemAtIndexPath:indexPath)
+    
+    case indexPath.section
+    when 0
+      classe = classi_prime[indexPath.row]
+    when 1
+      classe = classi_seconde[indexPath.row]
+    when 2
+      classe = classi_terze[indexPath.row]
+    when 3
+      classe = classi_quarte[indexPath.row]
+    when 4
+      classe = classi_quinte[indexPath.row]
+    end
+
+    self.selected_classi.removeObject(classe)
+
+  end
 
 end
+

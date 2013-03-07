@@ -91,8 +91,6 @@ class ClienteDetailController < UIViewController
 
   def prepareForSegue(segue, sender:sender)
     
-    puts segue.identifier
-
     if segue.identifier.isEqualToString("showForm")
       segue.destinationViewController.cliente = @cliente
   
@@ -118,9 +116,23 @@ class ClienteDetailController < UIViewController
 
       controller.appunto = appunto
       controller.cliente = @cliente
+    elsif segue.identifier.isEqualToString("showEditClassi")
+      "dismiss_popover".add_observer(self, :dismissPopover)
+      @popoverController = segue.popoverController
+      @popoverController.delegate = self
+      @popoverController.contentViewController.selected_classi = @classiCollectionController.selected_classi
     end
   end
 
+  def dismissPopover
+    @popoverController.dismissPopoverAnimated(true)
+    "dismiss_popover".remove_observer(self, :dismissPopover)
+  end
+
+  def popoverControllerDidDismissPopover(popoverController)
+    @popoverController.delegate = nil
+    @popoverController = nil
+  end 
 
   # actions
 

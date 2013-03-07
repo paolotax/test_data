@@ -15,8 +15,22 @@ class ClasseItem < UICollectionViewCell
          label.textAlignment = UITextAlignmentCenter
          label.backgroundColor = UIColor.clearColor
          label.textColor = UIColor.darkGrayColor
+         label.highlightedTextColor = UIColor.whiteColor
          label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
          cell.contentView.addSubview(label)
+      end
+
+      @note_text = UITextView.alloc.initWithFrame([[55, 5], [100, 40]]).tap do |text|
+        text.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
+        text.setUserInteractionEnabled(false)
+        # text.editable = false  #   preserva lo scroll ma sbaglia tap
+        text.textAlignment = UITextAlignmentLeft
+        text.backgroundColor = UIColor.clearColor
+        text.textColor = UIColor.darkGrayColor
+        #text.highlightedTextColor = UIColor.whiteColor
+
+        text.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
+        cell.contentView.addSubview(text)
       end
 
       @alunni_label = UILabel.alloc.initWithFrame([[0, 0], [157, 20]]).tap do |label|
@@ -26,6 +40,7 @@ class ClasseItem < UICollectionViewCell
          label.textAlignment = UITextAlignmentRight
          label.backgroundColor = UIColor.clearColor
          label.textColor = UIColor.darkGrayColor
+         label.highlightedTextColor = UIColor.whiteColor
          label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
          cell.contentView.addSubview(label)
       end
@@ -67,8 +82,6 @@ class ClasseItem < UICollectionViewCell
       # cell.layer.backgroundColor = UIColor.colorWithPatternImage(image).CGColor;
       cell.backgroundColor = UIColor.whiteColor
 
-      # cell.clipsToBounds = false
-
       # Rounded corners.
       cell.layer.cornerRadius = 10
 
@@ -82,7 +95,15 @@ class ClasseItem < UICollectionViewCell
       cell.layer.shadowRadius = 3.0
       cell.layer.shadowOffset = CGSizeMake(3, 3);
 
+      # selectedBackground
+      bgView = UIView.alloc.initWithFrame(self.frame)
+      bgView.backgroundColor = UIColor.blueColor
+      bgView.layer.borderColor = UIColor.whiteColor.CGColor
+      bgView.layer.borderWidth = 4
+      bgView.layer.cornerRadius = 10
+      cell.selectedBackgroundView = bgView
 
+      cell.clipsToBounds = false
     end
   end
   
@@ -91,6 +112,7 @@ class ClasseItem < UICollectionViewCell
     if @classe
       @classe_label.text = "#{@classe.num_classe} #{@classe.sezione}"
       @alunni_label.text = "#{@classe.nr_alunni}b"
+      @note_text.text = @classe.note
 
       mask = "mask-adozione".uiimage
 

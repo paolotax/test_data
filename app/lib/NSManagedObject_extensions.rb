@@ -18,6 +18,10 @@ class NSManagedObject
     @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:false, withsearchKey:@searchKey, withSearchString:searchString, inManagedObjectContext:Store.shared.context)
   end
 
+  def self.searchController(searchString, searchScope)
+    # Use if you have a search bar in your table view
+    @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:false, withsearchKey:@searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:Store.shared.context)
+  end
 
   def save_to_backend
     puts "save to backend"

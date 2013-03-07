@@ -2,7 +2,7 @@ class Appunto < NSManagedObject
 
   @sortKeys = ['created_at']
   @sectionKey = nil
-  @searchKey  = ["cliente_nome", "destinatario", "note"]
+  @searchKey  = ["cliente_nome", "destinatario", "note", "cliente.comune", "cliente.frazione"]
 
   @attributes = [
     { name: 'remote_id',    type: NSInteger32AttributeType, default: nil,   optional: true, transient: false, indexed: false},
@@ -28,6 +28,29 @@ class Appunto < NSManagedObject
     [nil, ['Destinatario', 'destinatario', :text, 'Stato', 'status', :text]],
     ['Note', ['Note', 'note', :longtext]]
   ]
+
+  def self.filtra_status(status)
+  
+    request = NSFetchRequest.alloc.init
+    request.entity = NSEntityDescription.entityForName(name, inManagedObjectContext:Store.shared.context)
+
+    predicates = []
+    predicates.addObject(NSPredicate.predicateWithFormat("status contains[cd] %@", argumentArray:[status]))
+    request.predicate = NSCompoundPredicate.orPredicateWithSubpredicates(predicates)
+
+    request.sortDescriptors = ["updated_at"].collect { |sortKey|
+      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:false)
+    }
+
+    error_ptr = Pointer.new(:object)
+    data = Store.shared.context.executeFetchRequest(request, error:error_ptr)
+    if data == nil
+      raise "Error when fetching data: #{error_ptr[0].description}"
+    end
+    data
+  end
+
+
 
 
 end

@@ -5,6 +5,7 @@ class AppuntiController < UIViewController
   attr_accessor :refreshControl
 
   outlet :appuntiTableView, UITableView
+  outlet :searchBar
 
   def viewDidLoad
     super
@@ -66,11 +67,19 @@ class AppuntiController < UIViewController
   def searchDisplayController(controller, shouldReloadTableForSearchString:searchString)
     Appunto.reset  
     @searchString = searchString
+    @searchScope = self.searchDisplayController.searchBar.scopeButtonTitles.objectAtIndex(self.searchDisplayController.searchBar.selectedScopeButtonIndex).split(" ").join("_").downcase
+    true
+  end
+
+  def searchDisplayController(controller, shouldReloadTableForSearchScope:searchScope)
+    Appunto.reset
+    @searchScope = self.searchDisplayController.searchBar.scopeButtonTitles.objectAtIndex(searchScope).split(" ").join("_").downcase
+    @searchString = self.searchDisplayController.searchBar.text
     true
   end
 
   def fetchControllerForTableView(tableView)
-    if tableView == self.appuntiTableView then Appunto.controller else Appunto.searchController(@searchString) end
+    if tableView == self.appuntiTableView then Appunto.controller else Appunto.searchController(@searchString, @searchScope) end
   end
 
   # UITableViewDelegate
