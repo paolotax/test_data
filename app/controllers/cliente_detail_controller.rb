@@ -18,6 +18,8 @@ class ClienteDetailController < UIViewController
   outlet :emailButton
   outlet :callButton
 
+  outlet :segmentedControl
+
   outlet :collectionViewContainer
 
   def viewDidLoad
@@ -37,6 +39,7 @@ class ClienteDetailController < UIViewController
 
   def viewWillAppear(animated)
     super
+    segmentedControl.removeAllSegments
     display_cliente if @cliente
   end
 
@@ -60,11 +63,21 @@ class ClienteDetailController < UIViewController
       self.callButton.enabled = false
       callButton.alpha = 0.5
     end
+    
     if cliente.email.blank?
       self.emailButton.enabled = false
       emailButton.alpha = 0.5
     end
-  
+    
+    if cliente.cliente_tipo == "Scuola Primaria"
+      segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
+      segmentedControl.insertSegmentWithTitle("Classi", atIndex:1,animated:false)
+      segmentedControl.selectedSegmentIndex = 0
+    else
+      segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
+      segmentedControl.selectedSegmentIndex = 0
+    end
+    
     if self.popoverViewController
       self.popoverViewController.dismissPopoverAnimated(true)
     end

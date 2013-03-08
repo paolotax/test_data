@@ -8,7 +8,7 @@ class ClasseItem < UICollectionViewCell
       
       cell.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
       
-      @classe_label = UILabel.alloc.initWithFrame([[0, 0], [55, 50]]).tap do |label|
+      @classe_label = UILabel.alloc.initWithFrame([[0, 0], [55, 70]]).tap do |label|
          #label.translatesAutoresizingMaskIntoConstraints = false
          label.numberOfLines = 1
          label.font = UIFont.boldSystemFontOfSize(20.0)
@@ -20,7 +20,7 @@ class ClasseItem < UICollectionViewCell
          cell.contentView.addSubview(label)
       end
 
-      @note_text = UITextView.alloc.initWithFrame([[55, 5], [100, 40]]).tap do |text|
+      @note_text = UITextView.alloc.initWithFrame([[55, 5], [240, 70]]).tap do |text|
         text.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
         text.setUserInteractionEnabled(false)
         # text.editable = false  #   preserva lo scroll ma sbaglia tap
@@ -33,7 +33,7 @@ class ClasseItem < UICollectionViewCell
         cell.contentView.addSubview(text)
       end
 
-      @alunni_label = UILabel.alloc.initWithFrame([[0, 0], [157, 20]]).tap do |label|
+      @alunni_label = UILabel.alloc.initWithFrame([[0, 0], [297, 20]]).tap do |label|
          #label.translatesAutoresizingMaskIntoConstraints = false
          label.numberOfLines = 1
          label.font = UIFont.systemFontOfSize(12.0)
@@ -45,34 +45,40 @@ class ClasseItem < UICollectionViewCell
          cell.contentView.addSubview(label)
       end
 
-      @adozione_image =  UIImageView.alloc.initWithFrame([[5, 50], [50, 60]]).tap do |imgv|
+      @adozione_image =  UIImageView.alloc.initWithFrame([[0, 70], [50, 60]]).tap do |imgv|
         #imgv.translatesAutoresizingMaskIntoConstraints = false
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.backgroundColor = UIColor.clearColor
-        imgv.layer.cornerRadius = 5
-        imgv.alpha = 0.8
+        #imgv.layer.cornerRadius = 5
+        imgv.alpha = 0.4
         imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
+
+        imgv.when_tapped { toggleKit(imgv) }
       end
 
-      @adozione_image_2 =  UIImageView.alloc.initWithFrame([[55, 50], [50, 60]]).tap do |imgv|
+      @adozione_image_2 =  UIImageView.alloc.initWithFrame([[50, 70], [50, 60]]).tap do |imgv|
         #imgv.translatesAutoresizingMaskIntoConstraints = false
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.backgroundColor = UIColor.clearColor
-        imgv.layer.cornerRadius = 5
-        imgv.alpha = 0.8
+        #imgv.layer.cornerRadius = 5
+        imgv.alpha = 0.4
         imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
+
+        imgv.when_tapped { toggleKit(imgv) }
       end
 
-      @adozione_image_3 =  UIImageView.alloc.initWithFrame([[105, 50], [50, 60]]).tap do |imgv|
+      @adozione_image_3 =  UIImageView.alloc.initWithFrame([[100, 70], [50, 60]]).tap do |imgv|
         #imgv.translatesAutoresizingMaskIntoConstraints = false
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.backgroundColor = UIColor.clearColor
-        imgv.layer.cornerRadius = 5
-        imgv.alpha = 0.8
+        #imgv.layer.cornerRadius = 5
+        imgv.alpha = 0.4
         imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
+
+        imgv.when_tapped { toggleKit(imgv) }
       end
 
       cell.contentView.autoresizesSubviews = true
@@ -83,11 +89,11 @@ class ClasseItem < UICollectionViewCell
       cell.backgroundColor = UIColor.whiteColor
 
       # Rounded corners.
-      cell.layer.cornerRadius = 10
+      #cell.layer.cornerRadius = 10
 
       # A thin border.
-      cell.layer.borderColor = UIColor.yellowColor.CGColor;
-      cell.layer.borderWidth = 3;
+      cell.layer.borderColor = UIColor.lightGrayColor.CGColor;
+      cell.layer.borderWidth = 1;
 
       # Drop shadow.
       cell.layer.shadowColor = UIColor.blackColor.CGColor;
@@ -100,7 +106,7 @@ class ClasseItem < UICollectionViewCell
       bgView.backgroundColor = UIColor.blueColor
       bgView.layer.borderColor = UIColor.whiteColor.CGColor
       bgView.layer.borderWidth = 4
-      bgView.layer.cornerRadius = 10
+      #bgView.layer.cornerRadius = 10
       cell.selectedBackgroundView = bgView
 
       cell.clipsToBounds = false
@@ -163,6 +169,8 @@ class ClasseItem < UICollectionViewCell
     end
   end
  
-
+  def toggleKit(sender)
+    sender.alpha == 1 ? sender.alpha = 0.4 : sender.alpha = 1
+  end
 
 end
