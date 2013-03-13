@@ -1,5 +1,5 @@
 class NSFetchRequest
-  def self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
+  def self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
     # Fetch all entityName from the model, filtering by searchKey and sorting by sortKey
     request = self.alloc.init
     request.entity = NSEntityDescription.entityForName(entityName, inManagedObjectContext:context)
@@ -14,13 +14,13 @@ class NSFetchRequest
     end
       
     request.sortDescriptors = sortKeys.collect { |sortKey|
-      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:aBoolean)
+      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:sortOrders[sortKeys.indexOfObject(sortKey)])
     } unless sortKeys == nil
     
     request
   end
 
-  def self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:context)
+  def self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:context)
     # Fetch all entityName from the model, filtering by searchKey and sorting by sortKey
     request = self.alloc.init
     request.entity = NSEntityDescription.entityForName(entityName, inManagedObjectContext:context)
@@ -45,14 +45,15 @@ class NSFetchRequest
     request.predicate = pred
       
     request.sortDescriptors = sortKeys.collect { |sortKey|
-      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:aBoolean)
+      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:sortOrders[sortKeys.indexOfObject(sortKey)])
     } unless sortKeys == nil
     
     request
   end
   
-  def self.fetchObjectsForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, inManagedObjectContext:context)
-    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:nil, withSearchString:nil, inManagedObjectContext:context)
+  def self.fetchObjectsForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, inManagedObjectContext:context)
+    
+    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:nil, withSearchString:nil, inManagedObjectContext:context)
     
     error_ptr = Pointer.new(:object)
     data = context.executeFetchRequest(request, error:error_ptr)
@@ -62,8 +63,9 @@ class NSFetchRequest
     data
   end
 
-  def self.fetchObjectsForEntityForName(entityName, withSectionKey:sectionKey, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
-    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
+  def self.fetchObjectsForEntityForName(entityName, withSectionKey:sectionKey, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
+    
+    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
     
     error_ptr = Pointer.new(:object)
     controller = NSFetchedResultsController.alloc.initWithFetchRequest(request, managedObjectContext:context, sectionNameKeyPath:sectionKey, cacheName:nil)      
@@ -74,9 +76,9 @@ class NSFetchRequest
     controller
   end
 
-  def self.fetchObjectsForEntityForName(entityName, withSectionKey:sectionKey, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:context)
+  def self.fetchObjectsForEntityForName(entityName, withSectionKey:sectionKey, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:context)
     
-    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:aBoolean, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope,inManagedObjectContext:context)
+    request = self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, withSearchScope:searchScope,inManagedObjectContext:context)
     
     error_ptr = Pointer.new(:object)
     controller = NSFetchedResultsController.alloc.initWithFetchRequest(request, managedObjectContext:context, sectionNameKeyPath:sectionKey, cacheName:nil)      

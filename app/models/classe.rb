@@ -3,6 +3,8 @@ class Classe < NSManagedObject
   PROPERTIES = [:remote_id, :classe, :sezione, :nr_alunni, :remote_cliente_id, :adozioni]
   
   @sortKeys = ['remote_cliente_id', 'num_classe', 'sezione']
+  @sortOrders = [true, true, true]
+  
   @sectionKey = nil
   @searchKey  = nil
 

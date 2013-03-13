@@ -18,7 +18,10 @@ Motion::Project::App.setup do |app|
   app.frameworks << 'CFNetwork'
   app.frameworks << 'CoreData'
   app.frameworks << 'QuartzCore'
-  
+  app.frameworks << 'AddressBook'
+  app.frameworks << 'CoreLocation'
+  app.frameworks << 'MapKit'
+
   app.pods do
     pod 'RestKit', :git => "https://github.com/RestKit/RestKit.git", commit: 'ee00e59'
     pod 'SVProgressHUD'

@@ -161,7 +161,7 @@ class AppuntiController < UIViewController
                                                       @refreshControl.endRefreshing
                                                     end,
                                     failure: lambda do |operation, error|
-                                                      "appuntiListDidLoadBackend".post_notification
+                                                      "appuntiListErrorLoadBackend".post_notification
                                                       App.alert("#{error.localizedDescription}")
                                                     end)
       end

@@ -1,6 +1,7 @@
 class Libro < NSManagedObject
   
   @sortKeys = ['settore', 'titolo']
+  @sortOrders = [true, true]
   @sectionKey = 'settore'
   @searchKey  = ['titolo', 'settore']
 

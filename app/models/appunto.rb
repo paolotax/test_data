@@ -1,6 +1,8 @@
 class Appunto < NSManagedObject
 
   @sortKeys = ['created_at']
+  @sortOrders = [false]
+  
   @sectionKey = nil
   @searchKey  = ["cliente_nome", "destinatario", "note", "cliente.comune", "cliente.frazione"]
 

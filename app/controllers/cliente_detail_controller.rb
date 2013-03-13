@@ -194,21 +194,21 @@ class ClienteDetailController < UIViewController
     )
   end
 
-  # splitView delegates
+  # # splitView delegates
 
-  def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
-    return false
-  end
-
-  # def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
-  #   barButtonItem.title = "Menu"
-  #   self.navigationItem.setLeftBarButtonItem(barButtonItem)
-  #   self.popoverViewController = pc
+  # def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
+  #   return false
   # end
+
+  # # def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
+  # #   barButtonItem.title = "Menu"
+  # #   self.navigationItem.setLeftBarButtonItem(barButtonItem)
+  # #   self.popoverViewController = pc
+  # # end
   
-  # def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
-  #   self.navigationItem.setLeftBarButtonItems([], animated:false)
-  #   self.popoverViewController = nil
-  # end
+  # # def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
+  # #   self.navigationItem.setLeftBarButtonItems([], animated:false)
+  # #   self.popoverViewController = nil
+  # # end
 
 end

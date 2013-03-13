@@ -13,41 +13,44 @@ class ClientiController < UIViewController
     self.clientiTableView.addSubview(refreshControl)
 
     # non funzia
-    #self.clientiTableView.registerClass(ClienteCell, forCellReuseIdentifier:"clienteCell")
+    self.clientiTableView.registerClass(ClienteCell, forCellReuseIdentifier:"clienteCell")
 
-    if Device.ipad?
-      self.detailViewController = self.splitViewController.viewControllers.lastObject.topViewController
-    end
+    # if Device.ipad?
+    #   self.detailViewController = self.splitViewController.viewControllers.lastObject.topViewController
+    # end
     true
   end
 
+
   def viewWillAppear(animated)
     super
+    "clientiListDidLoadBackend".add_observer(self, :reload)
+    "clientiListErrorLoadBackend".add_observer(self, :errorLoad)
+    "errorLogin".add_observer(self, :errorLoad)
+    reload
+  end
+
+  def viewWillDisappear(animated)
+    super
+    "clientiListDidLoadBackend".remove_observer(self, :reload)
+    "clientiListErrorLoadBackend".remove_observer(self, :errorLoad)
+    "errorLogin".remove_observer(self, :errorLoad)
+  end
+  
+  def reload
     Cliente.reset
     self.clientiTableView.reloadData
+    @refreshControl.endRefreshing
   end
 
-  def loadFromBackend
-    Store.shared.backend.getObjectsAtPath("api/v1/clienti",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-
-                                                  Store.shared.save
-                                                  Store.shared.persist
-
-                                                  Cliente.reset
-                                                  self.clientiTableView.reloadData
-                                                  @refreshControl.endRefreshing
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  @refreshControl.endRefreshing
-                                                  App.alert("#{error.localizedDescription}")
-                                                end)
+  def errorLoad
+    @refreshControl.endRefreshing
   end
+
 
   # Storyboard methods
   def prepareForSegue(segue, sender:sender)
-    puts segue.identifier
+
     if segue.identifier.isEqualToString("displayCliente")
 
       if (self.searchDisplayController.isActive)
@@ -90,11 +93,14 @@ class ClientiController < UIViewController
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
     cell = self.clientiTableView.dequeueReusableCellWithIdentifier("clienteCell")
-    cell ||= ClienteCell.alloc.initWithStyle(UITableViewCellStyleDefault,
-                                            reuseIdentifier:"clienteCell")
-    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator
     cell.cliente = self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath)
     cell
+  end
+
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    cell = tableView.cellForRowAtIndexPath(indexPath)
+    self.performSegueWithIdentifier("displayCliente", sender:cell )
   end
 
   def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
@@ -106,5 +112,22 @@ class ClientiController < UIViewController
     #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
     # end
   end
+
+  private
+
+    def loadFromBackend
+      Store.shared.login do
+        Store.shared.backend.getObjectsAtPath("api/v1/clienti",
+                                    parameters: nil,
+                                    success: lambda do |operation, result|
+                                                      "clientiListDidLoadBackend".post_notification
+                                                      @refreshControl.endRefreshing
+                                                    end,
+                                    failure: lambda do |operation, error|
+                                                      "clientiListErrorLoadBackend".post_notification
+                                                      App.alert("#{error.localizedDescription}")
+                                                    end)
+      end
+    end
 
 end

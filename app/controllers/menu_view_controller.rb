@@ -5,7 +5,7 @@ class MenuViewController < UITableViewController
   def viewDidLoad
     super
     if Device.ipad?
-      self.detailViewController = self.splitViewController.viewControllers.lastObject.topViewController
+      self.detailViewController = self.splitViewController.viewControllers.lastObject
     end
     true
   end

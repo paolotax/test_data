@@ -1,6 +1,8 @@
 class Riga < NSManagedObject
   
   @sortKeys = ['titolo']
+  @sortOrders = [true]
+  
   @sectionKey = nil
   @searchKey  = 'titolo'
 

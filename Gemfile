@@ -14,7 +14,10 @@ gem 'afmotion'
 gem 'rubymotion_generators'
 gem 'geomotion'
 
+
 gem "ib"
+
+gem "map-kit-wrapper"
 
 #gem "motion-gravatar"
 #gem "motion-addressbook"

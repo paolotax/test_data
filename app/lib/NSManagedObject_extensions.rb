@@ -5,22 +5,22 @@ class NSManagedObject
 
   def self.objects
     # Use if you do not need any section in your table view
-    @objects ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSortKeys:@sortKeys, ascending:false, inManagedObjectContext:Store.shared.context)
+    @objects ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSortKeys:@sortKeys, ascending:@sortOrders, inManagedObjectContext:Store.shared.context)
   end
 
   def self.controller
     # Use if you require sections in your table view
-    @controller ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:false, withsearchKey:nil, withSearchString:nil, inManagedObjectContext:Store.shared.context)
+    @controller ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:@sortOrders, withsearchKey:nil, withSearchString:nil, inManagedObjectContext:Store.shared.context)
   end
   
   def self.searchController(searchString)
     # Use if you have a search bar in your table view
-    @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:false, withsearchKey:@searchKey, withSearchString:searchString, inManagedObjectContext:Store.shared.context)
+    @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:@sortOrders, withsearchKey:@searchKey, withSearchString:searchString, inManagedObjectContext:Store.shared.context)
   end
 
   def self.searchController(searchString, searchScope)
     # Use if you have a search bar in your table view
-    @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:false, withsearchKey:@searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:Store.shared.context)
+    @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:@sortOrders, withsearchKey:@searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:Store.shared.context)
   end
 
   def save_to_backend
@@ -33,7 +33,7 @@ class NSManagedObject
 
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
-
+                                    "clientiListDidLoadBackend".post_notification
                                     puts self.remote_id         
                                   end, 
                           failure:lambda do |operation, error|
@@ -44,7 +44,8 @@ class NSManagedObject
                           success:lambda do |operation, result|
                                     Store.shared.persist      
                                     "appuntiListDidLoadBackend".post_notification
-                                    "reload_appunti_collections".post_notification   
+                                    "reload_appunti_collections".post_notification
+                                    "clientiListDidLoadBackend".post_notification   
                                   end, 
                           failure:lambda do |operation, error|
                                     #Store.shared.persist

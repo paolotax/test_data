@@ -114,17 +114,22 @@ class MappingProvider
                                        inManagedObjectStore:@store)
       mapping.identificationAttributes = [ "ClienteId" ]
       mapping.addAttributeMappingsFromDictionary(id: "ClienteId",
-                                                 titolo: "nome",
-                                                 comune: "comune",
-                                                 frazione: "frazione",
-                                                 cliente_tipo: "cliente_tipo",
-                                                 indirizzo: "indirizzo",
-                                                 cap: "cap",
-                                                 provincia: "provincia",
-                                                 telefono: "telefono",
-                                                 email: "email",
-                                                 latitude: "latitude",
-                                                 longitude: "longitude"
+                                             titolo: "nome",
+                                             comune: "comune",
+                                           frazione: "frazione",
+                                       cliente_tipo: "cliente_tipo",
+                                          indirizzo: "indirizzo",
+                                                cap: "cap",
+                                          provincia: "provincia",
+                                           telefono: "telefono",
+                                              email: "email",
+                                           latitude: "latitude",
+                                          longitude: "longitude",
+                                    ragione_sociale: "ragione_sociale",
+                                        partita_iva: "partita_iva",
+                                     codice_fiscale: "codice_fiscale",
+                                    appunti_da_fare: "appunti_da_fare",
+                                 appunti_in_sospeso: "appunti_in_sospeso"
                                                  )
       # mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunti", 
       #                                 toKeyPath:"appunti", withMapping:appunto_mapping))

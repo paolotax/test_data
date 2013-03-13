@@ -3,6 +3,8 @@ class Adozione < NSManagedObject
   PROPERTIES = [:remote_id, :remote_libro_id, :sigla, :remote_classe_id]
   
   @sortKeys = ['remote_classe_id']
+  @sortOrders = [true]
+  
   @sectionKey = nil
   @searchKey  = nil
 
