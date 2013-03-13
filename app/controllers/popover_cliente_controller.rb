@@ -8,9 +8,6 @@ class PopoverClienteController < UITableViewController
     super
 
     self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged('07-map-marker'.uiimage) {
-      cliente.nel_baule == 0 ? self.cliente.nel_baule = 1 : self.cliente.nel_baule = 0 
-      self.cliente.update
-      Store.shared.persist
       "reload_annotations".post_notification(self, cliente: cliente)
     }
 

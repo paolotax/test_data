@@ -37,9 +37,12 @@ class MainController < UIViewController
 
   def reload(notification)
     annotation = notification.userInfo[:cliente]
+    annotation.nel_baule == 0 ? annotation.nel_baule = 1 : annotation.nel_baule = 0 
+    annotation.update
+    Store.shared.persist
     self.map.removeAnnotation(annotation)
     self.map.addAnnotation(annotation)
-    self.annotationPopover.dismissPopoverAnimated(true)
+    self.annotationPopover.dismissPopoverAnimated(true) if annotationPopover
   end
 
   def coordinateRegionForItems(items, itemsCount)
@@ -102,7 +105,6 @@ class MainController < UIViewController
       view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:nil)
       if annotation.nel_baule == 1
         view.pinColor = MKPinAnnotationColorPurple
-        puts "perche non funzia"
       elsif annotation.appunti_da_fare && annotation.appunti_da_fare > 0
         view.pinColor = MKPinAnnotationColorRed
       else
@@ -115,8 +117,12 @@ class MainController < UIViewController
       view.animatesDrop = false
     #end
 
-    btnImage = "07-map-marker".uiimage
-    leftBtn = UIButton.custom
+    if annotation.nel_baule == 1
+      btnImage = "07-map-marker-purple".uiimage
+    else
+      btnImage = "07-map-marker".uiimage
+    end
+    leftBtn = UIButton.alloc.initWithFrame(CGRectMake(0, 1, 16, 26))
     leftBtn.setBackgroundImage(btnImage, forState:UIControlStateNormal)
 
     view.rightCalloutAccessoryView = UIButton.info
@@ -129,21 +135,26 @@ class MainController < UIViewController
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
 
     selectedCliente = view.annotation
-
     mapView.deselectAnnotation(view.annotation, animated:true)
 
-    storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
-    pvc = storyboard.instantiateViewControllerWithIdentifier("PopoverClienteController")
-    pvc.cliente = selectedCliente
-    pvc.navigationItem.title = "#{selectedCliente.nome}"
+    if control.buttonType == UIButtonTypeInfoLight
 
-    nav = UINavigationController.alloc.initWithRootViewController(pvc)
-    popover = UIPopoverController.alloc.initWithContentViewController(nav)
-    popover.delegate = self
+      storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
+      pvc = storyboard.instantiateViewControllerWithIdentifier("PopoverClienteController")
+      pvc.cliente = selectedCliente
+      pvc.navigationItem.title = "#{selectedCliente.nome}"
+
+      nav = UINavigationController.alloc.initWithRootViewController(pvc)
+      popover = UIPopoverController.alloc.initWithContentViewController(nav)
+      popover.delegate = self
+      
+      self.annotationPopover = popover
+      self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionAny, animated:true)
     
-    self.annotationPopover = popover
-    self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionAny, animated:true)
-  
+    else
+      "reload_annotations".post_notification(self, cliente: selectedCliente)
+    end
+
     # mapItem = selectedCliente.mapItem
     # launchOptions = { MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving }
     # mapItem.openInMapsWithLaunchOptions(launchOptions)
