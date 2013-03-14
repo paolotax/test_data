@@ -90,6 +90,18 @@ class MainController < UIViewController
     result = MKMapItem.openMapsWithItems(mapItems, launchOptions:nil)
   end
 
+  def resetPins(sender)
+
+    @clienti.each do |c|
+      if c.nel_baule == 1
+        c.nel_baule = 0
+        c.update
+      end
+    end 
+    Store.shared.persist
+    self.map.removeAnnotations(@clienti)
+    self.map.addAnnotations(@clienti)
+  end
 
 
 
@@ -109,7 +121,6 @@ class MainController < UIViewController
         view.pinColor = MKPinAnnotationColorRed
       else
         view.pinColor = MKPinAnnotationColorGreen
-        puts "non funzia"
       end
 
       view.canShowCallout = true
@@ -122,7 +133,7 @@ class MainController < UIViewController
     else
       btnImage = "07-map-marker".uiimage
     end
-    leftBtn = UIButton.alloc.initWithFrame(CGRectMake(0, 1, 16, 26))
+    leftBtn = UIButton.alloc.initWithFrame(CGRectMake(0, 1, 26, 26))
     leftBtn.setBackgroundImage(btnImage, forState:UIControlStateNormal)
 
     view.rightCalloutAccessoryView = UIButton.info

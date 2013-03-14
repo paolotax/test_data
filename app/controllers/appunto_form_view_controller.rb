@@ -16,14 +16,16 @@ class AppuntoFormViewController < UITableViewController
   # UITableViewDelegate
 
   def numberOfSectionsInTableView(tableView)
-    2
+    3
   end
 
   def tableView(tableView, numberOfRowsInSection:section)
     if (section == 1)
        @appunto.righe.count + 1
-    else
+    elsif section == 0
        6
+    else
+      1
     end
   end
 
@@ -77,6 +79,11 @@ class AppuntoFormViewController < UITableViewController
         cell ||= RigaTableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellID)
         cell.riga = @appunto.righe.objectAtIndex(indexPath.row - 1)
       end
+    elsif indexPath.section == 2
+
+      cellID = "addReminderCell"
+      cell = tableView.dequeueReusableCellWithIdentifier(cellID) 
+      cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleCustom, reuseIdentifier:cellID)
     end  
     cell
   end
@@ -102,7 +109,6 @@ class AppuntoFormViewController < UITableViewController
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
   end
-
 
 
 
@@ -194,6 +200,21 @@ class AppuntoFormViewController < UITableViewController
     segue.destinationViewController.appunto = @appunto
   end
 
+  def prepareForAddReminderSegue(segue, sender:sender)
+    editController = segue.destinationViewController
+    editController.appunto = @appunto
+    editController.setReminderChangedBlock( lambda do |text, date, error|
+        path = NSIndexPath.indexPathForRow(0, inSection:2)
+        cell = self.tableView.cellForRowAtIndexPath(path)
+        main_queue = Dispatch::Queue.main
+        main_queue.async do
+          cell.textLabel.setText(text)
+        end
+        return true
+      end
+    )
+  end
+
   def prepareForSegue(segue, sender:sender)
     if segue.identifier.isEqualToString("editDestinatario") 
       self.prepareForEditDestinatarioSegue(segue, sender:sender)
@@ -209,6 +230,8 @@ class AppuntoFormViewController < UITableViewController
       self.prepareForShowClienteSegue(segue, sender:sender)
     elsif segue.identifier.isEqualToString("editRiga") 
       self.prepareForEditRigaSegue(segue, sender:sender)
+    elsif segue.identifier.isEqualToString("addReminder") 
+      self.prepareForAddReminderSegue(segue, sender:sender)
     elsif segue.identifier.isEqualToString("addRiga") 
       self.prepareForAddRigaSegue(segue, sender:sender)
     end

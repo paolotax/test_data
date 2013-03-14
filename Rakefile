@@ -7,7 +7,8 @@ Bundler.require
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'test_data'
+  app.name = 'youpropa'
+
   app.device_family = [:iphone, :ipad]
   app.icons = ["appicon.png", "appicon@2x.png", "appicon~ipad.png", "appicon~ipad@2x.png"]
 
@@ -21,6 +22,7 @@ Motion::Project::App.setup do |app|
   app.frameworks << 'AddressBook'
   app.frameworks << 'CoreLocation'
   app.frameworks << 'MapKit'
+  app.frameworks << 'EventKit'
 
   app.pods do
     pod 'RestKit', :git => "https://github.com/RestKit/RestKit.git", commit: 'ee00e59'
