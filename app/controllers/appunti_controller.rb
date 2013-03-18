@@ -12,9 +12,7 @@ class AppuntiController < UIViewController
     @refreshControl = UIRefreshControl.alloc.init
     @refreshControl.addTarget(self, action:"loadFromBackend", forControlEvents:UIControlEventValueChanged)
     self.appuntiTableView.addSubview(refreshControl)
-
     self.navigationItem.rightBarButtonItem = self.editButtonItem
-
     self.appuntiTableView.registerClass(AppuntoCell, forCellReuseIdentifier:"appuntoCell")
   end
 

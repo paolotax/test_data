@@ -26,7 +26,7 @@ class Cliente < NSManagedObject
     { name: 'partita_iva',      type: NSStringAttributeType, default: '', optional: true, transient: false, indexed: false},
     { name: 'appunti_da_fare',    type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
     { name: 'appunti_in_sospeso', type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
-    { name: 'nel_baule',          type: NSBooleanAttributeType, default: false, optional: true, transient: false, indexed: false}
+    { name: 'nel_baule',          type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false}
   ]
 
   @relationships = [

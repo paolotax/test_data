@@ -57,6 +57,8 @@ class EventKitManager
     success = self.eventStore.saveReminder(reminder, commit:true, error:error)
     unless success
       puts "There was an error saving the reminder #{error}"
+    else
+      puts reminder.calendarItemExternalIdentifier
     end
 
   end

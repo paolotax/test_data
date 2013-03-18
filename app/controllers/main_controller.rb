@@ -10,9 +10,10 @@ class MainController < UIViewController
   def viewDidLoad
     super
     self.navigationBar.leftBarButtonItem = MKUserTrackingBarButtonItem.alloc.initWithMapView(self.map)
-    @clienti = fetch_clienti_in_corso.select {|c| !c.latitude.nil? && !c.longitude.nil?}
-    self.map.addAnnotations(@clienti)
+    reload
   end
+
+
 
   def viewWillAppear(animated)
     super    
@@ -27,22 +28,36 @@ class MainController < UIViewController
       ptr = clienti_group.to_pointer(CLLocationCoordinate2D.type)
     end
 
-    "reload_annotations".add_observer(self, "reload:", nil)
+    "reload_annotations".add_observer(self, :reload)
+    "annotation_did_change".add_observer(self, "change_annotation:", nil)
   end
 
-  def viewWillDisppear(animated)
-    super    
-    "reload_annotations".remove_observer(self, :reload, nil)
+  def viewWillDisappear(animated)
+    "reload_annotations".remove_observer(self, :reload)
+    "annotation_did_change".remove_observer(self, "change_annotation:")
   end 
 
-  def reload(notification)
+  def change_annotation(notification)
+
     annotation = notification.userInfo[:cliente]
-    annotation.nel_baule == 0 ? annotation.nel_baule = 1 : annotation.nel_baule = 0 
-    annotation.update
-    Store.shared.persist
-    self.map.removeAnnotation(annotation)
-    self.map.addAnnotation(annotation)
-    self.annotationPopover.dismissPopoverAnimated(true) if annotationPopover
+    puts annotation
+
+    # devo mettere questo per ripetizione notifica
+    unless @pippo
+      annotation.nel_baule == 0 ? annotation.nel_baule = 1 : annotation.nel_baule = 0 
+      annotation.update
+      Store.shared.persist
+      self.map.removeAnnotation(annotation)
+      self.map.addAnnotation(annotation)
+      self.annotationPopover.dismissPopoverAnimated(true) if annotationPopover
+      @pippo = true
+    end
+  end
+
+  def reload
+    self.map.removeAnnotations(@clienti)
+    self.clienti = fetch_clienti_in_corso.select {|c| !c.latitude.nil? && !c.longitude.nil?}
+    self.map.addAnnotations(@clienti)
   end
 
   def coordinateRegionForItems(items, itemsCount)
@@ -82,7 +97,6 @@ class MainController < UIViewController
   end
 
   def showInMaps(sender)
-
     mapItems = []
     for cliente in clienti
       mapItems.addObject(cliente.mapItem) if cliente.nel_baule == 1
@@ -91,7 +105,6 @@ class MainController < UIViewController
   end
 
   def resetPins(sender)
-
     @clienti.each do |c|
       if c.nel_baule == 1
         c.nel_baule = 0
@@ -99,8 +112,7 @@ class MainController < UIViewController
       end
     end 
     Store.shared.persist
-    self.map.removeAnnotations(@clienti)
-    self.map.addAnnotations(@clienti)
+    reload
   end
 
 
@@ -145,6 +157,8 @@ class MainController < UIViewController
 
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
 
+    @pippo = nil
+
     selectedCliente = view.annotation
     mapView.deselectAnnotation(view.annotation, animated:true)
 
@@ -163,12 +177,9 @@ class MainController < UIViewController
       self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionAny, animated:true)
     
     else
-      "reload_annotations".post_notification(self, cliente: selectedCliente)
+      "annotation_did_change".post_notification(self, cliente: selectedCliente)
     end
 
-    # mapItem = selectedCliente.mapItem
-    # launchOptions = { MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving }
-    # mapItem.openInMapsWithLaunchOptions(launchOptions)
   end
 
 
@@ -188,5 +199,12 @@ class MainController < UIViewController
   #   self.navigationItem.setLeftBarButtonItems([], animated:false)
   #   self.popoverViewController = nil
   # end
+
+  # popoverController delegates
+
+  def popoverControllerShouldDismissPopover(popoverController)
+    #false
+    true
+  end
 
 end

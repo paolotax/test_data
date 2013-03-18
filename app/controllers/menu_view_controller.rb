@@ -1,6 +1,14 @@
 class MenuViewController < UITableViewController
 
+  extend IB
+
   attr_accessor :detailViewController
+  
+  outlet :activityIndicator
+  
+  def login(sender)
+    Store.shared.login {}
+  end
   
   def viewDidLoad
     super
@@ -10,82 +18,37 @@ class MenuViewController < UITableViewController
     true
   end
 
-  def login(sender)
-    Store.shared.login {}
-  end
-
   def importa(sender)
-    Store.shared.clear
-    Store.shared.login do
-      puts "loggato"
-      Store.shared.backend.getObjectsAtPath("api/v1/clienti",
-                              parameters: nil,
-                              success: lambda do |operation, result|
-                                                puts "Clienti: #{result.array.count}"
-                                                self.addAppunti
-                                              end,
-                              failure: lambda do |operation, error|
-                                                puts error
-                                              end)
+    self.activityIndicator.startAnimating
+    importer = DataImporter.default
+    importer.importa_clienti do |result|
+      
+      main_queue = Dispatch::Queue.main
+      main_queue.async do
+        "reload_annotations".post_notification
+      end
+
+      importer.importa_classi do |result|
+        importer.importa_libri do |result|
+          importer.importa_adozioni do |result|
+            importer.importa_appunti do |result|
+              importer.importa_righe do |result|
+                #importer.importa_clienti do |result|
+                  
+                  #lo devo rifare seno scaglia
+                  # main_queue = Dispatch::Queue.main
+                  # main_queue.async do
+                  #   "reload_annotations".post_notification
+                  # end
+                  puts "finito"
+                  self.activityIndicator.stopAnimating
+                #end
+              end
+            end
+          end
+        end
+      end
     end
   end
 
-  def addAppunti
-    Store.shared.backend.getObjectsAtPath("api/v1/appunti",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Appunti: #{result.array.count}"
-                                                  self.addLibri
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-  end
-
-  def addLibri
-    Store.shared.backend.getObjectsAtPath("api/v1/libri",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Libri: #{result.array.count}"
-                                                  self.addRighe
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-  end
-
-  def addRighe
-    Store.shared.backend.getObjectsAtPath("api/v1/righe",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Righe: #{result.array.count}"
-                                                  self.addClassi
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-  end
-
-  def addClassi
-    Store.shared.backend.getObjectsAtPath("api/v1/classi",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Classi: #{result.array.count}"
-                                                  self.addAdozioni
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-  end
-
-  def addAdozioni
-    Store.shared.backend.getObjectsAtPath("api/v1/adozioni",
-                                parameters: nil,
-                                success: lambda do |operation, result|
-                                                  puts "Adozioni: #{result.array.count}"
-                                                end,
-                                failure: lambda do |operation, error|
-                                                  puts error
-                                                end)
-  end
 end

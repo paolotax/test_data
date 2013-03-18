@@ -1,16 +1,44 @@
-class AppuntoFormViewController < UITableViewController
+class AppuntoFormController < UITableViewController
 
   attr_accessor :appunto, :cliente, :presentedAsModal, :saveBlock, :sourceController
 
 
   def viewWillAppear(animated)
     super
-    
     if presentedAsModal?
       self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
     end
     view.reloadData
+
+    name = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.addObserver(self, 
+              selector:"changes:",
+                  name:name, 
+                object:nil)
+    puts "awake"
   end
+
+  def viewDidAppear(animated)
+    self.contentSizeForViewInPopover = self.tableView.contentSize
+  end
+
+
+  def changes(sender)
+    self.navigationItem.setRightBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target:self, action:"save:"))
+    self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
+  end
+
+  def viewWillDisappear(sender)
+    super
+    name = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.removeObserver(self, 
+                     name:name, 
+                   object:nil)
+    puts "fault"
+  end
+
 
 
   # UITableViewDelegate
@@ -254,21 +282,21 @@ class AppuntoFormViewController < UITableViewController
     "appuntiListDidLoadBackend".post_notification
     "reload_appunti_collections".post_notification
 
-    if Device.ipad?
-      self.dismissViewControllerAnimated(true, completion:nil)
-    else
+    unless presentedAsModal?
       self.navigationController.popViewControllerAnimated(true)
+    else
+      self.dismissViewControllerAnimated(true, completion:nil)
     end 
   end
 
   def cancel(sender)
 
     Store.shared.context.rollback
-    if Device.ipad?
-      self.dismissViewControllerAnimated(true, completion:nil)
-    else
+    unless presentedAsModal?
       self.navigationController.popViewControllerAnimated(true)
-    end
+    else
+      self.dismissViewControllerAnimated(true, completion:nil)
+    end 
   end
 
   private

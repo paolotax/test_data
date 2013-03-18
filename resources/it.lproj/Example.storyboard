@@ -899,10 +899,10 @@
             </objects>
             <point key="canvasLocation" x="2203" y="1650"/>
         </scene>
-        <!--Appunto Form View Controller-->
+        <!--Appunto Form Controller-->
         <scene sceneID="r7Z-KO-H7w">
             <objects>
-                <tableViewController id="5Tv-UM-tvv" customClass="AppuntoFormViewController" sceneMemberID="viewController">
+                <tableViewController id="5Tv-UM-tvv" customClass="AppuntoFormController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="rqO-Nm-3Xc">
                         <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1845,19 +1845,16 @@
                 <relationship kind="action" name="viewWillAppear:"/>
                 <relationship kind="action" name="viewWillDisappear:"/>
                 <relationship kind="outlet" name="appuntiTableView" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
+                <relationship kind="outlet" name="searchBar"/>
             </relationships>
         </class>
-        <class className="AppuntoFormViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/AppuntoFormViewController.h"/>
+        <class className="AppuntoFormController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AppuntoFormController.h"/>
             <relationships>
                 <relationship kind="action" name="cancel:"/>
-                <relationship kind="action" name="create_appunto"/>
-                <relationship kind="action" name="load_appunto"/>
                 <relationship kind="action" name="numberOfSectionsInTableView:"/>
                 <relationship kind="action" name="save:"/>
-                <relationship kind="action" name="update_appunto"/>
-                <relationship kind="action" name="viewDidLoad"/>
+                <relationship kind="action" name="viewDidAppear:"/>
                 <relationship kind="action" name="viewWillAppear:"/>
             </relationships>
         </class>
@@ -1873,36 +1870,39 @@
         </class>
         <class className="ClienteCell" superclassName="UITableViewCell">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ClienteCell.h"/>
+            <relationships>
+                <relationship kind="action" name="addCittaLabel"/>
+                <relationship kind="action" name="addClienteLabel"/>
+                <relationship kind="action" name="addDafareBadge"/>
+                <relationship kind="action" name="addInsospesoBadge"/>
+                <relationship kind="action" name="format_date:"/>
+                <relationship kind="action" name="layoutSubviews"/>
+                <relationship kind="action" name="setShadowOffset:"/>
+                <relationship kind="action" name="setupBackground"/>
+            </relationships>
         </class>
         <class className="ClienteDetailController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ClienteDetailController.h"/>
             <relationships>
-                <relationship kind="action" name="activateDeletionMode:"/>
-                <relationship kind="action" name="appunti_completati"/>
-                <relationship kind="action" name="appunti_in_corso"/>
-                <relationship kind="action" name="delete:"/>
+                <relationship kind="action" name="collectionChange:"/>
+                <relationship kind="action" name="dismissPopover"/>
                 <relationship kind="action" name="display_cliente"/>
-                <relationship kind="action" name="endDeletionMode:"/>
-                <relationship kind="action" name="handlePinch:"/>
-                <relationship kind="action" name="handleSwipeUp:"/>
                 <relationship kind="action" name="makeCall:"/>
                 <relationship kind="action" name="navigate:"/>
-                <relationship kind="action" name="reload"/>
+                <relationship kind="action" name="popoverControllerDidDismissPopover:"/>
                 <relationship kind="action" name="sendEmail:"/>
-                <relationship kind="action" name="sorted_appunti"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="action" name="viewWillAppear:"/>
                 <relationship kind="action" name="viewWillDisappear:"/>
-                <relationship kind="outlet" name="appuntiCollectionView"/>
                 <relationship kind="outlet" name="callButton"/>
                 <relationship kind="outlet" name="cittaLabel"/>
-                <relationship kind="outlet" name="classiCollectionView"/>
-                <relationship kind="outlet" name="docentiCollectionView"/>
+                <relationship kind="outlet" name="collectionViewContainer"/>
                 <relationship kind="outlet" name="emailButton"/>
                 <relationship kind="outlet" name="indirizzoLabel"/>
                 <relationship kind="outlet" name="navigaButton"/>
                 <relationship kind="outlet" name="nomeLabel"/>
                 <relationship kind="outlet" name="nuovoAppuntoButton"/>
+                <relationship kind="outlet" name="segmentedControl"/>
             </relationships>
         </class>
         <class className="ClienteFormViewController" superclassName="UITableViewController">
@@ -1931,13 +1931,15 @@
         <class className="ClientiController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ClientiController.h"/>
             <relationships>
+                <relationship kind="action" name="errorLoad"/>
                 <relationship kind="action" name="fetchControllerForTableView:"/>
                 <relationship kind="action" name="loadFromBackend"/>
                 <relationship kind="action" name="numberOfSectionsInTableView:"/>
+                <relationship kind="action" name="reload"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="action" name="viewWillAppear:"/>
+                <relationship kind="action" name="viewWillDisappear:"/>
                 <relationship kind="outlet" name="clientiTableView" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
             </relationships>
         </class>
         <class className="EditPrezzoViewController" superclassName="UITableViewController">
@@ -1991,7 +1993,7 @@
         <class className="LibroCell" superclassName="UITableViewCell">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LibroCell.h"/>
         </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
+        <class className="NSLayoutConstraint">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
             <relationships>
                 <relationship kind="action" name="to_s"/>
@@ -2029,6 +2031,12 @@
                 <relationship kind="action" name="sendPick"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="outlet" name="pickResultLabel"/>
+            </relationships>
+        </class>
+        <class className="UIBarButtonItem">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UIBarButtonItem.h"/>
+            <relationships>
+                <relationship kind="action" name="sugarcube_handle_action:"/>
             </relationships>
         </class>
         <class className="UIButton">
