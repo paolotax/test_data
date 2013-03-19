@@ -106,16 +106,6 @@ class AppuntiController < UIViewController
     95
   end
 
-  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-    # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
-    # tableView.updates do
-    #   if tableView.numberOfRowsInSection(indexPath.section) == 1
-    #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
-    #   end
-    #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
-    # end
-  end
-  
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true) unless Device.ipad?
     cell = tableView.cellForRowAtIndexPath(indexPath)
@@ -126,14 +116,27 @@ class AppuntiController < UIViewController
     end
   end
 
-  # def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
+  def tableView(tableView, canEditRowAtIndexPath:indexPath)
+    if !self.isEditing
+      false
+    end
+  end
+
+  def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
+    # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
+    # tableView.updates do
+    #   if tableView.numberOfRowsInSection(indexPath.section) == 1
+    #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
+    #   end
+    #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
+    # end
   #   if editing_style == UITableViewCellEditingStyleDelete
   #     editing_style = "UITableViewCellEditingStyleDelete"
   #     delete_appunto(self.tableView.cellForRowAtIndexPath(indexPath).appunto)
   #     @appunti.delete_at(indexPath.row)
   #     self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
   #   end
-  # end
+  end
 
   # def delete_appunto(appunto)
   #   puts "Deleting cliente #{appunto.remote_id}"

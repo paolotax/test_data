@@ -103,15 +103,23 @@ class ClientiController < UIViewController
     self.performSegueWithIdentifier("displayCliente", sender:cell )
   end
 
-  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-    # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
-    # tableView.updates do
-    #   if tableView.numberOfRowsInSection(indexPath.section) == 1
-    #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
-    #   end
-    #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
-    # end
-  end
+  # def tableView(tableView, editingStyleForRowAtIndexPath:indexPath)
+  #   if self.editing
+  #     return UITableViewCellEditingStyleDelete
+  #   else
+  #     return UITableViewCellEditingStyleNone
+  #   end
+  # end
+
+  # def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
+  #   # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
+  #   # tableView.updates do
+  #   #   if tableView.numberOfRowsInSection(indexPath.section) == 1
+  #   #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
+  #   #   end
+  #   #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
+  #   # end
+  # end
 
   private
 

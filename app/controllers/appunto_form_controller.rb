@@ -1,6 +1,6 @@
 class AppuntoFormController < UITableViewController
 
-  attr_accessor :appunto, :cliente, :presentedAsModal, :saveBlock, :sourceController
+  attr_accessor :appunto, :cliente, :presentedAsModal, :saveBlock, :sourceController, :actionSheet
 
 
   def viewWillAppear(animated)
@@ -36,7 +36,6 @@ class AppuntoFormController < UITableViewController
     center.removeObserver(self, 
                      name:name, 
                    object:nil)
-    puts "fault"
   end
 
 
@@ -44,7 +43,7 @@ class AppuntoFormController < UITableViewController
   # UITableViewDelegate
 
   def numberOfSectionsInTableView(tableView)
-    3
+    4
   end
 
   def tableView(tableView, numberOfRowsInSection:section)
@@ -107,12 +106,20 @@ class AppuntoFormController < UITableViewController
         cell ||= RigaTableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:cellID)
         cell.riga = @appunto.righe.objectAtIndex(indexPath.row - 1)
       end
+    
     elsif indexPath.section == 2
 
       cellID = "addReminderCell"
       cell = tableView.dequeueReusableCellWithIdentifier(cellID) 
       cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleCustom, reuseIdentifier:cellID)
-    end  
+    
+    elsif indexPath.section == 3
+
+      cellID = "deleteCell"
+      cell = tableView.dequeueReusableCellWithIdentifier(cellID) 
+      cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleCustom, reuseIdentifier:cellID)
+    
+    end   
     cell
   end
 
@@ -136,9 +143,27 @@ class AppuntoFormController < UITableViewController
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
+    if indexPath.section == 3
+
+      @actionSheet = UIActionSheet.alloc.initWithTitle("Sei sicuro?",
+                                              delegate:self,
+                                          cancelButtonTitle:"Annulla",
+                                          destructiveButtonTitle:"Elimina",
+                                          otherButtonTitles:nil)
+
+      @actionSheet.showFromRect(self.tableView.frame, inView:self.view, animated:true)
+      #appunto.remove
+    end
+
   end
 
 
+  def actionSheet(actionSheet, didDismissWithButtonIndex:buttonIndex)
+    if buttonIndex != actionSheet.cancelButtonIndex
+      #self.delegate playerDetailsViewController:self didDeletePlayer:self.playerToEdit
+    end
+    actionSheet = nil
+  end
 
 
   # segues
@@ -264,6 +289,9 @@ class AppuntoFormController < UITableViewController
       self.prepareForAddRigaSegue(segue, sender:sender)
     end
   end
+
+
+
 
 
   # save
