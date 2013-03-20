@@ -118,6 +118,7 @@ class ClienteDetailController < UIViewController
       if Device.ipad? && sender.class == Appunto_Appunto_
         appunto = sender
       else
+        controller.isNew = true
         appunto = Appunto.add do |a|
           a.cliente = @cliente
           a.ClienteId = @cliente.ClienteId
@@ -151,7 +152,6 @@ class ClienteDetailController < UIViewController
 
   def navigate(sender)
     url = NSURL.URLWithString("http://maps.apple.com/maps?q=#{@cliente.latitude},#{@cliente.longitude}")
-    puts url
     UIApplication.sharedApplication.openURL(url);
   end  
 

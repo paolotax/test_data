@@ -1,22 +1,53 @@
 class AppuntoFormController < UITableViewController
 
-  attr_accessor :appunto, :cliente, :presentedAsModal, :saveBlock, :sourceController, :actionSheet
+  attr_accessor :appunto, :cliente, 
+                :presentedAsModal, :isNew, 
+                :presentedInPopover, :presentedInDetailView, :saveBlock
 
+
+  def viewDidLoad
+    super
+    puts "0. didLoad"
+    puts Store.shared.stats
+  end
 
   def viewWillAppear(animated)
     super
+    puts "0. willAppear"
+    puts Store.shared.stats
+
+    view.reloadData   
+    puts "1. reloadData"
+    puts Store.shared.stats
+
+    
+
+    unless isNew?
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end
+
     if presentedAsModal?
       self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
     end
-    view.reloadData
 
-    name = NSManagedObjectContextObjectsDidChangeNotification
+    # non funzia
+    #"NSManagedObjectContextObjectsDidChangeNotification".add_observer(self, "changes:")
+
+    didChange = NSManagedObjectContextObjectsDidChangeNotification
     center = NSNotificationCenter.defaultCenter
     center.addObserver(self, 
               selector:"changes:",
-                  name:name, 
-                object:nil)
-    puts "awake"
+                  name:didChange, 
+                object:Store.shared.context)
+
+    didSave = NSManagedObjectContextDidSaveNotification
+    center.addObserver(self, 
+              selector:"didSave:",
+                  name:didSave,
+                object:Store.shared.context)
   end
 
   def viewDidAppear(animated)
@@ -25,17 +56,30 @@ class AppuntoFormController < UITableViewController
 
 
   def changes(sender)
+    puts "---changes---"
+    puts Store.shared.stats
+    if presentedInPopover?
+      "unallow_dismiss_popover".post_notification
+    end
     self.navigationItem.setRightBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target:self, action:"save:"))
     self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
   end
 
+  def didSave(sender)
+    puts "---didSave---"
+    puts Store.shared.stats
+  end
+
   def viewWillDisappear(sender)
     super
+    puts "---dismiss changes---"
+    puts Store.shared.stats
+
     name = NSManagedObjectContextObjectsDidChangeNotification
     center = NSNotificationCenter.defaultCenter
     center.removeObserver(self, 
                      name:name, 
-                   object:nil)
+                   object:Store.shared.context)
   end
 
 
@@ -143,15 +187,16 @@ class AppuntoFormController < UITableViewController
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
+    
     if indexPath.section == 3
-
+      cell = tableView.cellForRowAtIndexPath(indexPath)
       @actionSheet = UIActionSheet.alloc.initWithTitle("Sei sicuro?",
                                               delegate:self,
                                           cancelButtonTitle:"Annulla",
                                           destructiveButtonTitle:"Elimina",
                                           otherButtonTitles:nil)
 
-      @actionSheet.showFromRect(self.tableView.frame, inView:self.view, animated:true)
+      @actionSheet.showFromRect(cell.frame, inView:self.view, animated:true)
       #appunto.remove
     end
 
@@ -159,10 +204,13 @@ class AppuntoFormController < UITableViewController
 
 
   def actionSheet(actionSheet, didDismissWithButtonIndex:buttonIndex)
-    if buttonIndex != actionSheet.cancelButtonIndex
+    if buttonIndex != @actionSheet.cancelButtonIndex
+
+      puts "elimina todo"
+
       #self.delegate playerDetailsViewController:self didDeletePlayer:self.playerToEdit
     end
-    actionSheet = nil
+    @actionSheet = nil
   end
 
 
@@ -221,18 +269,19 @@ class AppuntoFormController < UITableViewController
     )
   end
 
+
   def prepareForEditStatoSegue(segue, sender:sender)
-    editController = segue.destinationViewController
-    editController.appunto = @appunto
-    editController.setStatoChangedBlock( lambda do |text, error|
-        path = NSIndexPath.indexPathForRow(3, inSection:0)
-        cell = self.tableView.cellForRowAtIndexPath(path)
-        cell.detailTextLabel.setText(text)
-        @appunto.status = text
-        return true
-      end
-    )
+    statoController = segue.destinationViewController
+    statoController.appunto = @appunto
+    statoController.delegate = self
   end
+  
+  # editStatoController delegate
+  def editStatoController(controller, didSelectStato:stato)
+    @appunto.status = stato
+    self.navigationController.popViewControllerAnimated(true)
+  end
+
 
   def prepareForShowClienteSegue(segue, sender:sender)
     editController = segue.destinationViewController.visibleViewController
@@ -271,20 +320,28 @@ class AppuntoFormController < UITableViewController
   def prepareForSegue(segue, sender:sender)
     if segue.identifier.isEqualToString("editDestinatario") 
       self.prepareForEditDestinatarioSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("editNote") 
       self.prepareForEditNoteSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("editStato") 
       self.prepareForEditStatoSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("editTelefono") 
       self.prepareForEditTelefonoSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("editEmail") 
       self.prepareForEditEmailSegue(segue, sender:sender)  
+    
     elsif segue.identifier.isEqualToString("showCliente") 
       self.prepareForShowClienteSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("editRiga") 
       self.prepareForEditRigaSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("addReminder") 
       self.prepareForAddReminderSegue(segue, sender:sender)
+    
     elsif segue.identifier.isEqualToString("addRiga") 
       self.prepareForAddRigaSegue(segue, sender:sender)
     end
@@ -297,40 +354,117 @@ class AppuntoFormController < UITableViewController
   # save
 
   def save(sender)
-
+    
     if @appunto.isUpdated
       @appunto.updated_at = Time.now
+      puts "0. updated time"
+      puts Store.shared.stats
     end
-    Store.shared.save
-    Store.shared.persist
-        
-    puts @appunto.remote_id
-    self.appunto.save_to_backend  
+    
 
+    Store.shared.save
+    puts "1. save"
+    puts Store.shared.stats
+
+    Store.shared.persist
+    puts "2. persist"
+    puts Store.shared.stats
+    
+    self.appunto.save_to_backend  
+    puts "3. backend"
+    puts Store.shared.stats
+    
     "appuntiListDidLoadBackend".post_notification
     "reload_appunti_collections".post_notification
+    "allow_dismiss_popover".post_notification
 
-    unless presentedAsModal?
-      self.navigationController.popViewControllerAnimated(true)
-    else
+    if presentedAsModal?
+      puts "4. presentedAsModal"  
+      puts Store.shared.stats
       self.dismissViewControllerAnimated(true, completion:nil)
+    end
+    
+    if presentedInPopover?
+      puts "4. presentedInPopover"  
+      puts Store.shared.stats
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      puts "4. presentedInDetailView"
+      puts Store.shared.stats
+      puts "ce l'ho"
+      self.navigationItem.title = "ce l'ho"
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
     end 
   end
 
   def cancel(sender)
 
-    Store.shared.context.rollback
-    unless presentedAsModal?
-      self.navigationController.popViewControllerAnimated(true)
+    if isNew?
+      puts "1. isNew = true"
+      puts Store.shared.stats
+      @appunto.remove
+      puts "2. remove"
+      puts Store.shared.stats
     else
+      puts "1. update"
+      puts Store.shared.stats
+      Store.shared.context.rollback
+      puts "2. rollback"
+      puts Store.shared.stats
+    end
+
+    if presentedAsModal?
+      puts "3. closemodal"
+      puts Store.shared.stats
       self.dismissViewControllerAnimated(true, completion:nil)
+    end
+
+    if presentedInPopover?
+      puts "3. pop navigation"
+      puts Store.shared.stats
+      "allow_dismiss_popover".post_notification
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      puts "3. reset detail view"
+      puts Store.shared.stats
+      self.navigationItem.title = "ce l'ho"
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
     end 
+
   end
 
   private
 
     def presentedAsModal?
-      self.presentedAsModal == true
+      presentedAsModal == true
+    end
+
+    def isNew?
+      isNew == true
+    end
+
+    def presentedInPopover?
+      presentedInPopover == true
+    end
+    
+    def presentedInDetailView?
+      presentedInDetailView == true
     end
 
 end

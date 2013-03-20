@@ -2,7 +2,7 @@ class EditStatoViewController < UITableViewController
 
   STATUSES = ['da fare', 'in sospeso', 'completato']
 
-  attr_accessor :statoChangedBlock, :appunto
+  attr_accessor :appunto, :delegate
 
 
   def tableView(tableView, numberOfRowsInSection:section)
@@ -30,18 +30,7 @@ class EditStatoViewController < UITableViewController
     tableView.cellForRowAtIndexPath(indexPath).accessoryType = UITableViewCellAccessoryCheckmark
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
 
-    text = @appunto.status = STATUSES[indexPath.row].split(" ").join("_")
-
-    error = Pointer.new(:object)
-    success = @statoChangedBlock.call(text, error)
-    if (success) 
-      self.navigationController.popViewControllerAnimated(true)
-      return true
-    else
-      alertView = UIAlertView.alloc.initWithTitle("Error", message:error.localizedDescription, delegate:nil, cancelButtonTitle:"Chiudi", otherButtonTitles:nil);
-      alertView.show
-      return false
-    end
+    self.delegate.editStatoController(self, didSelectStato:STATUSES[indexPath.row].split(" ").join("_"))
 
   end
 

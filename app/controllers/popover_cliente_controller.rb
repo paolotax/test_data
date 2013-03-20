@@ -6,7 +6,7 @@ class PopoverClienteController < UITableViewController
 
   def viewDidLoad
     super
-    self.contentSizeForViewInPopover = CGSizeMake(320, 95)
+    self.contentSizeForViewInPopover = CGSizeMake(320, 0)
 
     self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged('07-map-marker'.uiimage) {
       "annotation_did_change".post_notification(self, cliente: cliente)
@@ -18,7 +18,13 @@ class PopoverClienteController < UITableViewController
 
   def viewWillAppear(animated)
     super
+    
     self.tableView.reloadData
+    if appunti_in_corso.count == 1 
+      self.navigationItem.title = "#{appunti_in_corso.count} appunto"
+    else
+      self.navigationItem.title = "#{appunti_in_corso.count} appunti"
+    end
   end
   
   def viewDidAppear(animated)
@@ -71,7 +77,7 @@ class PopoverClienteController < UITableViewController
     appunto = self.tableView.cellForRowAtIndexPath(indexPath).appunto
 
     if segue.identifier.isEqualToString("displayAppunto")
-      segue.destinationViewController.presentedAsModal = false
+      segue.destinationViewController.presentedInPopover = true
       segue.destinationViewController.appunto = appunto
     end
   end

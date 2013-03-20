@@ -44,7 +44,7 @@ class AppuntiController < UIViewController
 
   # Storyboard methods
   def prepareForSegue(segue, sender:sender)
-
+    puts segue.identifier + " appunti_controller"
     if (self.searchDisplayController.isActive)
       indexPath = self.searchDisplayController.searchResultsTableView.indexPathForCell(sender)
       appunto = self.searchDisplayController.searchResultsTableView.cellForRowAtIndexPath(indexPath).appunto
@@ -54,9 +54,11 @@ class AppuntiController < UIViewController
     end
 
     if segue.identifier.isEqualToString("displayAppunto")
+      #segue.destinationViewController.presentedInDetailView = true
       segue.destinationViewController.appunto = appunto
 
     elsif segue.identifier.isEqualToString("modalAppunto")
+      segue.destinationViewController.visibleViewController.presentedInDetailView = true
       segue.destinationViewController.visibleViewController.appunto = appunto
     end
 

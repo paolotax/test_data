@@ -16,7 +16,10 @@ class MainController < UIViewController
 
 
   def viewWillAppear(animated)
-    super    
+    super
+    
+    @can_dismiss_popover = true
+
     if clienti.count > 0
       region = self.coordinateRegionForItems(clienti, clienti.count-1)
       self.map.setRegion(region)
@@ -30,17 +33,29 @@ class MainController < UIViewController
 
     "reload_annotations".add_observer(self, :reload)
     "annotation_did_change".add_observer(self, "change_annotation:", nil)
+    "allow_dismiss_popover".add_observer(self, "allow_dismiss")
+    "unallow_dismiss_popover".add_observer(self, "unallow_dismiss")
   end
 
   def viewWillDisappear(animated)
+    puts "map willDisappear"
     "reload_annotations".remove_observer(self, :reload)
     "annotation_did_change".remove_observer(self, "change_annotation:")
+    "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
+    "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
+  end
+
+  def allow_dismiss
+    @can_dismiss_popover = true
+  end
+
+  def unallow_dismiss
+    @can_dismiss_popover = false
   end 
 
   def change_annotation(notification)
 
     annotation = notification.userInfo[:cliente]
-    puts annotation
 
     # devo mettere questo per ripetizione notifica
     unless @pippo
@@ -167,14 +182,13 @@ class MainController < UIViewController
       storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
       pvc = storyboard.instantiateViewControllerWithIdentifier("PopoverClienteController")
       pvc.cliente = selectedCliente
-      pvc.navigationItem.title = "#{selectedCliente.nome}"
 
       nav = UINavigationController.alloc.initWithRootViewController(pvc)
       popover = UIPopoverController.alloc.initWithContentViewController(nav)
       popover.delegate = self
       
       self.annotationPopover = popover
-      self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionAny, animated:true)
+      self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
     
     else
       "annotation_did_change".post_notification(self, cliente: selectedCliente)
@@ -203,8 +217,7 @@ class MainController < UIViewController
   # popoverController delegates
 
   def popoverControllerShouldDismissPopover(popoverController)
-    #false
-    true
+    @can_dismiss_popover
   end
 
 end
