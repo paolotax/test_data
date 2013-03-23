@@ -30,11 +30,14 @@ class NSManagedObject
       # // POST to create
       Store.shared.backend.postObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-
+                                    puts "new id = #{self.remote_id}"
+                                    puts Store.shared.stats
+                                    Store.shared.persist
+                                    puts "persist"
+                                    puts Store.shared.stats                                    
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
                                     "clientiListDidLoadBackend".post_notification
-                                    puts self.remote_id         
                                   end, 
                           failure:lambda do |operation, error|
                                     puts self.remote_id 
@@ -42,7 +45,11 @@ class NSManagedObject
     else
       Store.shared.backend.putObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-                                    Store.shared.persist      
+                                    puts "updated = #{self.remote_id}"
+                                    puts Store.shared.stats
+                                    Store.shared.persist  
+                                    puts "persist"
+                                    puts Store.shared.stats        
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
                                     "clientiListDidLoadBackend".post_notification   

@@ -1,4 +1,4 @@
-include SugarCube::Adjust 
+#include SugarCube::Adjust 
 
 class AppDelegate
 
@@ -36,17 +36,21 @@ class AppDelegate
   def applicationDidEnterBackground(application)
     puts "Did Enter Background"
     saveContext
+    puts Store.shared.stats
   end 
 
   def applicationDidBecomeActive(application)
+    puts "Did become Active"
     Store.shared.login do
       puts "logged in"
     end
+    puts Store.shared.stats
   end
 
   def applicationWillTerminate(application)
     puts "Will Terminate"
     saveContext
+    puts Store.shared.stats
   end 
     
   def saveContext

@@ -2,16 +2,11 @@ class PopoverClienteController < UITableViewController
 
   extend IB
 
-  attr_accessor :cliente, :appunti_in_corso
+  attr_accessor :delegate, :cliente, :appunti_in_corso
 
   def viewDidLoad
     super
-    self.contentSizeForViewInPopover = CGSizeMake(320, 0)
-
-    self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged('07-map-marker'.uiimage) {
-      "annotation_did_change".post_notification(self, cliente: cliente)
-    }
-
+    self.contentSizeForViewInPopover = CGSizeMake(320, 95)
     self.appunti_in_corso = []
     self.tableView.registerClass(AppuntoCell, forCellReuseIdentifier:"appuntoCell")
   end
@@ -20,7 +15,17 @@ class PopoverClienteController < UITableViewController
     super
     
     self.tableView.reloadData
-    if appunti_in_corso.count == 1 
+
+    self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged('38-house'.uiimage) {
+     "replace_cliente".post_notification(self, cliente: @cliente)
+    }
+    self.navigationItem.rightBarButtonItem = UIBarButtonItem.add {
+      self.performSegueWithIdentifier("addAppunto", sender:self)
+    }
+  
+    if appunti_in_corso.count == 0
+      self.navigationItem.title = cliente.nome
+    elsif appunti_in_corso.count == 1 
       self.navigationItem.title = "#{appunti_in_corso.count} appunto"
     else
       self.navigationItem.title = "#{appunti_in_corso.count} appunti"
@@ -73,12 +78,20 @@ class PopoverClienteController < UITableViewController
   # Storyboard methods
   def prepareForSegue(segue, sender:sender)
 
-    indexPath = self.tableView.indexPathForCell(sender)
-    appunto = self.tableView.cellForRowAtIndexPath(indexPath).appunto
-
     if segue.identifier.isEqualToString("displayAppunto")
+      indexPath = self.tableView.indexPathForCell(sender)
+      appunto = self.tableView.cellForRowAtIndexPath(indexPath).appunto
       segue.destinationViewController.presentedInPopover = true
       segue.destinationViewController.appunto = appunto
+    
+    elsif segue.identifier.isEqualToString("addAppunto")
+
+      controller = segue.destinationViewController
+      controller.isNew = true
+      controller.presentedInPopover = true
+      #controller.appunto = appunto
+      controller.cliente = cliente
+      
     end
   end
 

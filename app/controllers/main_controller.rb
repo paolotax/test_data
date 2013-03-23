@@ -4,20 +4,154 @@ class MainController < UIViewController
 
   outlet :map, MKMapView
   outlet :navigationBar
+  outlet :mainToolbar
 
-  attr_accessor :popoverViewController, :clienti, :annotationPopover
+  attr_accessor :popoverViewController, :clienti
 
   def viewDidLoad
     super
-    self.navigationBar.leftBarButtonItem = MKUserTrackingBarButtonItem.alloc.initWithMapView(self.map)
+    
+    trackItem = MKUserTrackingBarButtonItem.alloc.initWithMapView(self.map)
+
+    spaceItem =  UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFlexibleSpace, target:nil, action:nil)
+ 
+    @searchBar = UISearchBar.alloc.initWithFrame([[0, 0], [250, 0]])
+    @searchBar.delegate = self
+    searchItem = UIBarButtonItem.alloc.initWithCustomView(@searchBar)
+ 
+    self.mainToolbar.items = [trackItem, spaceItem, searchItem]
+    
+    @searchController = SearchClientiController.alloc.initWithStyle(UITableViewStylePlain)
+    @searchController.delegate = self
+
     reload
   end
+
+
+
+  def searchClientiController(controller, didSelectCliente:cliente)
+    @searchBar.text = cliente.nome
+    self.finishSearchWithString(cliente)
+
+    self.map.addAnnotation(cliente)
+
+
+
+    r = self.map.visibleMapRect
+    r.center = cliente.coordinate
+    r.span.latitudeDelta = 0.5
+    r.span.longitudeDelta = 0.5
+    region = self.map.regionThatFits(r)
+    self.map.setRegion(region, animated:true) 
+
+    self.map.selectAnnotation(cliente, animated:true)
+
+  end
+
+  def searchBarTextDidBeginEditing(searchBar)
+    
+    if @searchPopover == nil
+    
+      nav = UINavigationController.alloc.initWithRootViewController(@searchController)
+      popover = UIPopoverController.alloc.initWithContentViewController(nav)
+      @searchPopover = popover
+      @searchPopover.delegate = self
+
+      popover.passthroughViews = [@searchBar]
+      
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds,
+                                                         inView:@searchBar,
+                                       permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                       animated:true)
+    end
+  end                                                    
+
+  def searchBarTextDidEndEditing(searchBar)
+
+    if @searchPopover != nil
+      nav = @searchPopover.contentViewController
+      searchesController = nav.topViewController
+      #if (searchesController.confirmSheet == nil)
+        @searchPopover.dismissPopoverAnimated(true)
+        @searchPopover = nil
+      #end
+    end
+    searchBar.resignFirstResponder
+  end
+
+  def searchBar(searchBar, textDidChange:searchText)
+    @searchController.filter(searchText)
+  end
+
+
+  def searchBarSearchButtonClicked(searchBar)
+    searchString = searchBar.text
+    # searchController addToRecentSearches:searchString];
+    self.finishSearchWithString(searchString)
+  end
+
+  def finishSearchWithString(searchString)
+    @searchPopover.dismissPopoverAnimated(true)
+    @searchPopover = nil
+    @searchBar.resignFirstResponder
+  end
+
+  def popoverControllerDidDismissPopover(popoverController)
+    @searchBar.resignFirstResponder
+  end
+
+  
+
+  def willRotateToInterfaceOrientation(toInterfaceOrientation, duration:duration)
+    if @searchPopover
+      @searchPopover.dismissPopoverAnimated(false)
+    end
+    # if @annotationPopover
+    #   @annotationPopover.dismissPopoverAnimated(false)
+    # end
+  end
+    
+  def didRotateFromInterfaceOrientation(fromInterfaceOrientation)
+    if @searchPopover
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds, inView:@searchBar,
+                                             permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                             animated:false)
+    end
+    if @annotationPopover
+      @annotationPopover.presentPopoverFromRect(@selectedAnnotation.bounds, inView:@selectedAnnotation, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
+    end
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
   def viewWillAppear(animated)
     super
     
+    if self.popoverViewController
+      self.popoverViewController.dismissPopoverAnimated(true)
+    end
+
     @can_dismiss_popover = true
 
     if clienti.count > 0
@@ -35,14 +169,15 @@ class MainController < UIViewController
     "annotation_did_change".add_observer(self, "change_annotation:", nil)
     "allow_dismiss_popover".add_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".add_observer(self, "unallow_dismiss")
+    "replace_cliente".add_observer(self, "replaceCliente:", nil)
   end
 
   def viewWillDisappear(animated)
-    puts "map willDisappear"
     "reload_annotations".remove_observer(self, :reload)
     "annotation_did_change".remove_observer(self, "change_annotation:")
     "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
+    "replace_cliente".remove_observer(self, "replaceCliente:")
   end
 
   def allow_dismiss
@@ -53,6 +188,16 @@ class MainController < UIViewController
     @can_dismiss_popover = false
   end 
 
+  def replaceCliente(notification)
+
+    unless @pippo
+      annotation = notification.userInfo[:cliente]
+      @annotationPopover.dismissPopoverAnimated(true) if @annotationPopover
+      self.performSegueWithIdentifier("replaceCliente", sender:annotation)
+      @pippo = true
+    end
+  end
+  
   def change_annotation(notification)
 
     annotation = notification.userInfo[:cliente]
@@ -64,7 +209,7 @@ class MainController < UIViewController
       Store.shared.persist
       self.map.removeAnnotation(annotation)
       self.map.addAnnotation(annotation)
-      self.annotationPopover.dismissPopoverAnimated(true) if annotationPopover
+      @annotationPopover.dismissPopoverAnimated(true) if @annotationPopover
       @pippo = true
     end
   end
@@ -173,25 +318,26 @@ class MainController < UIViewController
   def mapView(mapView, annotationView:view, calloutAccessoryControlTapped:control)
 
     @pippo = nil
-
-    selectedCliente = view.annotation
+    @selectedAnnotation = view
+    
+    @selectedCliente = view.annotation
     mapView.deselectAnnotation(view.annotation, animated:true)
 
     if control.buttonType == UIButtonTypeInfoLight
 
       storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
       pvc = storyboard.instantiateViewControllerWithIdentifier("PopoverClienteController")
-      pvc.cliente = selectedCliente
+      pvc.cliente = @selectedCliente
 
       nav = UINavigationController.alloc.initWithRootViewController(pvc)
       popover = UIPopoverController.alloc.initWithContentViewController(nav)
       popover.delegate = self
-      
-      self.annotationPopover = popover
-      self.annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
+
+      @annotationPopover = popover
+      @annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
     
     else
-      "annotation_did_change".post_notification(self, cliente: selectedCliente)
+      "annotation_did_change".post_notification(self, cliente: @selectedCliente)
     end
 
   end
@@ -199,25 +345,35 @@ class MainController < UIViewController
 
   # splitView delegates
 
-  def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
-    return false
-  end
+  # def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
+  #   return false
+  # end
 
-  # def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
-  #   barButtonItem.title = "Menu"
-  #   self.navigationItem.setLeftBarButtonItem(barButtonItem)
-  #   self.popoverViewController = pc
-  # end
+  def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
+    barButtonItem.title = "Menu"
+    self.navigationItem.setLeftBarButtonItem(barButtonItem)
+    self.popoverViewController = pc
+  end
   
-  # def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
-  #   self.navigationItem.setLeftBarButtonItems([], animated:false)
-  #   self.popoverViewController = nil
-  # end
+  def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
+    self.navigationItem.setLeftBarButtonItems([], animated:false)
+    self.popoverViewController = nil
+  end
 
   # popoverController delegates
 
   def popoverControllerShouldDismissPopover(popoverController)
     @can_dismiss_popover
   end
+
+
+
+  def prepareForSegue(segue, sender:sender)
+    
+    if segue.identifier.isEqualToString("replaceCliente")
+      segue.destinationViewController.visibleViewController.cliente = sender
+    end
+  end
+
 
 end

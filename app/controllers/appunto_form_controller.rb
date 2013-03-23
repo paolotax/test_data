@@ -13,25 +13,9 @@ class AppuntoFormController < UITableViewController
 
   def viewWillAppear(animated)
     super
+    
     puts "0. willAppear"
     puts Store.shared.stats
-
-    view.reloadData   
-    puts "1. reloadData"
-    puts Store.shared.stats
-
-    
-
-    unless isNew?
-      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
-      }
-    end
-
-    if presentedAsModal?
-      self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
-    end
 
     # non funzia
     #"NSManagedObjectContextObjectsDidChangeNotification".add_observer(self, "changes:")
@@ -48,6 +32,33 @@ class AppuntoFormController < UITableViewController
               selector:"didSave:",
                   name:didSave,
                 object:Store.shared.context)
+
+    if isNew?
+      self.appunto = Appunto.add do |a|
+        a.cliente = cliente
+        a.ClienteId = cliente.ClienteId
+        a.cliente_nome = cliente.nome
+        a.destinatario = ""
+        a.status = "da_fare"
+        a.created_at = Time.now
+      end
+    end 
+
+    view.reloadData   
+    puts "1. reloadData"
+    puts Store.shared.stats
+
+    unless isNew?
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end
+
+    if presentedAsModal?
+      self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
+    end
+
   end
 
   def viewDidAppear(animated)
@@ -101,13 +112,13 @@ class AppuntoFormController < UITableViewController
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
-    
+
     if indexPath.section == 0
 
       if indexPath.row == 2
 
         cellID = "noteCell"
-        cell = tableView.dequeueReusableCellWithIdentifier(cellID) 
+        cell = self.tableView.dequeueReusableCellWithIdentifier(cellID) 
         cell ||= UITableViewCell.alloc.initWithStyle(UITableViewCellStyleCustom, reuseIdentifier:cellID)
         field = cell.viewWithTag(1123)
         field.text = @appunto.note      
@@ -175,15 +186,15 @@ class AppuntoFormController < UITableViewController
     end
   end
 
-  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-    # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
-    # tableView.updates do
-    #   if tableView.numberOfRowsInSection(indexPath.section) == 1
-    #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
-    #   end
-    #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
-    # end
-  end
+  # def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
+  #   # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
+  #   # tableView.updates do
+  #   #   if tableView.numberOfRowsInSection(indexPath.section) == 1
+  #   #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
+  #   #   end
+  #   #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
+  #   # end
+  # end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
@@ -354,6 +365,12 @@ class AppuntoFormController < UITableViewController
   # save
 
   def save(sender)
+
+    name = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.removeObserver(self, 
+                     name:name, 
+                   object:Store.shared.context)
     
     if @appunto.isUpdated
       @appunto.updated_at = Time.now
@@ -374,9 +391,9 @@ class AppuntoFormController < UITableViewController
     puts "3. backend"
     puts Store.shared.stats
     
-    "appuntiListDidLoadBackend".post_notification
-    "reload_appunti_collections".post_notification
-    "allow_dismiss_popover".post_notification
+    # "appuntiListDidLoadBackend".post_notification
+    # "reload_appunti_collections".post_notification
+    # "allow_dismiss_popover".post_notification
 
     if presentedAsModal?
       puts "4. presentedAsModal"  
@@ -387,6 +404,7 @@ class AppuntoFormController < UITableViewController
     if presentedInPopover?
       puts "4. presentedInPopover"  
       puts Store.shared.stats
+      "allow_dismiss_popover".post_notification
       self.navigationController.popViewControllerAnimated(true)
     end
 
@@ -396,16 +414,23 @@ class AppuntoFormController < UITableViewController
       puts "ce l'ho"
       self.navigationItem.title = "ce l'ho"
       self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-
+        puts "gino"
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+        puts "pino"
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
       }
     end 
   end
 
   def cancel(sender)
+
+    name = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.removeObserver(self, 
+                     name:name, 
+                   object:Store.shared.context)
 
     if isNew?
       puts "1. isNew = true"
@@ -437,13 +462,16 @@ class AppuntoFormController < UITableViewController
     if presentedInDetailView?
       puts "3. reset detail view"
       puts Store.shared.stats
-      self.navigationItem.title = "ce l'ho"
+      # Cliente.reset
+      # Appunto.reset
+      # self.navigationItem.title = "ce l'ho"
       self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-
+        puts "Gino"
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+        puts "Pino"
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
       }
     end 
 

@@ -127,9 +127,9 @@ class ClienteDetailController < UIViewController
           a.created_at = Time.now
         end 
       end
-
       controller.appunto = appunto
       controller.cliente = @cliente
+
     elsif segue.identifier.isEqualToString("showEditClassi")
       "dismiss_popover".add_observer(self, :dismissPopover)
       @popoverController = segue.popoverController
