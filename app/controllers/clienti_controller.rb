@@ -100,7 +100,12 @@ class ClientiController < UIViewController
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     cell = tableView.cellForRowAtIndexPath(indexPath)
-    self.performSegueWithIdentifier("displayCliente", sender:cell )
+
+    if Device.ipad?
+      "pushClienteController".post_notification(self, cliente: cell.cliente)
+    else  
+      self.performSegueWithIdentifier("displayCliente", sender:cell )
+    end
   end
 
   # def tableView(tableView, editingStyleForRowAtIndexPath:indexPath)

@@ -6,7 +6,7 @@ class PopoverClienteController < UITableViewController
 
   def viewDidLoad
     super
-    self.contentSizeForViewInPopover = CGSizeMake(320, 95)
+    self.contentSizeForViewInPopover = CGSizeMake(320, 0)
     self.appunti_in_corso = []
     self.tableView.registerClass(AppuntoCell, forCellReuseIdentifier:"appuntoCell")
   end
@@ -17,7 +17,7 @@ class PopoverClienteController < UITableViewController
     self.tableView.reloadData
 
     self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged('38-house'.uiimage) {
-     "replace_cliente".post_notification(self, cliente: @cliente)
+     "pushClienteController".post_notification(self, cliente: @cliente)
     }
     self.navigationItem.rightBarButtonItem = UIBarButtonItem.add {
       self.performSegueWithIdentifier("addAppunto", sender:self)

@@ -3,155 +3,28 @@ class MainController < UIViewController
   extend IB
 
   outlet :map, MKMapView
-  outlet :navigationBar
   outlet :mainToolbar
 
-  attr_accessor :popoverViewController, :clienti
+  attr_accessor :clienti
 
   def viewDidLoad
     super
-    
+  
     trackItem = MKUserTrackingBarButtonItem.alloc.initWithMapView(self.map)
-
     spaceItem =  UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFlexibleSpace, target:nil, action:nil)
- 
     @searchBar = UISearchBar.alloc.initWithFrame([[0, 0], [250, 0]])
     @searchBar.delegate = self
     searchItem = UIBarButtonItem.alloc.initWithCustomView(@searchBar)
- 
     self.mainToolbar.items = [trackItem, spaceItem, searchItem]
-    
     @searchController = SearchClientiController.alloc.initWithStyle(UITableViewStylePlain)
     @searchController.delegate = self
 
+    @filterClienti = ["switch_da_fare", "switch_in_sospeso", "switch_nel_baule"]
     reload
   end
 
-
-
-  def searchClientiController(controller, didSelectCliente:cliente)
-    @searchBar.text = cliente.nome
-    self.finishSearchWithString(cliente)
-
-    self.map.addAnnotation(cliente)
-
-
-
-    r = self.map.visibleMapRect
-    r.center = cliente.coordinate
-    r.span.latitudeDelta = 0.5
-    r.span.longitudeDelta = 0.5
-    region = self.map.regionThatFits(r)
-    self.map.setRegion(region, animated:true) 
-
-    self.map.selectAnnotation(cliente, animated:true)
-
-  end
-
-  def searchBarTextDidBeginEditing(searchBar)
-    
-    if @searchPopover == nil
-    
-      nav = UINavigationController.alloc.initWithRootViewController(@searchController)
-      popover = UIPopoverController.alloc.initWithContentViewController(nav)
-      @searchPopover = popover
-      @searchPopover.delegate = self
-
-      popover.passthroughViews = [@searchBar]
-      
-      @searchPopover.presentPopoverFromRect(@searchBar.bounds,
-                                                         inView:@searchBar,
-                                       permittedArrowDirections:UIPopoverArrowDirectionAny,
-                                                       animated:true)
-    end
-  end                                                    
-
-  def searchBarTextDidEndEditing(searchBar)
-
-    if @searchPopover != nil
-      nav = @searchPopover.contentViewController
-      searchesController = nav.topViewController
-      #if (searchesController.confirmSheet == nil)
-        @searchPopover.dismissPopoverAnimated(true)
-        @searchPopover = nil
-      #end
-    end
-    searchBar.resignFirstResponder
-  end
-
-  def searchBar(searchBar, textDidChange:searchText)
-    @searchController.filter(searchText)
-  end
-
-
-  def searchBarSearchButtonClicked(searchBar)
-    searchString = searchBar.text
-    # searchController addToRecentSearches:searchString];
-    self.finishSearchWithString(searchString)
-  end
-
-  def finishSearchWithString(searchString)
-    @searchPopover.dismissPopoverAnimated(true)
-    @searchPopover = nil
-    @searchBar.resignFirstResponder
-  end
-
-  def popoverControllerDidDismissPopover(popoverController)
-    @searchBar.resignFirstResponder
-  end
-
-  
-
-  def willRotateToInterfaceOrientation(toInterfaceOrientation, duration:duration)
-    if @searchPopover
-      @searchPopover.dismissPopoverAnimated(false)
-    end
-    # if @annotationPopover
-    #   @annotationPopover.dismissPopoverAnimated(false)
-    # end
-  end
-    
-  def didRotateFromInterfaceOrientation(fromInterfaceOrientation)
-    if @searchPopover
-      @searchPopover.presentPopoverFromRect(@searchBar.bounds, inView:@searchBar,
-                                             permittedArrowDirections:UIPopoverArrowDirectionAny,
-                                                             animated:false)
-    end
-    if @annotationPopover
-      @annotationPopover.presentPopoverFromRect(@selectedAnnotation.bounds, inView:@selectedAnnotation, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
-    end
-  end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   def viewWillAppear(animated)
     super
-    
-    if self.popoverViewController
-      self.popoverViewController.dismissPopoverAnimated(true)
-    end
-
     @can_dismiss_popover = true
 
     if clienti.count > 0
@@ -169,7 +42,7 @@ class MainController < UIViewController
     "annotation_did_change".add_observer(self, "change_annotation:", nil)
     "allow_dismiss_popover".add_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".add_observer(self, "unallow_dismiss")
-    "replace_cliente".add_observer(self, "replaceCliente:", nil)
+    "pushClienteController".add_observer(self, "pushClienteTapped:", nil)
   end
 
   def viewWillDisappear(animated)
@@ -177,7 +50,7 @@ class MainController < UIViewController
     "annotation_did_change".remove_observer(self, "change_annotation:")
     "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
-    "replace_cliente".remove_observer(self, "replaceCliente:")
+    "pushClienteController".remove_observer(self, "pushClienteTapped:")
   end
 
   def allow_dismiss
@@ -188,20 +61,22 @@ class MainController < UIViewController
     @can_dismiss_popover = false
   end 
 
-  def replaceCliente(notification)
-
-    unless @pippo
-      annotation = notification.userInfo[:cliente]
-      @annotationPopover.dismissPopoverAnimated(true) if @annotationPopover
-      self.performSegueWithIdentifier("replaceCliente", sender:annotation)
-      @pippo = true
-    end
+  def slidePopContainer
+    self.parentViewController
   end
+
+  def pushClienteTapped(notification)
+    cliente = notification.userInfo[:cliente]
+    @annotationPopover.dismissPopoverAnimated(false) if @annotationPopover
+    clienteDetail = self.storyboard.instantiateViewControllerWithIdentifier("ClienteDetailController")
+    clienteDetail.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    clienteDetail.cliente = cliente
+    slidePopContainer.pushViewController(clienteDetail)
+  end
+
   
   def change_annotation(notification)
-
     annotation = notification.userInfo[:cliente]
-
     # devo mettere questo per ripetizione notifica
     unless @pippo
       annotation.nel_baule == 0 ? annotation.nel_baule = 1 : annotation.nel_baule = 0 
@@ -216,28 +91,35 @@ class MainController < UIViewController
 
   def reload
     self.map.removeAnnotations(@clienti)
-    self.clienti = fetch_clienti_in_corso.select {|c| !c.latitude.nil? && !c.longitude.nil?}
+    self.clienti = fetch_clienti.select {|c| !c.latitude.nil? && !c.longitude.nil?}
     self.map.addAnnotations(@clienti)
   end
 
-  def coordinateRegionForItems(items, itemsCount)
-    r = MKMapRectNull
-    (0..itemsCount).each do |i|
-      p = MKMapPointForCoordinate(items[i].coordinate)
-      r = MKMapRectUnion(r, MKMapRectMake(p.x - 10, p.y - 10, 20, 20))
-    end
-    return MKCoordinateRegionForMapRect(r)
-  end
 
-  def fetch_clienti_in_corso
+
+  def fetch_clienti
+
     context = Store.shared.context
     request = NSFetchRequest.alloc.init
     request.entity = NSEntityDescription.entityForName("Cliente", inManagedObjectContext:context)
-    pred = nil
 
+    pred = nil
     searchPredicates = [] 
-    ["appunti_da_fare", "appunti_in_sospeso"].each do |sk|
-      searchPredicates.addObject(NSPredicate.predicateWithFormat("#{sk} > 0"))
+
+    if @filterClienti.include?("switch_da_fare")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("appunti_da_fare > 0"))
+    end
+    if @filterClienti.include?("switch_in_sospeso")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("appunti_in_sospeso > 0"))
+    end
+    if @filterClienti.include?("switch_nel_baule")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("nel_baule = 1"))
+    end
+    if @filterClienti.include?("switch_scuole_primarie")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo = 'Scuola Primaria'"))
+    end
+    if @filterClienti.include?("switch_altri_clienti")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo != 'Scuola Primaria'"))
     end
 
     pred = NSCompoundPredicate.orPredicateWithSubpredicates(searchPredicates)
@@ -256,25 +138,6 @@ class MainController < UIViewController
     data
   end
 
-  def showInMaps(sender)
-    mapItems = []
-    for cliente in clienti
-      mapItems.addObject(cliente.mapItem) if cliente.nel_baule == 1
-    end
-    result = MKMapItem.openMapsWithItems(mapItems, launchOptions:nil)
-  end
-
-  def resetPins(sender)
-    @clienti.each do |c|
-      if c.nel_baule == 1
-        c.nel_baule = 0
-        c.update
-      end
-    end 
-    Store.shared.persist
-    reload
-  end
-
 
 
   # MapView dlegates
@@ -282,23 +145,44 @@ class MainController < UIViewController
   def mapView(mapView, viewForAnnotation:annotation)
 
     return nil if annotation.is_a?(MKUserLocation) 
-      
-    #kPinIdentifier = "TAXCliente"
-    #view = mapView.dequeueReusableAnnotationViewWithIdentifier(kPinIdentifier)
-    #unless view
-      view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:nil)
-      if annotation.nel_baule == 1
-        view.pinColor = MKPinAnnotationColorPurple
-      elsif annotation.appunti_da_fare && annotation.appunti_da_fare > 0
-        view.pinColor = MKPinAnnotationColorRed
-      else
-        view.pinColor = MKPinAnnotationColorGreen
-      end
-
+    
+    view = mapView.dequeueReusableAnnotationViewWithIdentifier("spot")
+    if (!view)
+      view = MKAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:"spot")
+      view.enabled = true
       view.canShowCallout = true
-      view.calloutOffset = CGPointMake(-5, 5);
-      view.animatesDrop = false
-    #end
+      view.centerOffset = CGPointMake(7, -15)
+      view.calloutOffset = CGPointMake(-8, 0)
+    end
+
+    if annotation.nel_baule == 1
+      view.image = "pin-purple".uiimage
+    elsif annotation.appunti_da_fare && annotation.appunti_da_fare > 0
+      view.image = "pin-red".uiimage
+    elsif annotation.appunti_in_sospeso && annotation.appunti_in_sospeso > 0
+      view.image = "pin-green".uiimage
+    elsif annotation.cliente_tipo == "Scuola Primaria"
+      view.image = "pin-orange".uiimage
+    else
+      view.image = "pin-gray".uiimage
+    end
+    
+    # #kPinIdentifier = "TAXCliente"
+    # #view = mapView.dequeueReusableAnnotationViewWithIdentifier(kPinIdentifier)
+    # #unless view
+    #   view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:nil)
+    #   if annotation.nel_baule == 1
+    #     view.pinColor = MKPinAnnotationColorPurple
+    #   elsif annotation.appunti_da_fare && annotation.appunti_da_fare > 0
+    #     view.pinColor = MKPinAnnotationColorRed
+    #   else
+    #     view.pinColor = MKPinAnnotationColorGreen
+    #   end
+
+    #   view.canShowCallout = true
+    #   view.calloutOffset = CGPointMake(-5, 5);
+    #   view.animatesDrop = false
+    # #end
 
     if annotation.nel_baule == 1
       btnImage = "07-map-marker-purple".uiimage
@@ -335,29 +219,149 @@ class MainController < UIViewController
 
       @annotationPopover = popover
       @annotationPopover.presentPopoverFromRect(view.bounds, inView:view, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
-    
     else
       "annotation_did_change".post_notification(self, cliente: @selectedCliente)
     end
 
   end
 
+  # map methods
 
-  # splitView delegates
+  def selectItemInMap(item)
+    
+    unless @clienti.include? item
+      self.map.addAnnotation(item)
+    end
 
-  # def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
-  #   return false
-  # end
-
-  def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
-    barButtonItem.title = "Menu"
-    self.navigationItem.setLeftBarButtonItem(barButtonItem)
-    self.popoverViewController = pc
+    r = self.map.visibleMapRect
+    r.center = item.coordinate
+    r.span.latitudeDelta = 0.2
+    r.span.longitudeDelta = 0.2
+    region = self.map.regionThatFits(r)
+    self.map.setRegion(region, animated:true) 
+    self.map.selectAnnotation(item, animated:true)
   end
   
-  def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
-    self.navigationItem.setLeftBarButtonItems([], animated:false)
-    self.popoverViewController = nil
+  def coordinateRegionForItems(items, itemsCount)
+    r = MKMapRectNull
+    (0..itemsCount).each do |i|
+      p = MKMapPointForCoordinate(items[i].coordinate)
+      r = MKMapRectUnion(r, MKMapRectMake(p.x - 10, p.y - 10, 20, 20))
+    end
+    return MKCoordinateRegionForMapRect(r)
+  end
+
+  def showInMaps(sender)
+    mapItems = []
+    for cliente in clienti
+      mapItems.addObject(cliente.mapItem) if cliente.nel_baule == 1
+    end
+    result = MKMapItem.openMapsWithItems(mapItems, launchOptions:nil)
+  end
+
+  def setPins(sender)
+    unless @setPinPopover
+      storyboard = UIStoryboard.storyboardWithName("MainStoryboard_iPad", bundle:nil)
+      pvc = storyboard.instantiateViewControllerWithIdentifier("SetPinController")
+      pvc.delegate = self
+      pvc.selectedPins = @filterClienti
+      nav = UINavigationController.alloc.initWithRootViewController(pvc)
+      popover = UIPopoverController.alloc.initWithContentViewController(nav)
+      popover.delegate = self
+      @setPinPopover = popover
+      @setPinPopover.presentPopoverFromBarButtonItem(sender, permittedArrowDirections:UIPopoverArrowDirectionAny, animated:true)
+    end
+  end
+
+
+  # setPinController delegate
+
+  def resetBaule
+    @clienti.each do |c|
+      if c.nel_baule == 1
+        c.nel_baule = 0
+        c.update
+      end
+    end 
+    Store.shared.persist
+    reload
+  end
+
+  def setPinController(controller, didChangedPin:selectedPins)
+    @filterClienti = selectedPins
+    reload
+  end
+
+
+  # searchBar SearchClienti delegates and methods
+
+  def searchClientiController(controller, didSelectCliente:cliente)
+    @searchBar.text = cliente.nome
+    self.finishSearchWithString(cliente)
+    self.selectItemInMap(cliente)
+  end
+
+  def searchBarTextDidBeginEditing(searchBar)
+    
+    if @searchPopover == nil
+      nav = UINavigationController.alloc.initWithRootViewController(@searchController)
+      popover = UIPopoverController.alloc.initWithContentViewController(nav)
+      @searchPopover = popover
+      @searchPopover.delegate = self
+      popover.passthroughViews = [@searchBar]
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds,
+                                                         inView:@searchBar,
+                                       permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                       animated:true)
+    end
+  end                                                    
+
+  def searchBarTextDidEndEditing(searchBar)
+    if @searchPopover != nil
+      nav = @searchPopover.contentViewController
+      searchesController = nav.topViewController
+      #if (searchesController.confirmSheet == nil)
+        @searchPopover.dismissPopoverAnimated(true)
+        @searchPopover = nil
+      #end
+    end
+    searchBar.resignFirstResponder
+  end
+
+  def searchBar(searchBar, textDidChange:searchText)
+    @searchController.filter(searchText)
+  end
+
+  def searchBarSearchButtonClicked(searchBar)
+    searchString = searchBar.text
+    # searchController addToRecentSearches:searchString];
+    self.finishSearchWithString(searchString)
+  end
+
+  def finishSearchWithString(searchString)
+    @searchPopover.dismissPopoverAnimated(true)
+    @searchPopover = nil
+    @searchBar.resignFirstResponder
+  end
+
+  def willRotateToInterfaceOrientation(toInterfaceOrientation, duration:duration)
+    if @searchPopover
+      @searchPopover.dismissPopoverAnimated(false)
+    end
+    if @annotationPopover
+      @annotationPopover.dismissPopoverAnimated(false)
+    end
+  end
+    
+  def didRotateFromInterfaceOrientation(fromInterfaceOrientation)
+    if @searchPopover
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds, inView:@searchBar,
+                                             permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                             animated:false)
+    end
+    if @annotationPopover
+      @annotationPopover.presentPopoverFromRect(@selectedAnnotation.bounds, inView:@selectedAnnotation, permittedArrowDirections:UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight, animated:true)
+    end
   end
 
   # popoverController delegates
@@ -366,14 +370,20 @@ class MainController < UIViewController
     @can_dismiss_popover
   end
 
-
-
-  def prepareForSegue(segue, sender:sender)
-    
-    if segue.identifier.isEqualToString("replaceCliente")
-      segue.destinationViewController.visibleViewController.cliente = sender
+  def popoverControllerDidDismissPopover(popoverController)
+    if @setPinPopover
+      @setPinPopover.delegate = nil
+      @setPinPopover = nil
     end
+    if @annotationPopover
+      @annotationPopover.delegate = nil
+      @annotationPopover = nil
+    end
+    @searchBar.resignFirstResponder
   end
+
+
+
 
 
 end

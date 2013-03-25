@@ -10,6 +10,7 @@ class ClienteDetailController < UIViewController
       :popoverViewController,
       :appuntiCollectionController
 
+  outlet :mainToolbar
   outlet :nomeLabel
   outlet :indirizzoLabel
   outlet :cittaLabel
@@ -17,13 +18,33 @@ class ClienteDetailController < UIViewController
   outlet :navigaButton
   outlet :emailButton
   outlet :callButton
+  outlet :editMultipleButton
 
   outlet :segmentedControl
 
   outlet :collectionViewContainer
 
+  def slidePopContainer
+    self.parentViewController
+  end
+
   def viewDidLoad
     super
+
+    mapItem = UIBarButtonItem.imaged("103-map".uiimage) {
+      slidePopContainer.popViewController(self)
+    }
+    
+    spaceItem =  UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFlexibleSpace, target:nil, action:nil)
+ 
+    @searchBar = UISearchBar.alloc.initWithFrame([[0, 0], [250, 0]])
+    @searchBar.delegate = self
+    searchItem = UIBarButtonItem.alloc.initWithCustomView(@searchBar)
+ 
+    self.mainToolbar.items = [mapItem, spaceItem, searchItem]
+    
+    @searchController = SearchClientiController.alloc.initWithStyle(UITableViewStylePlain)
+    @searchController.delegate = self
 
     self.nuovoAppuntoButton.text = "Nuovo Appunto"
     self.nuovoAppuntoButton.textColor = UIColor.whiteColor
@@ -46,12 +67,6 @@ class ClienteDetailController < UIViewController
   def viewWillDisappear(animated)
     super
   end
- 
-  # def reload
-  #   Cliente.reset
-  #   Appunto.reset
-  #   puts "Notificato"
-  # end
 
   def display_cliente
 
@@ -78,10 +93,7 @@ class ClienteDetailController < UIViewController
       segmentedControl.selectedSegmentIndex = 0
     end
     
-    if self.popoverViewController
-      self.popoverViewController.dismissPopoverAnimated(true)
-    end
-
+    self.editMultipleButton.enabled = false
 
     @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
     @appuntiCollectionController.view.frame = self.collectionViewContainer.bounds
@@ -105,6 +117,7 @@ class ClienteDetailController < UIViewController
   def prepareForSegue(segue, sender:sender)
     
     if segue.identifier.isEqualToString("showForm")
+
       segue.destinationViewController.cliente = @cliente
   
     elsif segue.identifier.isEqualToString("nuovoAppunto")
@@ -119,22 +132,17 @@ class ClienteDetailController < UIViewController
         appunto = sender
       else
         controller.isNew = true
-        appunto = Appunto.add do |a|
-          a.cliente = @cliente
-          a.ClienteId = @cliente.ClienteId
-          a.cliente_nome = @cliente.nome
-          a.status = "da_fare"
-          a.created_at = Time.now
-        end 
       end
       controller.appunto = appunto
       controller.cliente = @cliente
 
     elsif segue.identifier.isEqualToString("showEditClassi")
+
       "dismiss_popover".add_observer(self, :dismissPopover)
       @popoverController = segue.popoverController
       @popoverController.delegate = self
       @popoverController.contentViewController.selected_classi = @classiCollectionController.selected_classi
+
     end
   end
 
@@ -142,11 +150,6 @@ class ClienteDetailController < UIViewController
     @popoverController.dismissPopoverAnimated(true)
     "dismiss_popover".remove_observer(self, :dismissPopover)
   end
-
-  def popoverControllerDidDismissPopover(popoverController)
-    @popoverController.delegate = nil
-    @popoverController = nil
-  end 
 
   # actions
 
@@ -194,21 +197,83 @@ class ClienteDetailController < UIViewController
     )
   end
 
-  # # splitView delegates
 
-  # def splitViewController(svc, shouldHideViewController:vc, inOrientation:orientation)
-  #   return false
-  # end
+  # searchBar SearchClienti delegates and methods
 
-  # # def splitViewController(svc, willHideViewController:vc, withBarButtonItem:barButtonItem, forPopoverController:pc)
-  # #   barButtonItem.title = "Menu"
-  # #   self.navigationItem.setLeftBarButtonItem(barButtonItem)
-  # #   self.popoverViewController = pc
-  # # end
-  
-  # # def splitViewController(svc, willShowViewController:avc, invalidatingBarButtonItem:barButtonItem) 
-  # #   self.navigationItem.setLeftBarButtonItems([], animated:false)
-  # #   self.popoverViewController = nil
-  # # end
+  def searchClientiController(controller, didSelectCliente:cliente)
+    @searchBar.text = cliente.nome
+    self.finishSearchWithString(cliente)
+    "pushClienteController".post_notification(self, cliente: cliente)
+  end
+
+  def searchBarTextDidBeginEditing(searchBar)
+    
+    if @searchPopover == nil
+    
+      nav = UINavigationController.alloc.initWithRootViewController(@searchController)
+      popover = UIPopoverController.alloc.initWithContentViewController(nav)
+      @searchPopover = popover
+      @searchPopover.delegate = self
+
+      popover.passthroughViews = [@searchBar]
+      
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds,
+                                                         inView:@searchBar,
+                                       permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                       animated:true)
+    end
+  end                                                    
+
+  def searchBarTextDidEndEditing(searchBar)
+
+    if @searchPopover != nil
+      nav = @searchPopover.contentViewController
+      searchesController = nav.topViewController
+      #if (searchesController.confirmSheet == nil)
+        @searchPopover.dismissPopoverAnimated(true)
+        @searchPopover = nil
+      #end
+    end
+    searchBar.resignFirstResponder
+  end
+
+  def searchBar(searchBar, textDidChange:searchText)
+    @searchController.filter(searchText)
+  end
+
+  def searchBarSearchButtonClicked(searchBar)
+    searchString = searchBar.text
+    # searchController addToRecentSearches:searchString];
+    self.finishSearchWithString(searchString)
+  end
+
+  def finishSearchWithString(searchString)
+    @searchPopover.dismissPopoverAnimated(true)
+    @searchPopover = nil
+    @searchBar.resignFirstResponder
+  end
+
+
+  # popover delegates and rotation
+
+  def popoverControllerDidDismissPopover(popoverController)
+    @popoverController.delegate = nil
+    @popoverController = nil
+    @searchBar.resignFirstResponder
+  end 
+
+  def willRotateToInterfaceOrientation(toInterfaceOrientation, duration:duration)
+    if @searchPopover
+      @searchPopover.dismissPopoverAnimated(false)
+    end
+  end
+    
+  def didRotateFromInterfaceOrientation(fromInterfaceOrientation)
+    if @searchPopover
+      @searchPopover.presentPopoverFromRect(@searchBar.bounds, inView:@searchBar,
+                                             permittedArrowDirections:UIPopoverArrowDirectionAny,
+                                                             animated:false)
+    end
+  end
 
 end
