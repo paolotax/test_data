@@ -13,10 +13,6 @@ class AppuntiCollectionController < UIViewController
                 :currentPinchCollectionView,
                 :currentPinchedItem
 
-
-
-
-
   outlet :appuntiCollectionView
   outlet :completatiCollectionView
 

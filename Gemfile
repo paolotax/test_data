@@ -10,14 +10,19 @@ gem 'motion-cocoapods'
 gem 'bubble-wrap'
 gem 'sugarcube'
 gem 'afmotion'
-
+gem 'teacup'
 gem 'rubymotion_generators'
 gem 'geomotion'
+
+gem 'motion-testflight'
+gem 'rake'
+gem 'rake-hooks'
+gem 'motion-dtrace'
 
 
 gem "ib"
 
-gem "map-kit-wrapper"
+#gem "map-kit-wrapper"
 
 #gem "motion-gravatar"
 #gem "motion-addressbook"

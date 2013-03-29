@@ -140,8 +140,7 @@ class AppuntoCell < UITableViewCell
                        withBadgeFrameColor:UIColor.whiteColor, 
                              withScale:1,
                            withShining:true)
-        
-
+ 
       self.contentView.addSubview(@customBadge) 
     end
 

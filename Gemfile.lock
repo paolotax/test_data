@@ -18,7 +18,6 @@ GEM
       open4 (~> 1.3.0)
       rake (~> 10.0.0)
       xcodeproj (~> 0.5.0)
-    codependency (0.2.0)
     colored (1.2)
     escape (0.0.4)
     faraday (0.8.6)
@@ -32,11 +31,11 @@ GEM
       thor (>= 0.15.4)
       xcodeproj (>= 0.4.1)
     json (1.7.7)
-    map-kit-wrapper (0.0.3)
-      codependency (= 0.2.0)
-      rake
     motion-cocoapods (1.2.2)
       cocoapods (>= 0.14.0)
+    motion-dtrace (0.1.1)
+      rake
+    motion-testflight (1.4)
     multi_json (1.6.1)
     multipart-post (1.2.0)
     netrc (0.7.7)
@@ -49,9 +48,13 @@ GEM
       netrc (~> 0.7.7)
     open4 (1.3.0)
     rake (10.0.3)
+    rake-hooks (1.2.3)
+      rake
     rubymotion_generators (0.1.0)
       thor (~> 0.15)
     sugarcube (0.18.21)
+    teacup (1.2.8)
+      rake
     thor (0.17.0)
     xcodeproj (0.5.2)
       activesupport (~> 3.2.6)
@@ -65,7 +68,11 @@ DEPENDENCIES
   bubble-wrap
   geomotion
   ib
-  map-kit-wrapper
   motion-cocoapods
+  motion-dtrace
+  motion-testflight
+  rake
+  rake-hooks
   rubymotion_generators
   sugarcube
+  teacup

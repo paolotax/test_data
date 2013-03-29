@@ -166,29 +166,13 @@ class MainController < UIViewController
     else
       view.image = "pin-gray".uiimage
     end
-    
-    # #kPinIdentifier = "TAXCliente"
-    # #view = mapView.dequeueReusableAnnotationViewWithIdentifier(kPinIdentifier)
-    # #unless view
-    #   view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier:nil)
-    #   if annotation.nel_baule == 1
-    #     view.pinColor = MKPinAnnotationColorPurple
-    #   elsif annotation.appunti_da_fare && annotation.appunti_da_fare > 0
-    #     view.pinColor = MKPinAnnotationColorRed
-    #   else
-    #     view.pinColor = MKPinAnnotationColorGreen
-    #   end
-
-    #   view.canShowCallout = true
-    #   view.calloutOffset = CGPointMake(-5, 5);
-    #   view.animatesDrop = false
-    # #end
 
     if annotation.nel_baule == 1
       btnImage = "07-map-marker-purple".uiimage
     else
       btnImage = "07-map-marker".uiimage
     end
+
     leftBtn = UIButton.alloc.initWithFrame(CGRectMake(0, 1, 26, 26))
     leftBtn.setBackgroundImage(btnImage, forState:UIControlStateNormal)
 
@@ -234,11 +218,11 @@ class MainController < UIViewController
     end
 
     r = self.map.visibleMapRect
-    r.center = item.coordinate
-    r.span.latitudeDelta = 0.2
-    r.span.longitudeDelta = 0.2
-    region = self.map.regionThatFits(r)
-    self.map.setRegion(region, animated:true) 
+    pt = MKMapPointForCoordinate(item.coordinate)
+    r.origin.x = pt.x - r.size.width * 0.5
+    r.origin.y = pt.y - r.size.height * 0.5
+    self.map.setVisibleMapRect(r, animated:true)
+
     self.map.selectAnnotation(item, animated:true)
   end
   
@@ -246,7 +230,7 @@ class MainController < UIViewController
     r = MKMapRectNull
     (0..itemsCount).each do |i|
       p = MKMapPointForCoordinate(items[i].coordinate)
-      r = MKMapRectUnion(r, MKMapRectMake(p.x - 10, p.y - 10, 20, 20))
+      r = MKMapRectUnion(r, MKMapRectMake(p.x, p.y, 0.1, 0.1))
     end
     return MKCoordinateRegionForMapRect(r)
   end
@@ -275,6 +259,19 @@ class MainController < UIViewController
 
 
   # setPinController delegate
+
+  def smartBaule
+    visibleMapRect = map.visibleMapRect
+    visibleAnnotations = map.annotationsInMapRect(visibleMapRect)
+    if visibleAnnotations
+      visibleAnnotations.allObjects.each do |c|
+        c.nel_baule = 1
+        c.update
+      end 
+      Store.shared.persist
+    end
+    reload
+  end
 
   def resetBaule
     @clienti.each do |c|

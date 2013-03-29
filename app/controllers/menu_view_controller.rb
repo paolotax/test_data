@@ -2,20 +2,30 @@ class MenuViewController < UITableViewController
 
   extend IB
 
-  attr_accessor :detailViewController
+  #attr_accessor :detailViewController
   
   outlet :activityIndicator
   
-  def login(sender)
-    Store.shared.login {}
-  end
-  
   def viewDidLoad
     super
-    if Device.ipad?
-      self.detailViewController = self.splitViewController.viewControllers.lastObject
-    end
+    # if Device.ipad?
+    #   self.detailViewController = self.splitViewController.viewControllers.lastObject
+    # end
     true
+  end
+
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    if indexPath.section == 0 && indexPath.row == 2
+      controller = NelBauleController.new
+      self.navigationController.pushViewController(
+        controller,
+        animated: true
+      )
+    end
+  end
+
+  def login(sender)
+    Store.shared.login {}
   end
 
   def importa(sender)

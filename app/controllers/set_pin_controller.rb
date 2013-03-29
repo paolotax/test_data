@@ -65,6 +65,8 @@ class SetPinController < UITableViewController
     tableView.deselectRowAtIndexPath(indexPath, animated:false)
     if indexPath.row == 5
       @delegate.resetBaule
-    end  
+    elsif indexPath.row == 6
+      @delegate.smartBaule
+    end   
   end
 end
