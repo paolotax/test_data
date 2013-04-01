@@ -21,21 +21,82 @@ class ClienteAppuntoCell < UICollectionViewCell
       cell.deleteButton = UIButton.alloc.initWithFrame(CGRectMake(0, 0, 35, 35))
       unless deleteButtonImg
         buttonFrame = self.deleteButton.frame
+        
+        # UIGraphicsBeginImageContext(buttonFrame.size)
+        # sz = [buttonFrame.size.width, buttonFrame.size.height].min
+        # path = UIBezierPath.bezierPathWithArcCenter(CGPointMake(buttonFrame.size.width/2, buttonFrame.size.height/2),     radius:sz/2-MARGIN, startAngle:0, endAngle:(Math::PI * 2), clockwise:true)
+        # path.moveToPoint(CGPointMake(MARGIN, MARGIN))
+        # path.addLineToPoint(CGPointMake(sz-MARGIN, sz-MARGIN))
+        # path.moveToPoint(CGPointMake(MARGIN, sz-MARGIN))
+        # path.addLineToPoint(CGPointMake(sz-MARGIN, MARGIN))
+        # UIColor.redColor.setFill
+        # UIColor.whiteColor.setStroke
+        # path.setLineWidth(2.0)
+        # path.fill
+        # path.stroke
+        # deleteButtonImg = UIGraphicsGetImageFromCurrentImageContext()
+        # UIGraphicsEndImageContext()
+
+        
         UIGraphicsBeginImageContext(buttonFrame.size)
-        sz = [buttonFrame.size.width, buttonFrame.size.height].min
-        path = UIBezierPath.bezierPathWithArcCenter(CGPointMake(buttonFrame.size.width/2, buttonFrame.size.height/2),     radius:sz/2-MARGIN, startAngle:0, endAngle:(Math::PI * 2), clockwise:true)
-        path.moveToPoint(CGPointMake(MARGIN, MARGIN))
-        path.addLineToPoint(CGPointMake(sz-MARGIN, sz-MARGIN))
-        path.moveToPoint(CGPointMake(MARGIN, sz-MARGIN))
-        path.addLineToPoint(CGPointMake(sz-MARGIN, MARGIN))
-        UIColor.redColor.setFill
-        UIColor.whiteColor.setStroke
-        path.setLineWidth(2.0)
-        path.fill
-        path.stroke
+        context = UIGraphicsGetCurrentContext()
+
+        ## Color Declarations
+        strokeColor = UIColor.colorWithRed(0, green:0, blue:0, alpha:1)
+        color = UIColor.colorWithRed(0.886, green:0, blue:0, alpha:1)
+        fillColor = UIColor.colorWithRed(1, green:1, blue:1, alpha:1)
+
+        ## Shadow Declarations
+        shadow = strokeColor
+        shadowOffset = CGSizeMake(0.1, 1.1)
+        shadowBlurRadius = 5
+
+        ## Oval Drawing
+        ovalPath = UIBezierPath.bezierPathWithOvalInRect CGRectMake(2, 2, 27, 27)
+        CGContextSaveGState(context)
+        CGContextSetShadowWithColor(context, shadowOffset, shadowBlurRadius, shadow.CGColor)
+        color.setFill
+        ovalPath.fill
+        CGContextRestoreGState(context)
+
+        fillColor.setStroke
+        ovalPath.lineWidth = 3
+        ovalPath.stroke
+
+
+        ## Bezier Drawing
+        bezierPath = UIBezierPath.bezierPath
+        bezierPath.moveToPoint(CGPointMake(22, 9))
+        bezierPath.addLineToPoint(CGPointMake(9, 22))
+        bezierPath.addLineToPoint(CGPointMake(22, 9))
+        bezierPath.closePath
+        bezierPath.lineCapStyle = KCGLineCapRound
+
+        bezierPath.lineJoinStyle = KCGLineJoinBevel
+
+        fillColor.setStroke
+        bezierPath.lineWidth = 4.5
+        bezierPath.stroke
+
+
+        ## Bezier 2 Drawing
+        bezier2Path = UIBezierPath.bezierPath
+        bezier2Path.moveToPoint(CGPointMake(9, 9))
+        bezier2Path.addLineToPoint(CGPointMake(22, 22))
+        bezier2Path.addLineToPoint(CGPointMake(9, 9))
+        bezier2Path.closePath
+        bezier2Path.lineCapStyle = KCGLineCapRound
+
+        fillColor.setFill
+        bezier2Path.fill
+        fillColor.setStroke
+        bezier2Path.lineWidth = 4.5
+        bezier2Path.stroke
+
         deleteButtonImg = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
       end
+
       cell.deleteButton.setImage(deleteButtonImg, forState:UIControlStateNormal)
       cell.contentView.addSubview(self.deleteButton)
 

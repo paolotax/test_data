@@ -1,4 +1,4 @@
-class ClienteSmallView < UIView
+class ClienteSmallSelectedView < UIView
 
   def initWithFrame(frame)
     super.tap do
@@ -12,12 +12,14 @@ class ClienteSmallView < UIView
     context = UIGraphicsGetCurrentContext()
 
     ## Color Declarations
-    fillColor = UIColor.colorWithRed(0.218, green:0.215, blue:0.215, alpha:1)
+    fillColor = UIColor.colorWithRed(0.438, green:0, blue:0.657, alpha:1)
     strokeColor = UIColor.colorWithRed(0, green:0, blue:0, alpha:1)
-    fillColor2 = UIColor.colorWithRed(0.86, green:0.86, blue:0.86, alpha:1)
+    fillColor2 = UIColor.colorWithRed(0.856, green:0.856, blue:0.856, alpha:1)
+    color2 = UIColor.colorWithRed(0.143, green:0, blue:0.429, alpha:1)
+    color3 = UIColor.colorWithRed(0, green:0, blue:0.886, alpha:1)
 
     ## Shadow Declarations
-    shadow = strokeColor
+    shadow = color2
     shadowOffset = CGSizeMake(2.1, 1.1)
     shadowBlurRadius = 9
     shadow2 = fillColor2
@@ -32,7 +34,7 @@ class ClienteSmallView < UIView
 
     CGContextSaveGState(context)
     CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2.CGColor)
-    strokeColor.setStroke
+    color3.setStroke
     roundedRectangle2Path.lineWidth = 1
     roundedRectangle2Path.stroke
     CGContextRestoreGState(context)
@@ -70,8 +72,6 @@ class ClienteSmallView < UIView
     strokeColor.setStroke
     roundedRectanglePath.lineWidth = 1
     roundedRectanglePath.stroke
-
-
 
 
 

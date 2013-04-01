@@ -112,7 +112,9 @@ class AppuntiController < UIViewController
     tableView.deselectRowAtIndexPath(indexPath, animated:true) unless Device.ipad?
     cell = tableView.cellForRowAtIndexPath(indexPath)
     if Device.ipad?
-      self.performSegueWithIdentifier("modalAppunto", sender:cell )
+      "pushAppuntoController".post_notification(self, appunto: cell.appunto)
+
+      #self.performSegueWithIdentifier("modalAppunto", sender:cell )
     else
       self.performSegueWithIdentifier("displayAppunto", sender:cell )
     end

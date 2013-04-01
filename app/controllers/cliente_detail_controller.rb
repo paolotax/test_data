@@ -19,6 +19,7 @@ class ClienteDetailController < UIViewController
   outlet :emailButton
   outlet :callButton
   outlet :editMultipleButton
+  outlet :bauleButton
 
   outlet :segmentedControl
 
@@ -30,6 +31,11 @@ class ClienteDetailController < UIViewController
 
   def viewDidLoad
     super
+
+
+    bauleButton = BauleView.alloc.initWithFrame [[350,64], [70,70]]
+    bauleButton.backgroundColor = UIColor.clearColor
+    self.view.addSubview bauleButton    
 
     mapItem = UIBarButtonItem.imaged("103-map".uiimage) {
       slidePopContainer.popViewController(self)

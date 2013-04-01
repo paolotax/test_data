@@ -59,6 +59,11 @@ class AppuntoFormController < UITableViewController
       self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
     end
 
+    if presentedInDetailView?
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
+      }
+    end
   end
 
   def viewDidAppear(animated)
@@ -414,12 +419,11 @@ class AppuntoFormController < UITableViewController
       puts "ce l'ho"
       self.navigationItem.title = "ce l'ho"
       self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-        puts "gino"
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        puts "pino"
-        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        # UIApplication.sharedApplication.openURL(url)
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
       }
     end 
   end
@@ -466,12 +470,11 @@ class AppuntoFormController < UITableViewController
       # Appunto.reset
       # self.navigationItem.title = "ce l'ho"
       self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-        puts "Gino"
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        puts "Pino"
-        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        # UIApplication.sharedApplication.openURL(url)
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
       }
     end 
 

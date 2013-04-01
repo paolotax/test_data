@@ -43,6 +43,8 @@ class MainController < UIViewController
     "allow_dismiss_popover".add_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".add_observer(self, "unallow_dismiss")
     "pushClienteController".add_observer(self, "pushClienteTapped:", nil)
+    "pushAppuntoController".add_observer(self, "pushAppuntoTapped:", nil)
+    
   end
 
   def viewWillDisappear(animated)
@@ -51,6 +53,7 @@ class MainController < UIViewController
     "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
     "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
     "pushClienteController".remove_observer(self, "pushClienteTapped:")
+    "pushAppuntoController".remove_observer(self, "pushAppuntoTapped:", nil)
   end
 
   def allow_dismiss
@@ -74,6 +77,18 @@ class MainController < UIViewController
     slidePopContainer.pushViewController(clienteDetail)
   end
 
+  def pushAppuntoTapped(notification)
+    appunto = notification.userInfo[:appunto]
+    @annotationPopover.dismissPopoverAnimated(false) if @annotationPopover
+    appuntoDetail = self.storyboard.instantiateViewControllerWithIdentifier("AppuntoFormController")
+    appuntoDetail.presentedInDetailView = true
+    appuntoDetail.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    appuntoDetail.appunto = appunto
+    nav = UINavigationController.alloc.initWithRootViewController appuntoDetail
+    nav.navigationBar.barStyle = UIBarStyleBlack
+    slidePopContainer.pushViewController nav
+  end
+
   
   def change_annotation(notification)
     annotation = notification.userInfo[:cliente]
@@ -85,6 +100,7 @@ class MainController < UIViewController
       self.map.removeAnnotation(annotation)
       self.map.addAnnotation(annotation)
       @annotationPopover.dismissPopoverAnimated(true) if @annotationPopover
+      "baule_did_change".post_notification
       @pippo = true
     end
   end
@@ -271,6 +287,7 @@ class MainController < UIViewController
       Store.shared.persist
     end
     reload
+    "baule_did_change".post_notification
   end
 
   def resetBaule
@@ -282,6 +299,7 @@ class MainController < UIViewController
     end 
     Store.shared.persist
     reload
+    "baule_did_change".post_notification
   end
 
   def setPinController(controller, didChangedPin:selectedPins)

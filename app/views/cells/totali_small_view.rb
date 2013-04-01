@@ -13,7 +13,7 @@ class TotaliSmallView < UIView
     fillColor = UIColor.colorWithRed(1, green: 1, blue: 1, alpha: 1)
     strokeColor = UIColor.colorWithRed(0, green:0, blue:0, alpha:1)
     lineColor = UIColor.colorWithRed(0.976, green:0.757, blue:0.757, alpha:1)
-    grayLineColor = UIColor.colorWithRed 0.722, green: 0.722, blue: 0.722, alpha: 1
+    grayLineColor = UIColor.colorWithRed 0.8, green: 0.8, blue: 0.8, alpha: 1
 
     ## Shadow Declarations
     shadow = strokeColor

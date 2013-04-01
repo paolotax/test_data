@@ -8,7 +8,6 @@ class RigaSmallView < UIView
 
   def drawRect(rect)
     ## General Declarations
-    puts "draw"
     context = UIGraphicsGetCurrentContext()
 
     fillColor = UIColor.colorWithRed(1, green: 1, blue: 1, alpha: 1)

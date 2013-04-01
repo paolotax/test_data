@@ -51,59 +51,35 @@ class NelBauleController < UIViewController
     end  
   end
 
-  def viewDidLoad
+  def viewWillAppear(animated)
     super
-    # Title for this view
-    self.navigationItem.title = "Nel baule"
+    self.navigationItem.title = "#{@clienti.count} nel baule"
+    "baule_did_change".add_observer(self, :reload)
   end
-
+  
+  def viewWillDisappear(animated)
+    super
+    "baule_did_change".remove_observer(self, :reload)
+  end
+  
   def reload
     load_data
     @table_view.reloadData
+    @table_view.reloadSections(NSIndexSet.indexSetWithIndex(0), withRowAnimation:UITableViewRowAnimationFade)
+    self.navigationItem.title = "#{@clienti.count} nel baule"
   end
 
 
   #{{{ Table view delegate
 
-  def backgroundImageForRowAtIndexPath(indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == Riga_Riga_
-      return  "table_cell_single".uiimage.resizableImageWithCapInsets(UIEdgeInsetsMake(0.0, 30.0, 0.0, 30.0)) 
-    end
+  def numberOfSectionsInTableView(table_view)
+    1
   end
 
-  def tableView(table_view, heightForRowAtIndexPath: indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == NSKVONotifying_Cliente_Cliente_
-      44
-    elsif item.class == Appunto_Appunto_
-      75
-    elsif item.class == Riga_Riga_
-      25
-    else
-      42
-    end
+  def tableView(tableView, numberOfRowsInSection: section)
+    @grouped_baule.size
   end
 
-  def tableView(tableView, heightForFooterInSection:section)
-     # This will create a "invisible" footer
-     return 0.01
-  end
-
-  def tableView(table_view, didSelectRowAtIndexPath: path)
-    # i = path.indexAtPosition(1)
-    # return if @grouped_baule[i]['type'] == 'break'
-    # speakers = RMISpeakersViewController.new
-    # speakers.navigationItem.title = "Speakers"
-    # speakers.start_with = @grouped_baule[i]['speaker_index'].to_i
-    # self.navigationController.pushViewController(
-    #   speakers,
-    #   animated: true
-    # )
-  end
-  #}}}
-
-  #{{{ Table view datasource
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
     item = @grouped_baule[indexPath.row]
     if item.class == NSKVONotifying_Cliente_Cliente_
@@ -121,25 +97,56 @@ class NelBauleController < UIViewController
       cell.riga = @grouped_baule[indexPath.row]
     else
       cell = tableView.dequeueReusableCellWithIdentifier("TotaliSmallCell") || TotaliSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "TotaliSmallCell")
-
       
       cell.fill(item)
     end
     cell
   end
 
-  def tableView(tableView, numberOfRowsInSection: section)
-    @grouped_baule.size
+   def tableView(table_view, heightForRowAtIndexPath: indexPath)
+    item = @grouped_baule[indexPath.row]
+    if item.class == NSKVONotifying_Cliente_Cliente_ 
+      44
+    elsif item.class == Appunto_Appunto_
+      75
+    elsif item.class == Riga_Riga_
+      25
+    else
+      42
+    end
   end
 
-  #def tableView(table_view, willDeselectRowAtIndexPath: path)
-  #end
-
-  #def tableView(table_view, willSelectRowAtIndexPath: path)
-  #end
-
-  def numberOfSectionsInTableView(table_view)
-    1
+  def tableView(tableView, heightForFooterInSection:section)
+     # This will create a "invisible" footer
+     return 0.01
   end
-  #}}}
+
+    
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    item = @grouped_baule[indexPath.row]
+    if item.class == NSKVONotifying_Cliente_Cliente_ 
+      "pushClienteController".post_notification(self, cliente: item)
+    end
+  end
+
+  def tableView(tableView, canEditRowAtIndexPath:indexPath)
+    item = @grouped_baule[indexPath.row]
+    if item.class == NSKVONotifying_Cliente_Cliente_ 
+      true
+    else
+      false
+    end
+  end
+
+  def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
+    item = @grouped_baule[indexPath.row]
+    if editing_style == UITableViewCellEditingStyleDelete
+      item.nel_baule = 0
+      item.update
+      Store.shared.persist
+      "baule_did_change".post_notification
+      "reload_annotations".post_notification
+    end
+  end
+
 end

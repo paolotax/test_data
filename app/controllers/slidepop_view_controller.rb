@@ -56,7 +56,12 @@ class SlidepopViewController < UIViewController
             viewController.didMoveToParentViewController(self)
             
             if topVC.is_a? ClienteDetailController
-              puts topVC.cliente
+              topVC.view.removeFromSuperview
+              topVC.removeFromParentViewController
+            elsif topVC.is_a? AppuntoFormController
+              topVC.view.removeFromSuperview
+              topVC.removeFromParentViewController
+            elsif topVC.is_a? UINavigationController
               topVC.view.removeFromSuperview
               topVC.removeFromParentViewController
             end
@@ -105,39 +110,6 @@ class SlidepopViewController < UIViewController
     #   end
     # )
   end
-
-  def replaceViewController(cliente)
-
-    index = self.childViewControllers.count - 2
-    targetVC = self.childViewControllers[index]
-    topVC = self.topMostViewController
-    
-    topVC.willMoveToParentViewController(nil)
-    
-    
-    previousTransform = targetVC.view.transform
-    targetVC.view.transform = CGAffineTransformIdentity
-    targetVC.view.frame = self.view.bounds
-    targetVC.view.transform = previousTransform
-    
-    
-    UIView.animateWithDuration(0.3, 
-      animations:-> {
-        targetVC.view.alpha = 1.0
-        targetVC.view.transform = CGAffineTransformIdentity
-        topVC.view.transform = CGAffineTransformMakeTranslation(self.view.bounds.size.width, 0)
-      }, 
-      completion: lambda do |finished|
-        topVC = self.topMostViewController
-        topVC.removeFromParentViewController
-        clienteDetail = self.storyboard.instantiateViewControllerWithIdentifier("ClienteDetailController")
-        clienteDetail.cliente = cliente
-        self.pushViewController(clienteDetail)
-      end
-    )
-
-  end
-
 
   # splitView delegates
 

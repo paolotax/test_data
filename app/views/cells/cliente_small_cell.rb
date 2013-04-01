@@ -7,7 +7,7 @@ class ClienteSmallCell < UITableViewCell
       selectionStyle = UITableViewCellSelectionStyleNone
 
       self.backgroundView = ClienteSmallView.alloc.initWithFrame(self.frame)
-      self.selectedBackgroundView = ClienteSmallView.alloc.initWithFrame(self.frame)
+      self.selectedBackgroundView = ClienteSmallSelectedView.alloc.initWithFrame(self.frame)
 
       self.contentView.stylesheet = Teacup::Stylesheet[:cliente_style]
       layout(self.contentView, :content_view) do
