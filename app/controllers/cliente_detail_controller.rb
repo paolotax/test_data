@@ -19,7 +19,7 @@ class ClienteDetailController < UIViewController
   outlet :emailButton
   outlet :callButton
   outlet :editMultipleButton
-  outlet :bauleButton
+
 
   outlet :segmentedControl
 
@@ -32,10 +32,13 @@ class ClienteDetailController < UIViewController
   def viewDidLoad
     super
 
+    @clienteTitleView = ClienteTitleView.alloc.initWithFrame [[10, 49], [400,150]]
+    @clienteTitleView.backgroundColor = UIColor.clearColor
+    self.view.addSubview @clienteTitleView   
 
-    bauleButton = BauleView.alloc.initWithFrame [[350,64], [70,70]]
-    bauleButton.backgroundColor = UIColor.clearColor
-    self.view.addSubview bauleButton    
+    mapItem = UIBarButtonItem.imaged("103-map".uiimage) {
+      slidePopContainer.popViewController(self)
+    }
 
     mapItem = UIBarButtonItem.imaged("103-map".uiimage) {
       slidePopContainer.popViewController(self)
@@ -76,6 +79,8 @@ class ClienteDetailController < UIViewController
 
   def display_cliente
 
+    @clienteTitleView.cliente = @cliente
+    
     self.nomeLabel.text = cliente.nome
     self.indirizzoLabel.text = cliente.indirizzo
     self.cittaLabel.text = "#{cliente.cap} #{cliente.citta} #{cliente.provincia}"

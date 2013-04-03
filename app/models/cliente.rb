@@ -94,4 +94,7 @@ class Cliente < NSManagedObject
     data
   end
 
+  def nel_baule?
+    nel_baule == 1
+  end
 end
