@@ -38,15 +38,15 @@ class NelBauleController < UIViewController
     # Mah!!!
     @grouped_baule = []
     @clienti.each do |cliente|
-      @grouped_baule << cliente
+      @grouped_baule << { cliente: cliente }
       appunti = []
       appunti = @appunti.select {|a| a.cliente == cliente }
       appunti.each do |appunto|
-        @grouped_baule << appunto
+        @grouped_baule << { appunto: appunto }
         appunto.righe.each do |riga|
-          @grouped_baule << riga
+          @grouped_baule << { riga: riga }
         end
-        @grouped_baule << { totale_copie: appunto.totale_copie, totale_importo: appunto.totale_importo, telefono: appunto.telefono }
+        @grouped_baule << { totali: { totale_copie: appunto.totale_copie, totale_importo: appunto.totale_importo, telefono: appunto.telefono }}
       end
     end  
   end
@@ -81,35 +81,37 @@ class NelBauleController < UIViewController
   end
 
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == NSKVONotifying_Cliente_Cliente_
-      cell = tableView.dequeueReusableCellWithIdentifier("ClienteSmallCell") || ClienteSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "ClienteSmallCell")
-      cell.cliente = @grouped_baule[indexPath.row]
     
-    elsif item.class == Appunto_Appunto_
+    item = @grouped_baule[indexPath.row].keys[0].to_s
+
+    if item == "cliente"
+      cell = tableView.dequeueReusableCellWithIdentifier("ClienteSmallCell") || ClienteSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "ClienteSmallCell")
+      cell.cliente = @grouped_baule[indexPath.row][:cliente]
+    
+    elsif item == "appunto"
       cell = tableView.dequeueReusableCellWithIdentifier("AppuntoSmallCell") || AppuntoSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "AppuntoSmallCell")
 
-      cell.appunto = @grouped_baule[indexPath.row]
+      cell.appunto = @grouped_baule[indexPath.row][:appunto]
     
-    elsif item.class == Riga_Riga_
+    elsif item == "riga"
       cell = tableView.dequeueReusableCellWithIdentifier("RigaSmallCell") || RigaSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "RigaSmallCell")
 
-      cell.riga = @grouped_baule[indexPath.row]
+      cell.riga = @grouped_baule[indexPath.row][:riga]
     else
       cell = tableView.dequeueReusableCellWithIdentifier("TotaliSmallCell") || TotaliSmallCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: "TotaliSmallCell")
       
-      cell.fill(item)
+      cell.fill(@grouped_baule[indexPath.row][:totali])
     end
     cell
   end
 
    def tableView(table_view, heightForRowAtIndexPath: indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == NSKVONotifying_Cliente_Cliente_ 
+    item = @grouped_baule[indexPath.row].keys[0].to_s
+    if item == "cliente"
       44
-    elsif item.class == Appunto_Appunto_
+    elsif item == "appunto"
       75
-    elsif item.class == Riga_Riga_
+    elsif item == "riga"
       25
     else
       42
@@ -123,15 +125,17 @@ class NelBauleController < UIViewController
 
     
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == NSKVONotifying_Cliente_Cliente_ 
-      "pushClienteController".post_notification(self, cliente: item)
+    item = @grouped_baule[indexPath.row].keys[0].to_s
+    if item == "cliente"
+      "pushClienteController".post_notification(self, cliente: @grouped_baule[indexPath.row][:cliente])
+    elsif item == "appunto"
+      "pushAppuntoController".post_notification(self, appunto: @grouped_baule[indexPath.row][:appunto])
     end
   end
 
   def tableView(tableView, canEditRowAtIndexPath:indexPath)
-    item = @grouped_baule[indexPath.row]
-    if item.class == NSKVONotifying_Cliente_Cliente_ 
+    item = @grouped_baule[indexPath.row].keys[0].to_s
+    if item == "cliente"
       true
     else
       false
@@ -139,10 +143,13 @@ class NelBauleController < UIViewController
   end
 
   def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
-    item = @grouped_baule[indexPath.row]
+    
     if editing_style == UITableViewCellEditingStyleDelete
-      item.nel_baule = 0
-      item.update
+
+      cliente = @grouped_baule[indexPath.row][:cliente]
+
+      cliente.nel_baule = 0
+      cliente.update
       Store.shared.persist
       "baule_did_change".post_notification
       "reload_annotations".post_notification

@@ -7,7 +7,7 @@ class RigaFormViewController < UITableViewController
 
 
   attr_accessor :riga, :appunto
-
+ 
   def viewDidLoad
     true
   end
@@ -80,6 +80,7 @@ class RigaFormViewController < UITableViewController
   
 
   def save(sender)
+    @appunto.updated_at = Time.now
     self.navigationController.popViewControllerAnimated(true)
   end
 

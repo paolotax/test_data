@@ -11,13 +11,12 @@ class ClienteDetailController < UIViewController
       :appuntiCollectionController
 
   outlet :mainToolbar
-  outlet :nomeLabel
-  outlet :indirizzoLabel
-  outlet :cittaLabel
+
   outlet :nuovoAppuntoButton
   outlet :navigaButton
   outlet :emailButton
   outlet :callButton
+
   outlet :editMultipleButton
 
 
@@ -81,10 +80,6 @@ class ClienteDetailController < UIViewController
 
     @clienteTitleView.cliente = @cliente
     
-    self.nomeLabel.text = cliente.nome
-    self.indirizzoLabel.text = cliente.indirizzo
-    self.cittaLabel.text = "#{cliente.cap} #{cliente.citta} #{cliente.provincia}"
-
     if cliente.telefono.blank?
       self.callButton.enabled = false
       callButton.alpha = 0.5
@@ -141,10 +136,10 @@ class ClienteDetailController < UIViewController
       end  
       if Device.ipad? && sender.class == Appunto_Appunto_
         appunto = sender
+        controller.appunto = appunto
       else
         controller.isNew = true
       end
-      controller.appunto = appunto
       controller.cliente = @cliente
 
     elsif segue.identifier.isEqualToString("showEditClassi")

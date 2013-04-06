@@ -5,36 +5,32 @@ class AppuntoFormController < UITableViewController
                 :presentedInPopover, :presentedInDetailView, :saveBlock
 
 
+
   def viewDidLoad
     super
-    puts "0. didLoad"
-    puts Store.shared.stats
+    # funzia
+
   end
 
   def viewWillAppear(animated)
     super
-    
+
     puts "0. willAppear"
     puts Store.shared.stats
 
-    # non funzia
-    #"NSManagedObjectContextObjectsDidChangeNotification".add_observer(self, "changes:")
-
     didChange = NSManagedObjectContextObjectsDidChangeNotification
-    center = NSNotificationCenter.defaultCenter
-    center.addObserver(self, 
-              selector:"changes:",
-                  name:didChange, 
-                object:Store.shared.context)
+    didChange.add_observer(self, "changes:", Store.shared.context)
 
-    didSave = NSManagedObjectContextDidSaveNotification
-    center.addObserver(self, 
-              selector:"didSave:",
-                  name:didSave,
-                object:Store.shared.context)
+    # didChange = NSManagedObjectContextObjectsDidChangeNotification
+    # center = NSNotificationCenter.defaultCenter
+    # center.addObserver(self, 
+    #           selector:"changes:",
+    #               name:didChange, 
+    #             object:Store.shared.context)
 
-    if isNew?
-      self.appunto = Appunto.add do |a|
+
+    if isNew? && !@appunto
+      @appunto = Appunto.add do |a|
         a.cliente = cliente
         a.ClienteId = cliente.ClienteId
         a.cliente_nome = cliente.nome
@@ -43,10 +39,18 @@ class AppuntoFormController < UITableViewController
         a.created_at = Time.now
       end
     end 
+    view.reloadData
 
-    view.reloadData   
-    puts "1. reloadData"
-    puts Store.shared.stats
+    if @appunto && @appunto.isUpdated
+      @appunto.updated_at = Time.now
+      puts "0. updated time"
+      puts Store.shared.stats
+    end
+    # didSave = NSManagedObjectContextDidSaveNotification
+    # center.addObserver(self, 
+    #           selector:"didSave:",
+    #               name:didSave,
+    #             object:Store.shared.context)
 
     unless isNew?
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
@@ -66,6 +70,7 @@ class AppuntoFormController < UITableViewController
     end
   end
 
+
   def viewDidAppear(animated)
     self.contentSizeForViewInPopover = self.tableView.contentSize
   end
@@ -73,10 +78,13 @@ class AppuntoFormController < UITableViewController
 
   def changes(sender)
     puts "---changes---"
+    puts sender.userInfo
     puts Store.shared.stats
+    
     if presentedInPopover?
       "unallow_dismiss_popover".post_notification
     end
+    
     self.navigationItem.setRightBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemDone, target:self, action:"save:"))
     self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
   end
@@ -88,15 +96,216 @@ class AppuntoFormController < UITableViewController
 
   def viewWillDisappear(sender)
     super
-    puts "---dismiss changes---"
+    puts "---viewWillDisappear---"
     puts Store.shared.stats
+  end
 
-    name = NSManagedObjectContextObjectsDidChangeNotification
+
+
+
+# save
+
+  def save2(sender)
+  
+    error = Pointer.new(:object)
+    moc = @appunto.managedObjectContext
+    unless moc.save(error)
+      raise "Error when saving the model: #{error_ptr[0].description}"
+    end
+
+    if presentedAsModal?
+      self.dismissViewControllerAnimated(true, completion:nil)
+    end
+    
+    if presentedInPopover?
+      "allow_dismiss_popover".post_notification
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      self.navigationItem.title = "ce l'ho"
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end
+  end
+
+  def cancel2(sender)
+  
+    error = Pointer.new(:object)
+    moc = @appunto.managedObjectContext
+
+    if (@appunto.isInserted)
+      moc.deleteObject @appunto 
+    else
+      moc.refreshObject @appunto, mergeChanges:false
+    end
+
+    # if isNew?
+    #   @appunto.remove
+    # else
+    #   Store.shared.context.rollback
+    # end
+
+    if presentedAsModal?
+      self.dismissViewControllerAnimated(true, completion:nil)
+    end
+
+    if presentedInPopover?
+      "allow_dismiss_popover".post_notification
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end
+  end
+  
+  def save(sender)
+
+    didChange = NSManagedObjectContextObjectsDidChangeNotification
     center = NSNotificationCenter.defaultCenter
     center.removeObserver(self, 
-                     name:name, 
+                     name:didChange, 
                    object:Store.shared.context)
+
+    # didSave = NSManagedObjectContextDidSaveNotification
+    # center.removeObserver(self, 
+    #               name:didSave,
+    #             object:Store.shared.context)
+
+    puts "---removed NSManagedObjectContextObjectsDidChangeNotification---"
+    # puts "---removed NSManagedObjectContextDidSaveNotification---"
+    
+    if @appunto.isUpdated
+      @appunto.updated_at = Time.now
+      puts "0. updated time"
+      puts Store.shared.stats
+    end
+    
+
+    Store.shared.save
+    puts "1. save"
+    puts Store.shared.stats
+
+    Store.shared.persist
+    puts "2. persist"
+    puts Store.shared.stats
+    
+    self.appunto.save_to_backend  
+    puts "3. backend"
+    puts Store.shared.stats
+    
+    # "appuntiListDidLoadBackend".post_notification
+    # "reload_appunti_collections".post_notification
+    # "allow_dismiss_popover".post_notification
+
+    if presentedAsModal?
+      puts "4. presentedAsModal"  
+      puts Store.shared.stats
+      self.dismissViewControllerAnimated(true, completion:nil)
+    end
+    
+    if presentedInPopover?
+      puts "4. presentedInPopover"  
+      puts Store.shared.stats
+      "allow_dismiss_popover".post_notification
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      puts "4. presentedInDetailView"
+      puts Store.shared.stats
+      puts "ce l'ho"
+      self.navigationItem.title = "ce l'ho"
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end 
   end
+
+  def cancel(sender)
+
+    didChange = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.removeObserver(self, 
+                     name:didChange, 
+                   object:Store.shared.context)
+
+    # didSave = NSManagedObjectContextDidSaveNotification
+    # center.removeObserver(self, 
+    #               name:didSave,
+    #             object:Store.shared.context)
+
+    puts "---removed NSManagedObjectContextObjectsDidChangeNotification---"
+    # puts "---removed NSManagedObjectContextDidSaveNotification---"
+
+    if isNew?
+      puts "1. isNew = true"
+      puts Store.shared.stats
+      @appunto.remove
+      puts "2. remove"
+      puts Store.shared.stats
+    else
+      puts "1. update"
+      puts Store.shared.stats
+      Store.shared.context.rollback
+      puts "2. rollback"
+      puts Store.shared.stats
+    end
+
+    if presentedAsModal?
+      puts "3. closemodal"
+      puts Store.shared.stats
+      self.dismissViewControllerAnimated(true, completion:nil)
+    end
+
+    if presentedInPopover?
+      puts "3. pop navigation"
+      puts Store.shared.stats
+      "allow_dismiss_popover".post_notification
+      self.navigationController.popViewControllerAnimated(true)
+    end
+
+    if presentedInDetailView?
+      puts "3. reset detail view"
+      puts Store.shared.stats
+      # Cliente.reset
+      # Appunto.reset
+      # self.navigationItem.title = "ce l'ho"
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
+        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
+      }
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
+        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        UIApplication.sharedApplication.openURL(url)
+      }
+    end
+
+  end 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -364,121 +573,6 @@ class AppuntoFormController < UITableViewController
   end
 
 
-
-
-
-  # save
-
-  def save(sender)
-
-    name = NSManagedObjectContextObjectsDidChangeNotification
-    center = NSNotificationCenter.defaultCenter
-    center.removeObserver(self, 
-                     name:name, 
-                   object:Store.shared.context)
-    
-    if @appunto.isUpdated
-      @appunto.updated_at = Time.now
-      puts "0. updated time"
-      puts Store.shared.stats
-    end
-    
-
-    Store.shared.save
-    puts "1. save"
-    puts Store.shared.stats
-
-    Store.shared.persist
-    puts "2. persist"
-    puts Store.shared.stats
-    
-    self.appunto.save_to_backend  
-    puts "3. backend"
-    puts Store.shared.stats
-    
-    # "appuntiListDidLoadBackend".post_notification
-    # "reload_appunti_collections".post_notification
-    # "allow_dismiss_popover".post_notification
-
-    if presentedAsModal?
-      puts "4. presentedAsModal"  
-      puts Store.shared.stats
-      self.dismissViewControllerAnimated(true, completion:nil)
-    end
-    
-    if presentedInPopover?
-      puts "4. presentedInPopover"  
-      puts Store.shared.stats
-      "allow_dismiss_popover".post_notification
-      self.navigationController.popViewControllerAnimated(true)
-    end
-
-    if presentedInDetailView?
-      puts "4. presentedInDetailView"
-      puts Store.shared.stats
-      puts "ce l'ho"
-      self.navigationItem.title = "ce l'ho"
-      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
-      }
-      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
-      }
-    end 
-  end
-
-  def cancel(sender)
-
-    name = NSManagedObjectContextObjectsDidChangeNotification
-    center = NSNotificationCenter.defaultCenter
-    center.removeObserver(self, 
-                     name:name, 
-                   object:Store.shared.context)
-
-    if isNew?
-      puts "1. isNew = true"
-      puts Store.shared.stats
-      @appunto.remove
-      puts "2. remove"
-      puts Store.shared.stats
-    else
-      puts "1. update"
-      puts Store.shared.stats
-      Store.shared.context.rollback
-      puts "2. rollback"
-      puts Store.shared.stats
-    end
-
-    if presentedAsModal?
-      puts "3. closemodal"
-      puts Store.shared.stats
-      self.dismissViewControllerAnimated(true, completion:nil)
-    end
-
-    if presentedInPopover?
-      puts "3. pop navigation"
-      puts Store.shared.stats
-      "allow_dismiss_popover".post_notification
-      self.navigationController.popViewControllerAnimated(true)
-    end
-
-    if presentedInDetailView?
-      puts "3. reset detail view"
-      puts Store.shared.stats
-      # Cliente.reset
-      # Appunto.reset
-      # self.navigationItem.title = "ce l'ho"
-      self.navigationItem.leftBarButtonItem = UIBarButtonItem.imaged("38-house".uiimage) {
-        "pushClienteController".post_notification(self, cliente: @appunto.cliente)
-      }
-      self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
-      }
-    end 
-
-  end
 
   private
 
