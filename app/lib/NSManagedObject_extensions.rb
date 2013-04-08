@@ -23,6 +23,31 @@ class NSManagedObject
     @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:@sortOrders, withsearchKey:@searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:Store.shared.context)
   end
 
+
+  def delete_from_backend
+
+
+    if self.remote_id != 0  
+      
+      puts self.remote_id
+      # // POST to create
+      Store.shared.backend.deleteObject(self, path:nil, parameters:nil, 
+                          success:lambda do |operation, result|
+                                    puts "old id = #{self.remote_id}"
+                                    puts Store.shared.stats
+                                    Store.shared.persist
+                                    puts "persist"
+                                    puts Store.shared.stats                                    
+                                    "appuntiListDidLoadBackend".post_notification
+                                    "reload_appunti_collections".post_notification
+                                    "clientiListDidLoadBackend".post_notification
+                                  end, 
+                          failure:lambda do |operation, error|
+                                    puts self.remote_id 
+                                  end)
+    end
+  end
+
   def save_to_backend
     puts "save to backend"
     

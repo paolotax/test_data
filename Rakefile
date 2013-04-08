@@ -30,7 +30,7 @@ Motion::Project::App.setup do |app|
     pod 'RestKit', :git => "https://github.com/RestKit/RestKit.git", commit: 'ee00e59'
     pod 'SVProgressHUD'
     pod 'NVUIGradientButton'
-    #pod 'NVSlideMenuController'
+    pod 'NVSlideMenuController'
     pod 'CustomBadge'
   end
 

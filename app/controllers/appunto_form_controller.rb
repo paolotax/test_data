@@ -431,7 +431,24 @@ class AppuntoFormController < UITableViewController
   def actionSheet(actionSheet, didDismissWithButtonIndex:buttonIndex)
     if buttonIndex != @actionSheet.cancelButtonIndex
 
-      puts "elimina todo"
+      cliente = @appunto.cliente
+      
+      @appunto.delete_from_backend
+      
+      @appunto.remove
+
+      if presentedAsModal?
+        self.dismissViewControllerAnimated(true, completion:nil)
+      end
+
+      if presentedInPopover?
+        "allow_dismiss_popover".post_notification
+        self.navigationController.popViewControllerAnimated(true)
+      end
+
+      if presentedInDetailView?
+        "pushClienteController".post_notification(self, cliente: cliente)
+      end
 
       #self.delegate playerDetailsViewController:self didDeletePlayer:self.playerToEdit
     end
