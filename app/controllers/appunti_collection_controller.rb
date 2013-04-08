@@ -162,6 +162,7 @@ class AppuntiCollectionController < UIViewController
     indexPath = self.appuntiCollectionView.indexPathForCell(sender.superview.superview)
     puts indexPath
     appunto = @appunti_in_corso.objectAtIndex(indexPath.row)
+    #appunto.delete_from_backend
     appunto.remove
     self.appuntiCollectionView.deleteItemsAtIndexPaths([indexPath])
   

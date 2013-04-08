@@ -400,15 +400,30 @@ class AppuntoFormController < UITableViewController
     end
   end
 
-  # def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-  #   # self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
-  #   # tableView.updates do
-  #   #   if tableView.numberOfRowsInSection(indexPath.section) == 1
-  #   #     tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
-  #   #   end
-  #   #   tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
-  #   # end
-  # end
+  def tableView(tableView, canEditRowAtIndexPath:indexPath)
+    if indexPath.section == 1 && indexPath.row > 0
+      true
+    else
+      false
+    end
+  end
+
+  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
+    puts "Elimina"
+    if indexPath.section == 1 && indexPath.row > 0
+      puts "Elimina1"
+      riga = @appunto.righe.objectAtIndex(indexPath.row - 1)
+      riga.remove
+      #Store.shared.context.deleteObject(riga)
+      #self.fetchControllerForTableView(tableView).objectAtIndexPath(indexPath).remove
+      tableView.updates do
+        # if tableView.numberOfRowsInSection(indexPath.section) == 1
+        #   tableView.deleteSections(NSIndexSet.indexSetWithIndex(indexPath.section), withRowAnimation:UITableViewRowAnimationFade)
+        # end
+        tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
+      end
+    end
+  end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:true)
@@ -433,7 +448,7 @@ class AppuntoFormController < UITableViewController
 
       cliente = @appunto.cliente
       
-      @appunto.delete_from_backend
+      #@appunto.delete_from_backend
       
       @appunto.remove
 

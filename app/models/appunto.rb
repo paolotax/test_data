@@ -31,6 +31,21 @@ class Appunto < NSManagedObject
     ['Note', ['Note', 'note', :longtext]]
   ]
 
+  def remove
+
+    if self.status == "da_fare"
+      self.cliente.appunti_da_fare -= 1
+    elsif self.status == "in_sospeso"
+      self.cliente.appunti_in_sospeso -= 1
+    end
+
+    remove_from_backend
+
+    Store.shared.context.deleteObject(self)
+    Store.shared.save
+  end
+  
+
   def self.filtra_status(status)
   
     request = NSFetchRequest.alloc.init

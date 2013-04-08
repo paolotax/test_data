@@ -1,4 +1,5 @@
 class NSManagedObject
+  
   def self.entity
     @entity ||= NSEntityDescription.newEntityDescriptionWithName(name, attributes:@attributes, relationships:@relationships)
   end
@@ -23,75 +24,56 @@ class NSManagedObject
     @searchController ||= NSFetchRequest.fetchObjectsForEntityForName(name, withSectionKey:@sectionKey, withSortKeys:@sortKeys, ascending:@sortOrders, withsearchKey:@searchKey, withSearchString:searchString, withSearchScope:searchScope, inManagedObjectContext:Store.shared.context)
   end
 
-
-  def delete_from_backend
+  def refresh_backend
+    Store.shared.backend.getObject(self, path:nil, parameters:nil, 
+                        success:lambda do |operation, result|
+                                  Store.shared.persist                                    
+                                  "appuntiListDidLoadBackend".post_notification
+                                  "reload_appunti_collections".post_notification
+                                  "clientiListDidLoadBackend".post_notification
+                                end, 
+                        failure:lambda do |operation, error|
+                                end)
+  end
+  
+  def remove_from_backend
 
 
     if self.remote_id != 0  
       
-      puts self.remote_id
-      # // POST to create
       Store.shared.backend.deleteObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-                                    puts "old id = #{self.remote_id}"
-                                    puts Store.shared.stats
                                     Store.shared.persist
-                                    puts "persist"
-                                    puts Store.shared.stats                                    
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
                                     "clientiListDidLoadBackend".post_notification
                                   end, 
                           failure:lambda do |operation, error|
-                                    puts self.remote_id 
                                   end)
     end
   end
 
   def save_to_backend
-    puts "save to backend"
-    
     if self.remote_id == 0  
-      # // POST to create
       Store.shared.backend.postObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-                                    puts "new id = #{self.remote_id}"
-                                    puts Store.shared.stats
                                     Store.shared.persist
-                                    puts "persist"
-                                    puts Store.shared.stats                                    
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
                                     "clientiListDidLoadBackend".post_notification
                                   end, 
                           failure:lambda do |operation, error|
-                                    puts self.remote_id 
                                   end)
     else
       Store.shared.backend.putObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-                                    puts "updated = #{self.remote_id}"
-                                    puts Store.shared.stats
                                     Store.shared.persist  
-                                    puts "persist"
-                                    puts Store.shared.stats        
                                     "appuntiListDidLoadBackend".post_notification
                                     "reload_appunti_collections".post_notification
                                     "clientiListDidLoadBackend".post_notification   
                                   end, 
                           failure:lambda do |operation, error|
-                                    #Store.shared.persist
                                   end)
-
-    # elsif self.isUpdated == true
-    #   Store.shared.backend.deleteObject(self, path:nil, parameters:nil, 
-    #                       success:lambda do |operation, result|
-    #                                 puts self.remote_id         
-    #                               end, 
-    #                       failure:lambda do |operation, error|
-    #                                 #Store.shared.persist
-    #                               end)
-
     end
   end
 
@@ -130,4 +112,5 @@ class NSManagedObject
     # Allow access to the real class
     NSClassFromString(self.entity.managedObjectClassName)
   end
+
 end
