@@ -38,8 +38,11 @@ class AppuntoFormController < UITableViewController
         a.status = "da_fare"
         a.created_at = Time.now
       end
+
+      puts "is inserted = #{@appunto.isInserted}"
     end 
     view.reloadData
+    puts "is inserted reloaded = #{@appunto.isInserted}"
 
     if @appunto && @appunto.isUpdated
       @appunto.updated_at = Time.now
@@ -240,16 +243,7 @@ class AppuntoFormController < UITableViewController
 
   def cancel(sender)
 
-    didChange = NSManagedObjectContextObjectsDidChangeNotification
-    center = NSNotificationCenter.defaultCenter
-    center.removeObserver(self, 
-                     name:didChange, 
-                   object:Store.shared.context)
-
-    # didSave = NSManagedObjectContextDidSaveNotification
-    # center.removeObserver(self, 
-    #               name:didSave,
-    #             object:Store.shared.context)
+    
 
     puts "---removed NSManagedObjectContextObjectsDidChangeNotification---"
     # puts "---removed NSManagedObjectContextDidSaveNotification---"
@@ -295,6 +289,17 @@ class AppuntoFormController < UITableViewController
         UIApplication.sharedApplication.openURL(url)
       }
     end
+
+    didChange = NSManagedObjectContextObjectsDidChangeNotification
+    center = NSNotificationCenter.defaultCenter
+    center.removeObserver(self, 
+                     name:didChange, 
+                   object:Store.shared.context)
+
+    # didSave = NSManagedObjectContextDidSaveNotification
+    # center.removeObserver(self, 
+    #               name:didSave,
+    #             object:Store.shared.context)
 
   end 
 
