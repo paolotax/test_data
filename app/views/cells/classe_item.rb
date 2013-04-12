@@ -82,38 +82,29 @@ class ClasseItem < UICollectionViewCell
       end
 
 
-      @vacanze_image = UIImageView.alloc.initWithFrame([[271.5, 93], [50, 50]]).tap do |imgv|
+      @vacanze_image_1 = UIImageView.alloc.initWithFrame([[271.5, 93], [50, 50]]).tap do |imgv|
         
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.setImage UIImage.imageNamed("vacanze_vuoto")
-        #imgv.layer.cornerRadius = 5
-        #imgv.alpha = 0.4
-        #imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
 
         imgv.when_tapped { toggle_vacanza(imgv) } 
       end 
 
-      @vacanze_image_1 = UIImageView.alloc.initWithFrame([[331.5, 93], [50, 50]]).tap do |imgv|
+      @vacanze_image_2 = UIImageView.alloc.initWithFrame([[331.5, 93], [50, 50]]).tap do |imgv|
         
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.setImage UIImage.imageNamed("vacanze_vuoto")
-        #imgv.layer.cornerRadius = 5
-        #imgv.alpha = 0.4
-        #imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
 
         imgv.when_tapped { toggle_vacanza(imgv) } 
       end  
 
 
-      @vacanze_image_2 = UIImageView.alloc.initWithFrame([[393.5, 93], [50, 50]]).tap do |imgv|
+      @vacanze_image_3 = UIImageView.alloc.initWithFrame([[393.5, 93], [50, 50]]).tap do |imgv|
         
         imgv.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin
         imgv.setImage UIImage.imageNamed("vacanze_vuoto")
-        #imgv.layer.cornerRadius = 5
-        #imgv.alpha = 0.4
-        #imgv.layer.masksToBounds = true
         self.contentView.addSubview(imgv)
 
         imgv.when_tapped { toggle_vacanza(imgv) } 
@@ -181,6 +172,10 @@ class ClasseItem < UICollectionViewCell
         @adozione_image_3.hidden = true
       end
 
+      @vacanze_image_1.setImage "#{@classe.libro_1.blank? ? "vacanze_vuoto" : @classe.libro_1}".uiimage
+      @vacanze_image_2.setImage "#{@classe.libro_2.blank? ? "vacanze_vuoto" : @classe.libro_2}".uiimage
+      @vacanze_image_3.setImage "#{@classe.libro_3.blank? ? "vacanze_vuoto" : @classe.libro_3}".uiimage
+      self.setNeedsDisplay
     end
     @classe
   end
@@ -207,20 +202,33 @@ class ClasseItem < UICollectionViewCell
 
   def toggle_vacanza(sender)
 
-    if @status.nil? || @status == "vacanze_vuoto"
-      sender.setImage "vacanze_fiuto".uiimage
-      @status = "vacanze_fiuto"
-    elsif @status == "vacanze_fiuto"
-      sender.setImage "vacanze_fiuto_adottato".uiimage
-      @status = "vacanze_fiuto_adottato"
-    elsif @status == "vacanze_fiuto_adottato"
-      sender.setImage "vacanze_fiuto_ritirato".uiimage
-      @status = "vacanze_fiuto_ritirato"
-    elsif @status == "vacanze_fiuto_ritirato"
+    if sender == @vacanze_image_1
+      titolo = "fiuto"
+      attribute = "libro_1"
+    elsif sender == @vacanze_image_2
+      titolo = "castelli"
+      attribute = "libro_2"
+    else
+      titolo = "tutto"
+      attribute = "libro_3"
+    end
+
+    if @classe.valueForKey(attribute).blank? || @classe.valueForKey(attribute) == "vacanze_vuoto"
+      sender.setImage "vacanze_#{titolo}".uiimage
+      @classe.setValue "vacanze_#{titolo}", forKey: attribute
+    elsif @classe.valueForKey(attribute) == "vacanze_#{titolo}"
+      sender.setImage "vacanze_#{titolo}_adottato".uiimage
+      @classe.setValue "vacanze_#{titolo}_adottato", forKey: attribute
+    elsif @classe.valueForKey(attribute) == "vacanze_#{titolo}_adottato"
+      sender.setImage "vacanze_#{titolo}_ritirato".uiimage
+      @classe.setValue "vacanze_#{titolo}_ritirato", forKey: attribute
+    elsif @classe.valueForKey(attribute) == "vacanze_#{titolo}_ritirato"
       sender.setImage "vacanze_vuoto".uiimage
-      @status = "vacanze_vuoto"
+      @classe.setValue "vacanze_vuoto", forKey: attribute
     end
       
+    @classe.update
+    @classe.persist    
   end
 
 

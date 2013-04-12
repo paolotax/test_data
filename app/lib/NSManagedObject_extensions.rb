@@ -98,7 +98,11 @@ class NSManagedObject
     Store.shared.context.deleteObject(self)
     Store.shared.save
   end
-  
+
+  def persist
+    Store.shared.persist
+  end
+
   def self.sections
     @sections
   end

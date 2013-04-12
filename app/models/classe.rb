@@ -14,7 +14,13 @@ class Classe < NSManagedObject
     { name: 'num_classe',        type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
     { name: 'sezione',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
     { name: 'nr_alunni',         type: NSInteger16AttributeType, default: 0,   optional: true, transient: false, indexed: false},
-    { name: 'note',              type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false}
+    { name: 'insegnanti',        type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'note',              type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'libro_1',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'libro_2',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'libro_3',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'libro_4',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false}
+
   ]
 
   @relationships = [

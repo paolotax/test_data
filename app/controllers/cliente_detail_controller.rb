@@ -99,7 +99,7 @@ class ClienteDetailController < UIViewController
       segmentedControl.selectedSegmentIndex = 0
     end
     
-    self.editMultipleButton.enabled = false
+    #self.editMultipleButton.enabled = false
 
     @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
     @appuntiCollectionController.view.frame = self.collectionViewContainer.bounds

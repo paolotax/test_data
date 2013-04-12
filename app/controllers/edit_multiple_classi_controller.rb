@@ -45,17 +45,6 @@ class EditMultipleClassiController < UIViewController
     Store.shared.persist
     "reload_classi_collections".post_notification
     "dismiss_popover".post_notification
-
-    # error = Pointer.new(:object)
-    # success = @textChangedBlock.call(text, error)
-    # if (success) 
-    #   self.navigationController.popViewControllerAnimated(true)
-    #   return true
-    # else
-    #   alertView = UIAlertView.alloc.initWithTitle("Error", message:error.localizedDescription, delegate:nil, cancelButtonTitle:"Chiudi", otherButtonTitles:nil);
-    #   alertView.show
-    #   return false
-    # end
   end  
 
 
