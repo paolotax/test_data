@@ -137,6 +137,9 @@ class ClassiCollectionController < UIViewController
     end
 
     self.selected_classi << classe
+
+    cell = collectionView.cellForItemAtIndexPath(indexPath)
+    cell.setNeedsDisplay
   end
 
   def collectionView(collectionView, didDeselectItemAtIndexPath:indexPath)
@@ -156,6 +159,8 @@ class ClassiCollectionController < UIViewController
 
     self.selected_classi.removeObject(classe)
 
+    cell = collectionView.cellForItemAtIndexPath(indexPath)
+    cell.setNeedsDisplay
   end
 
 end

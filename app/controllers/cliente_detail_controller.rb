@@ -90,31 +90,90 @@ class ClienteDetailController < UIViewController
       emailButton.alpha = 0.5
     end
     
+ 
+
+    # if cliente.cliente_tipo == "Scuola Primaria"
+    #   segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
+    #   segmentedControl.insertSegmentWithTitle("Classi", atIndex:1,animated:false)
+    #   segmentedControl.selectedSegmentIndex = 0
+    # else
+    #   segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
+    #   segmentedControl.selectedSegmentIndex = 0
+    # end
+    
+    # #self.editMultipleButton.enabled = false
+
+    # @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
+    # @appuntiCollectionController.view.frame = self.collectionViewContainer.bounds
+    # @appuntiCollectionController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    # @appuntiCollectionController.cliente = @cliente
+    # self.collectionViewContainer.addSubview(@appuntiCollectionController.view)
+
+    # @classiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("ClassiCollection")
+    # @classiCollectionController.cliente = @cliente
+
+    # self.addChildViewController(@appuntiCollectionController)
+    # @appuntiCollectionController.didMoveToParentViewController(self)
+
+
+
+    @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
+    @appuntiCollectionController.cliente = @cliente
+
     if cliente.cliente_tipo == "Scuola Primaria"
-      segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
-      segmentedControl.insertSegmentWithTitle("Classi", atIndex:1,animated:false)
+
+      segmentedControl.insertSegmentWithTitle("Classi", atIndex:0,animated:false)
+      segmentedControl.insertSegmentWithTitle("Appunti", atIndex:1,animated:false)
       segmentedControl.selectedSegmentIndex = 0
+      @classiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("ClassiCollection")
+      @classiCollectionController.cliente = @cliente
+      
+      collection = @classiCollectionController
     else
       segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
       segmentedControl.selectedSegmentIndex = 0
+
+      collection = @appuntiCollectionController
     end
     
-    #self.editMultipleButton.enabled = false
+    collection.view.frame = self.collectionViewContainer.bounds  
+    collection.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+    self.collectionViewContainer.addSubview(collection.view)
+    self.addChildViewController(collection)
+    collection.didMoveToParentViewController(self)
 
-    @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
-    @appuntiCollectionController.view.frame = self.collectionViewContainer.bounds
-    @appuntiCollectionController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    @appuntiCollectionController.cliente = @cliente
-    self.collectionViewContainer.addSubview(@appuntiCollectionController.view)
-
-    @classiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("ClassiCollection")
-    @classiCollectionController.cliente = @cliente
-
-    self.addChildViewController(@appuntiCollectionController)
-    @appuntiCollectionController.didMoveToParentViewController(self)
+  end
 
 
+  def collectionChange(sender)
 
+    selectedSegment = sender.selectedSegmentIndex
+
+    if selectedSegment == 0
+      sourceView = @appuntiCollectionController
+      destView = @classiCollectionController
+      self.editMultipleButton.enabled = true
+    else
+      sourceView = @classiCollectionController
+      destView = @appuntiCollectionController
+      self.editMultipleButton.enabled = false
+    end
+
+    self.addChildViewController(destView)
+    self.transitionFromViewController(sourceView,
+                      toViewController:destView,
+                              duration:0.5,
+                               options:UIViewAnimationOptionTransitionFlipFromRight,
+                            animations:lambda do
+                                sourceView.view.removeFromSuperview
+                                destView.view.frame = self.collectionViewContainer.bounds
+                                self.collectionViewContainer.addSubview(destView.view)
+                              end,
+                            completion:lambda do |finished|
+                                destView.didMoveToParentViewController(self)
+                                sourceView.removeFromParentViewController
+                              end
+    )
   end
 
 
@@ -174,34 +233,7 @@ class ClienteDetailController < UIViewController
     UIApplication.sharedApplication.openURL(url);
   end  
 
-  def collectionChange(sender)
 
-    selectedSegment = sender.selectedSegmentIndex
-
-    if selectedSegment == 0
-      sourceView = @classiCollectionController
-      destView = @appuntiCollectionController
-    else
-      sourceView = @appuntiCollectionController
-      destView = @classiCollectionController
-    end
-
-    self.addChildViewController(destView)
-    self.transitionFromViewController(sourceView,
-                      toViewController:destView,
-                              duration:0.5,
-                               options:UIViewAnimationOptionTransitionFlipFromRight,
-                            animations:lambda do
-                                sourceView.view.removeFromSuperview
-                                destView.view.frame = self.collectionViewContainer.bounds
-                                self.collectionViewContainer.addSubview(destView.view)
-                              end,
-                            completion:lambda do |finished|
-                                destView.didMoveToParentViewController(self)
-                                sourceView.removeFromParentViewController
-                              end
-    )
-  end
 
 
   # searchBar SearchClienti delegates and methods

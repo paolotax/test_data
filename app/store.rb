@@ -4,7 +4,7 @@ class Store
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga, Classe, Adozione]
   
   BASE_URL = "http://youpropa.com"
-  #BASE_URL = "http://localhost:3000"
+  #BASE_URL = "http://192.168.1.130:3000"
 
   USERNAME = 'paolotax'
   PASSWORD = 'sisboccia'
@@ -144,8 +144,8 @@ class Store
     store_path = RKApplicationDataDirectory().stringByAppendingPathComponent(DB)
 
     #elimina il db
-    error = Pointer.new(:object)
-    NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
+    # error = Pointer.new(:object)
+    # NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
 
     error_ptr = Pointer.new(:object)
     unless @store.addSQLitePersistentStoreAtPath(store_path,

@@ -24,35 +24,65 @@ class MenuViewController < UITableViewController
     end
   end
 
+  def importa(sender)
+    @actionSheet = UIActionSheet.alloc.initWithTitle("Sei sicuro?",
+                                            delegate:self,
+                                        cancelButtonTitle:"Annulla",
+                                        destructiveButtonTitle:"Importa",
+                                        otherButtonTitles:nil)
+
+    @actionSheet.showFromRect(sender.frame, inView:self.view, animated:true)
+  end
+
+
+  def actionSheet(actionSheet, didDismissWithButtonIndex:buttonIndex)
+    if buttonIndex != @actionSheet.cancelButtonIndex
+      esegui_importazione
+    end
+    @actionSheet = nil
+  end
+
   def login(sender)
     Store.shared.login {}
   end
 
-  def importa(sender)
+  def esegui_importazione
     self.activityIndicator.startAnimating
     importer = DataImporter.default
+    
     importer.importa_clienti do |result|
       
       main_queue = Dispatch::Queue.main
       main_queue.async do
         "reload_annotations".post_notification
       end
-
+      Store.shared.persist
+      importer = DataImporter.default
       importer.importa_classi do |result|
+        Store.shared.persist
+        importer = DataImporter.default
         importer.importa_libri do |result|
+          Store.shared.persist
+          importer = DataImporter.default
           importer.importa_adozioni do |result|
+            Store.shared.persist
+            importer = DataImporter.default
             importer.importa_appunti do |result|
+              Store.shared.persist
+              importer = DataImporter.default
               importer.importa_righe do |result|
-                #importer.importa_clienti do |result|
-                  
-                  #lo devo rifare seno scaglia
-                  # main_queue = Dispatch::Queue.main
-                  # main_queue.async do
-                  #   "reload_annotations".post_notification
-                  # end
-                  puts "finito"
-                  self.activityIndicator.stopAnimating
-                #end
+                
+                
+                Store.shared.persist
+                puts "finito"
+                self.activityIndicator.stopAnimating
+
+                # importer = DataImporter.default
+                # importer.importa_clienti do |result|
+                #   puts "ari finito"
+                #   Store.shared.persist
+                #   puts "finito"
+                # end
               end
             end
           end

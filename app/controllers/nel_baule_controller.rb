@@ -133,27 +133,34 @@ class NelBauleController < UIViewController
     end
   end
 
-  def tableView(tableView, canEditRowAtIndexPath:indexPath)
-    item = @grouped_baule[indexPath.row].keys[0].to_s
-    if item == "cliente"
-      true
-    else
-      false
-    end
-  end
+  # def tableView(tableView, canEditRowAtIndexPath:indexPath)
+  #   item = @grouped_baule[indexPath.row].keys[0].to_s
+  #   if item == "cliente"
+  #     true
+  #   else
+  #     false
+  #   end
+  # end
 
-  def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
+  # def tableView(tableView, commitEditingStyle:editing_style, forRowAtIndexPath:indexPath)
     
-    if editing_style == UITableViewCellEditingStyleDelete
+  #   if editing_style == UITableViewCellEditingStyleDelete
 
-      cliente = @grouped_baule[indexPath.row][:cliente]
+  #     cliente = @grouped_baule[indexPath.row][:cliente]
+      
+  #     cliente.nel_baule = 0
+  #     cliente.update
+  #     Store.shared.persist
 
-      cliente.nel_baule = 0
-      cliente.update
-      Store.shared.persist
-      "baule_did_change".post_notification
-      "reload_annotations".post_notification
-    end
-  end
+  #     @grouped_baule.removeObjectAtIndex indexPath.row
+       
+  #     tableView.beginUpdates
+  #     tableView.deleteRowsAtIndexPaths(NSArray.arrayWithObject(indexPath),withRowAnimation:UITableViewRowAnimationFade)
+  #     tableView.endUpdates
+
+  #     "baule_did_change".post_notification
+  #     "reload_annotations".post_notification
+  #   end
+  # end
 
 end

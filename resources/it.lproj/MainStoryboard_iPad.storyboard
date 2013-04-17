@@ -956,7 +956,10 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2x6-ON-XJk">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="insegnanti..." minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2x6-ON-XJk">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="270" id="fPw-C2-dly"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" returnKeyType="done"/>
                                 <connections>
@@ -965,7 +968,7 @@
                             </textField>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackTranslucent" translatesAutoresizingMaskIntoConstraints="NO" id="vlg-Nq-jf8">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="401" id="b1v-7x-Qio"/>
+                                    <constraint firstAttribute="width" constant="401" id="zcz-zZ-Zg7"/>
                                 </constraints>
                                 <items>
                                     <barButtonItem systemItem="cancel" id="abX-tr-Y6k">
@@ -986,32 +989,41 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="87" id="Luj-Ux-c1H"/>
                                 </constraints>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no"/>
                                 <connections>
                                     <outlet property="delegate" destination="Q28-3Z-LfA" id="sz4-65-pVi"/>
                                 </connections>
                             </textView>
+                            <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Mcz-Rm-FhP"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Aggiungi" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bw5-uR-cFk">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="eny-LF-t4G" firstAttribute="centerX" secondItem="6Hb-O9-pZU" secondAttribute="centerX" type="default" id="2Vc-1R-0t1"/>
+                            <constraint firstItem="Mcz-Rm-FhP" firstAttribute="top" secondItem="lX3-m6-17P" secondAttribute="top" constant="81" id="Au2-OD-oyt"/>
+                            <constraint firstItem="bw5-uR-cFk" firstAttribute="top" secondItem="lX3-m6-17P" secondAttribute="top" constant="51" id="Dbt-3Q-tHs"/>
                             <constraint firstItem="6RA-gT-hmJ" firstAttribute="leading" secondItem="lX3-m6-17P" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="EDq-99-TWU"/>
                             <constraint firstItem="vlg-Nq-jf8" firstAttribute="trailing" secondItem="lX3-m6-17P" secondAttribute="trailing" type="default" id="Ecb-wc-VgB"/>
-                            <constraint firstItem="6Hb-O9-pZU" firstAttribute="top" secondItem="lX3-m6-17P" secondAttribute="top" constant="51" id="J6Z-f4-cdy"/>
                             <constraint firstItem="vlg-Nq-jf8" firstAttribute="top" secondItem="lX3-m6-17P" secondAttribute="top" type="default" id="MnX-ZF-gWh"/>
+                            <constraint firstItem="Mcz-Rm-FhP" firstAttribute="leading" secondItem="lX3-m6-17P" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="Sk2-BY-1h2"/>
+                            <constraint firstItem="bw5-uR-cFk" firstAttribute="centerX" secondItem="Mcz-Rm-FhP" secondAttribute="centerX" type="default" id="Xoj-EU-9gu"/>
                             <constraint firstItem="2x6-ON-XJk" firstAttribute="top" secondItem="6Hb-O9-pZU" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="Ykj-vl-fs4"/>
                             <constraint firstItem="6RA-gT-hmJ" firstAttribute="top" secondItem="eny-LF-t4G" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="b4m-D1-9WS"/>
-                            <constraint firstItem="2x6-ON-XJk" firstAttribute="leading" secondItem="lX3-m6-17P" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="eQp-WM-frh"/>
                             <constraint firstAttribute="bottom" secondItem="6RA-gT-hmJ" secondAttribute="bottom" constant="20" symbolic="YES" type="default" id="eng-JL-h2y"/>
                             <constraint firstAttribute="trailing" secondItem="6RA-gT-hmJ" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="g17-dh-2DJ"/>
-                            <constraint firstItem="2x6-ON-XJk" firstAttribute="centerX" secondItem="eny-LF-t4G" secondAttribute="centerX" type="default" id="gHa-XC-C12"/>
+                            <constraint firstItem="bw5-uR-cFk" firstAttribute="baseline" secondItem="6Hb-O9-pZU" secondAttribute="baseline" type="default" id="g5Y-Ml-PcE"/>
                             <constraint firstItem="6RA-gT-hmJ" firstAttribute="centerX" secondItem="eny-LF-t4G" secondAttribute="centerX" type="default" id="iw6-QD-L92"/>
-                            <constraint firstItem="2x6-ON-XJk" firstAttribute="centerX" secondItem="6Hb-O9-pZU" secondAttribute="centerX" type="default" id="oWW-Fo-NWm"/>
+                            <constraint firstAttribute="trailing" secondItem="2x6-ON-XJk" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="yqK-d7-mOk"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="addSwitch" destination="Mcz-Rm-FhP" id="REr-Ng-EcJ"/>
                         <outlet property="labelClassi" destination="6Hb-O9-pZU" id="CbX-sS-aPL"/>
                         <outlet property="textField" destination="2x6-ON-XJk" id="iKt-O4-lBp"/>
                         <outlet property="textView" destination="6RA-gT-hmJ" id="n7f-OX-BjA"/>
@@ -2486,6 +2498,7 @@
                 <relationship kind="action" name="textFieldShouldReturn:"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="action" name="viewWillAppear:"/>
+                <relationship kind="outlet" name="addSwitch"/>
                 <relationship kind="outlet" name="labelClassi"/>
                 <relationship kind="outlet" name="textField"/>
                 <relationship kind="outlet" name="textView"/>
@@ -2599,7 +2612,7 @@
                 <relationship kind="outlet" name="activityIndicator"/>
             </relationships>
         </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
+        <class className="NSLayoutConstraint">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
             <relationships>
                 <relationship kind="action" name="to_s"/>
@@ -2687,18 +2700,6 @@
                 <relationship kind="action" name="rounded"/>
                 <relationship kind="action" name="rounded_rect"/>
             </relationships>
-        </class>
-        <class className="UICollectionReusableView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionReusableView.h"/>
-        </class>
-        <class className="UICollectionViewCell" superclassName="UICollectionReusableView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewCell.h"/>
-        </class>
-        <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
-        </class>
-        <class className="UICollectionViewLayout" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
         <class className="UIControl">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UIControl.h"/>

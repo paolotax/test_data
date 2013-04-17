@@ -94,6 +94,43 @@ class Cliente < NSManagedObject
     data
   end
 
+  def sum_copie
+
+    context = Store.shared.context
+    request = NSFetchRequest.alloc.init
+    request.entity = NSEntityDescription.entityForName("Cliente", inManagedObjectContext:context)
+    request.resultType = NSDictionaryResultType
+
+    pred = nil
+    predicates = [] 
+    predicates.addObject(NSPredicate.predicateWithFormat("ClienteId = '#{self.ClienteId}'"))
+    pred = NSCompoundPredicate.andPredicateWithSubpredicates(predicates)
+    request.predicate = pred
+
+    keyPathExpression = NSExpression.expressionForKeyPath "appunti.righe.quantita" 
+    earliestExpression = NSExpression.expressionForFunction("sum:", arguments:NSArray.arrayWithObject(keyPathExpression))
+
+
+    earliestExpressionDescription = NSExpressionDescription.alloc.init
+    earliestExpressionDescription.setName("earliestDate")
+    earliestExpressionDescription.setExpression(earliestExpression)
+    earliestExpressionDescription.setExpressionResultType(NSInteger32AttributeType)
+
+    request.setPropertiesToFetch NSArray.arrayWithObject(earliestExpressionDescription)
+
+    # request.sortDescriptors = ["provincia", "comune", "nome"].collect { |sortKey|
+    #   NSSortDescriptor.alloc.initWithKey(sortKey, ascending:true)
+    # }
+    
+    error_ptr = Pointer.new(:object)
+    data = context.executeFetchRequest(request, error:error_ptr)
+    if data == nil
+      raise "Error when fetching data: #{error_ptr[0].description}"
+    end
+    data
+
+  end
+
   def nel_baule?
     nel_baule == 1
   end

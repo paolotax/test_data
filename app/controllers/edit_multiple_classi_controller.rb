@@ -7,16 +7,13 @@ class EditMultipleClassiController < UIViewController
   outlet :labelClassi
   outlet :textView
   outlet :textField
+  outlet :addSwitch
 
   attr_accessor :textChangedBlock
 
   def viewDidLoad
     super
 
-    # self.navigationItem.setLeftBarButtonItem(UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:"cancel:"))
-  
-    # if (![[self navigationItem] rightBarButtonItem]) {
-    #   [[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)]];
   end
   
 
@@ -24,22 +21,33 @@ class EditMultipleClassiController < UIViewController
   def viewWillAppear(animated)
     super
 
-    self.labelClassi.text = "#{@selected_classi.count} classi selezionate"
+    if @selected_classi.count == 1
 
-    if self.textView
-      self.textView.text = @testo
-      self.textView.becomeFirstResponder
+      self.labelClassi.text = "#{@selected_classi[0].num_classe} #{@selected_classi[0].sezione} - #{@selected_classi[0].cliente.nome}"
+      self.textField.text = @selected_classi[0].insegnanti
+      self.textView.text = @selected_classi[0].note
+    
     else
-      self.textField.text = @testo
-      self.textField.becomeFirstResponder
+      self.addSwitch.on = true
+      self.labelClassi.text = "#{@selected_classi.count} classi selezionate"    
+    
     end
+    self.textField.becomeFirstResponder
   end
   
   def handleTextCompletion
 
     @selected_classi.each do |classe|
-      classe.note = self.textField.text
+      if self.addSwitch.isOn  && @selected_classi.count >= 1
+        classe.insegnanti = "#{classe.insegnanti} #{self.textField.text}".strip
+        classe.note = "#{classe.note} #{self.textView.text}".strip
+      else
+        classe.note = self.textView.text
+        classe.insegnanti = self.textField.text
+      end
+      
       classe.update
+      classe.save_to_backend
     end  
 
     Store.shared.persist

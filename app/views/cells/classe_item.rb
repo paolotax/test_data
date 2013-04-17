@@ -1,8 +1,6 @@
 class ClasseItem < UICollectionViewCell
 
   attr_accessor :classe
-  attr_accessor :status
-
 
   def initWithFrame(frame)
     
@@ -11,17 +9,27 @@ class ClasseItem < UICollectionViewCell
       cell.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
       
       @classe_label = UILabel.alloc.initWithFrame([[25, 44], [32, 28]]).tap do |label|
-         #label.translatesAutoresizingMaskIntoConstraints = false
-         label.numberOfLines = 1
-         label.font = UIFont.boldSystemFontOfSize(20.0)
-         label.textAlignment = UITextAlignmentCenter
-         label.backgroundColor = UIColor.clearColor
-         label.textColor = UIColor.darkGrayColor
-         label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
-         cell.contentView.addSubview(label)
+        #label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.font = UIFont.boldSystemFontOfSize(22.0)
+        label.textAlignment = UITextAlignmentCenter
+        label.adjustsFontSizeToFitWidth = true
+        label.backgroundColor = UIColor.clearColor
+        label.textColor = UIColor.darkGrayColor
+        cell.contentView.addSubview(label)
       end
 
-      @note_text = UITextView.alloc.initWithFrame([[90, 13], [242, 19]]).tap do |text|
+      @insegnanti_label = UILabel.alloc.initWithFrame([[90, 13], [345, 31]]).tap do |label|
+        label.numberOfLines = 1
+        label.font = UIFont.systemFontOfSize(20.0)
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = UITextAlignmentLeft
+        label.backgroundColor = UIColor.clearColor
+        label.textColor = UIColor.darkGrayColor
+        cell.contentView.addSubview(label)
+      end
+
+      @note_text = UITextView.alloc.initWithFrame([[85, 44], [350, 47]]).tap do |text|
         text.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
         text.setUserInteractionEnabled(false)
         # text.editable = false  #   preserva lo scroll ma sbaglia tap
@@ -35,14 +43,14 @@ class ClasseItem < UICollectionViewCell
       end
 
       @alunni_label = UILabel.alloc.initWithFrame([[35, 122], [31, 14]]).tap do |label|
-         #label.translatesAutoresizingMaskIntoConstraints = false
-         label.numberOfLines = 1
-         label.font = UIFont.systemFontOfSize(12.0)
-         label.textAlignment = UITextAlignmentRight
-         label.backgroundColor = UIColor.clearColor
-         label.textColor = UIColor.darkGrayColor
-         label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
-         cell.contentView.addSubview(label)
+        #label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.font = UIFont.systemFontOfSize(12.0)
+        label.textAlignment = UITextAlignmentRight
+        label.backgroundColor = UIColor.clearColor
+        label.textColor = UIColor.darkGrayColor
+        label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin
+        cell.contentView.addSubview(label)
       end
 
       @adozione_image =  UIImageView.alloc.initWithFrame([[90, 103], [50, 60]]).tap do |imgv|
@@ -141,40 +149,83 @@ class ClasseItem < UICollectionViewCell
     if @classe
       @classe_label.text = "#{@classe.num_classe} #{@classe.sezione}"
       @alunni_label.text = "#{@classe.nr_alunni}b"
+      @insegnanti_label.text = @classe.insegnanti
       @note_text.text = @classe.note
 
       mask = "mask-adozione".uiimage
 
       if @classe.adozioni.count == 1
+        
         @adozione_image.hidden = false
         @adozione_image.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(0).sigla}.jpeg"), mask))   
         @adozione_image_2.hidden = true
         @adozione_image_3.hidden = true
+
+        if @classe.adozioni.objectAtIndex(0).kit_1.blank?
+          @adozione_image.alpha = 0.4
+        else
+          @adozione_image.alpha = 1
+        end
       
       elsif @classe.adozioni.count == 2 
+        
         @adozione_image.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(0).sigla}.jpeg"), mask))   
         @adozione_image_2.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(1).sigla}.jpeg"), mask))
         @adozione_image.hidden = false
         @adozione_image_2.hidden = false
         @adozione_image_3.hidden = true
 
+        if @classe.adozioni.objectAtIndex(0).kit_1.blank?
+          @adozione_image.alpha = 0.4
+        else
+          @adozione_image.alpha = 1
+        end
+
+        if @classe.adozioni.objectAtIndex(1).kit_1.blank?
+          @adozione_image_2.alpha = 0.4
+        else
+          @adozione_image_2.alpha = 1
+        end
+
       elsif @classe.adozioni.count >= 3 
+        
         @adozione_image.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(0).sigla}.jpeg"), mask))   
         @adozione_image_2.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(1).sigla}.jpeg"), mask))  
         @adozione_image_3.setImage(self.appImage(UIImage.imageNamed("#{@classe.adozioni.objectAtIndex(2).sigla}.jpeg"), mask))
         @adozione_image.hidden = false
         @adozione_image_2.hidden = false
         @adozione_image_3.hidden = false
- 
+
+        if @classe.adozioni.objectAtIndex(0).kit_1.blank?
+          @adozione_image.alpha = 0.4
+        else
+          @adozione_image.alpha = 1
+        end
+
+        if @classe.adozioni.objectAtIndex(1).kit_1.blank?
+          @adozione_image_2.alpha = 0.4
+        else
+          @adozione_image_2.alpha = 1
+        end
+
+        if @classe.adozioni.objectAtIndex(2).kit_1.blank?
+          @adozione_image_3.alpha = 0.4
+        else
+          @adozione_image_3.alpha = 1
+        end 
+      
       else
+        
         @adozione_image.hidden = true
         @adozione_image_2.hidden = true
         @adozione_image_3.hidden = true
+      
       end
 
       @vacanze_image_1.setImage "#{@classe.libro_1.blank? ? "vacanze_vuoto" : @classe.libro_1}".uiimage
       @vacanze_image_2.setImage "#{@classe.libro_2.blank? ? "vacanze_vuoto" : @classe.libro_2}".uiimage
       @vacanze_image_3.setImage "#{@classe.libro_3.blank? ? "vacanze_vuoto" : @classe.libro_3}".uiimage
+      
       self.setNeedsDisplay
     end
     @classe
@@ -197,7 +248,27 @@ class ClasseItem < UICollectionViewCell
   end
  
   def toggleKit(sender)
+
+    if sender == @adozione_image
+      adozione = @classe.adozioni.objectAtIndex(0)
+    elsif sender == @adozione_image_2
+      adozione = @classe.adozioni.objectAtIndex(1)
+    else
+      adozione = @classe.adozioni.objectAtIndex(2)
+    end
+
     sender.alpha == 1 ? sender.alpha = 0.4 : sender.alpha = 1
+
+    if adozione.kit_1.blank?
+      adozione.setValue "consegnato", forKey: "kit_1"
+    else
+      adozione.setValue "", forKey: "kit_1"
+    end
+
+    adozione.updated_at = Time.now
+    adozione.update
+    adozione.save_to_backend
+    adozione.persist
   end
 
   def toggle_vacanza(sender)
@@ -226,9 +297,11 @@ class ClasseItem < UICollectionViewCell
       sender.setImage "vacanze_vuoto".uiimage
       @classe.setValue "vacanze_vuoto", forKey: attribute
     end
-      
+    
+    @classe.updated_at = Time.now  
     @classe.update
-    @classe.persist    
+    @classe.save_to_backend 
+    @classe.persist   
   end
 
 
@@ -243,6 +316,9 @@ class ClasseItem < UICollectionViewCell
     color = UIColor.colorWithRed(1, green:0.114, blue:0.114, alpha:0.468)
     color2 = UIColor.colorWithRed(0.41, green:1, blue:0.114, alpha:0.61)
     color3 = UIColor.colorWithRed(1, green:1, blue:0.114, alpha:1)
+
+    selectedColor = UIColor.colorWithRed(0.972, green:0.762, blue:0.234, alpha:1)
+
 
     ## Shadow Declarations
     shadow = strokeColor
@@ -261,7 +337,16 @@ class ClasseItem < UICollectionViewCell
     CGContextRestoreGState(context)
 
     strokeColor.setStroke
-    roundedRectanglePath.lineWidth = 1
+
+
+    if self.isSelected == true
+      roundedRectanglePath.lineWidth = 3
+      selectedColor.setStroke
+    else
+      roundedRectanglePath.lineWidth = 1
+      strokeColor.setStroke
+    end
+
     roundedRectanglePath.stroke
 
 
