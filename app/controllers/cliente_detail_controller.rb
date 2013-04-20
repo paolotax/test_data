@@ -18,6 +18,7 @@ class ClienteDetailController < UIViewController
   outlet :callButton
 
   outlet :editMultipleButton
+  outlet :refreshClassiButton
 
 
   outlet :segmentedControl
@@ -90,33 +91,6 @@ class ClienteDetailController < UIViewController
       emailButton.alpha = 0.5
     end
     
- 
-
-    # if cliente.cliente_tipo == "Scuola Primaria"
-    #   segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
-    #   segmentedControl.insertSegmentWithTitle("Classi", atIndex:1,animated:false)
-    #   segmentedControl.selectedSegmentIndex = 0
-    # else
-    #   segmentedControl.insertSegmentWithTitle("Appunti", atIndex:0,animated:false)
-    #   segmentedControl.selectedSegmentIndex = 0
-    # end
-    
-    # #self.editMultipleButton.enabled = false
-
-    # @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
-    # @appuntiCollectionController.view.frame = self.collectionViewContainer.bounds
-    # @appuntiCollectionController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    # @appuntiCollectionController.cliente = @cliente
-    # self.collectionViewContainer.addSubview(@appuntiCollectionController.view)
-
-    # @classiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("ClassiCollection")
-    # @classiCollectionController.cliente = @cliente
-
-    # self.addChildViewController(@appuntiCollectionController)
-    # @appuntiCollectionController.didMoveToParentViewController(self)
-
-
-
     @appuntiCollectionController = self.storyboard.instantiateViewControllerWithIdentifier("AppuntiCollection")
     @appuntiCollectionController.cliente = @cliente
 
@@ -153,10 +127,12 @@ class ClienteDetailController < UIViewController
       sourceView = @appuntiCollectionController
       destView = @classiCollectionController
       self.editMultipleButton.enabled = true
+      self.refreshClassiButton.enabled = true
     else
       sourceView = @classiCollectionController
       destView = @appuntiCollectionController
       self.editMultipleButton.enabled = false
+      self.refreshClassiButton.enabled = false
     end
 
     self.addChildViewController(destView)
@@ -174,6 +150,19 @@ class ClienteDetailController < UIViewController
                                 sourceView.removeFromParentViewController
                               end
     )
+  end
+
+  def refreshClassi
+    Store.shared.login do
+      @cliente.classi.each do |c|
+        puts c
+        c.save_to_backend
+        c.adozioni.each do |a|
+          puts a
+          a.save_to_backend
+        end
+      end
+    end  
   end
 
 

@@ -34,6 +34,25 @@ class Cliente < NSManagedObject
     { name: 'classi', destination: 'Classe', inverse: 'cliente', json: 'classi', optional: true, transient: false, indexed: false, ordered: true, min: 0, max: NSIntegerMax, del: NSCascadeDeleteRule }
   ]
 
+  def save_to_backend
+    if self.ClienteId == 0  
+      Store.shared.backend.postObject(self, path:nil, parameters:nil, 
+                          success:lambda do |operation, result|
+                                    Store.shared.persist
+                                  end, 
+                          failure:lambda do |operation, error|
+                                  end)
+    else
+      Store.shared.backend.putObject(self, path:nil, parameters:nil, 
+                          success:lambda do |operation, result|
+                                    Store.shared.persist  
+                                  end, 
+                          failure:lambda do |operation, error|
+                                  end)
+    end
+  end
+
+
   def citta
     self.frazione.blank? ? self.comune : self.frazione
   end

@@ -681,6 +681,11 @@
                                         </segmentedControl>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="k98-Bd-nq9"/>
+                                    <barButtonItem systemItem="refresh" id="tFA-JH-4cy">
+                                        <connections>
+                                            <action selector="refreshClassi" destination="mIp-eZ-aPr" id="IUG-pC-REK"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vBg-R0-RqA">
@@ -777,6 +782,7 @@
                         <outlet property="mainToolbar" destination="ycx-bU-CQH" id="fs2-1F-RfX"/>
                         <outlet property="navigaButton" destination="Pql-pI-RU8" id="dRR-qO-VEK"/>
                         <outlet property="nuovoAppuntoButton" destination="Ukm-6s-04S" id="Aer-fz-zYF"/>
+                        <outlet property="refreshClassiButton" destination="tFA-JH-4cy" id="KB7-TO-v9Z"/>
                         <outlet property="segmentedControl" destination="L8z-a0-2Q6" id="nIQ-DS-grb"/>
                     </connections>
                 </viewController>
@@ -2449,6 +2455,7 @@
                 <relationship kind="action" name="makeCall:"/>
                 <relationship kind="action" name="navigate:"/>
                 <relationship kind="action" name="popoverControllerDidDismissPopover:"/>
+                <relationship kind="action" name="refreshClassi"/>
                 <relationship kind="action" name="searchBarSearchButtonClicked:"/>
                 <relationship kind="action" name="searchBarTextDidBeginEditing:"/>
                 <relationship kind="action" name="searchBarTextDidEndEditing:"/>
@@ -2464,6 +2471,7 @@
                 <relationship kind="outlet" name="mainToolbar"/>
                 <relationship kind="outlet" name="navigaButton"/>
                 <relationship kind="outlet" name="nuovoAppuntoButton"/>
+                <relationship kind="outlet" name="refreshClassiButton"/>
                 <relationship kind="outlet" name="segmentedControl"/>
             </relationships>
         </class>
@@ -2606,13 +2614,14 @@
         <class className="MenuViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/MenuViewController.h"/>
             <relationships>
+                <relationship kind="action" name="esegui_importazione"/>
                 <relationship kind="action" name="importa:"/>
                 <relationship kind="action" name="login:"/>
                 <relationship kind="action" name="viewDidLoad"/>
                 <relationship kind="outlet" name="activityIndicator"/>
             </relationships>
         </class>
-        <class className="NSLayoutConstraint">
+        <class className="NSLayoutConstraint" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
             <relationships>
                 <relationship kind="action" name="to_s"/>
@@ -2700,6 +2709,18 @@
                 <relationship kind="action" name="rounded"/>
                 <relationship kind="action" name="rounded_rect"/>
             </relationships>
+        </class>
+        <class className="UICollectionReusableView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionReusableView.h"/>
+        </class>
+        <class className="UICollectionViewCell" superclassName="UICollectionReusableView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewCell.h"/>
+        </class>
+        <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
+        </class>
+        <class className="UICollectionViewLayout" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
         <class className="UIControl">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UIControl.h"/>

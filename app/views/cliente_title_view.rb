@@ -41,7 +41,8 @@ class ClienteTitleView < UIView
         self.cliente.nel_baule = 1
       end
       cliente.update
-      Store.shared.persist
+      cliente.save_to_backend
+      cliente.persist
       @bauleButton.nel_baule = cliente.nel_baule
       "baule_did_change".post_notification
     }

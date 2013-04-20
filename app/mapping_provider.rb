@@ -17,7 +17,7 @@ class MappingProvider
 
     add_response_mapping(cliente_mapping, "cliente")
     add_response_mapping(cliente_mapping, "clienti")
-    add_request_mapping(cliente_mapping.inverseMapping, "cliente", Cliente)
+    add_request_mapping(request_cliente_mapping.inverseMapping, "cliente", Cliente)
     add_route_set(Cliente, "api/v1/clienti", "api/v1/clienti/:ClienteId")
 
     add_response_mapping(appunto_mapping, "appunto")
@@ -142,6 +142,31 @@ class MappingProvider
       #                                toKeyPath:"classi", withMapping:classe_mapping))
       # mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("docenti", 
       #                                toKeyPath:"docenti", withMapping:docente_mapping))
+    end
+  end
+
+  def request_cliente_mapping
+    @request_cliente_mapping ||= begin
+      mapping = RKEntityMapping.mappingForEntityForName("Cliente",
+                                       inManagedObjectStore:@store)
+
+      mapping.addAttributeMappingsFromDictionary(
+                                             titolo: "nome",
+                                             comune: "comune",
+                                           frazione: "frazione",
+                                       cliente_tipo: "cliente_tipo",
+                                          indirizzo: "indirizzo",
+                                                cap: "cap",
+                                          provincia: "provincia",
+                                           telefono: "telefono",
+                                              email: "email",
+                                           latitude: "latitude",
+                                          longitude: "longitude",
+                                    ragione_sociale: "ragione_sociale",
+                                        partita_iva: "partita_iva",
+                                     codice_fiscale: "codice_fiscale",
+                                          nel_baule: "nel_baule"
+                                                 )
     end
   end
 
