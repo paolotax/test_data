@@ -32,6 +32,7 @@ Motion::Project::App.setup do |app|
     pod 'NVUIGradientButton'
     pod 'NVSlideMenuController'
     pod 'CustomBadge'
+    pod 'Reachability'
   end
 
   app.vendor_project('vendor/MTLabel', :xcode, :target => 'MTLabel', :headers_dir => 'MTLabel')

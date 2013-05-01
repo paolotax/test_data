@@ -8,6 +8,7 @@ class SetPinController < UITableViewController
   outlet :switch_in_sospeso
   outlet :switch_nel_baule
   outlet :switch_scuole_primarie
+  outlet :switch_scuole_primarie_fatte
   outlet :switch_altri_clienti
 
   def viewDidLoad
@@ -27,6 +28,9 @@ class SetPinController < UITableViewController
       self.switch_nel_baule.on = true
     end
     if self.selectedPins.include? "switch_scuole_primarie"
+      self.switch_scuole_primarie.on = true  
+    end
+    if self.selectedPins.include? "switch_scuole_primarie_fatte"
       self.switch_scuole_primarie.on = true  
     end
     if self.selectedPins.include? "switch_altri_clienti"  
@@ -54,6 +58,9 @@ class SetPinController < UITableViewController
     if self.switch_scuole_primarie.isOn == true
       selectedPins << "switch_scuole_primarie"
     end
+    if self.switch_scuole_primarie_fatte.isOn == true
+      selectedPins << "switch_scuole_primarie_fatte"
+    end
     if self.switch_altri_clienti.isOn == true
       selectedPins << "switch_altri_clienti"
     end
@@ -63,10 +70,12 @@ class SetPinController < UITableViewController
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     tableView.deselectRowAtIndexPath(indexPath, animated:false)
-    if indexPath.row == 5
+    if indexPath.row == 6
       @delegate.resetBaule
-    elsif indexPath.row == 6
+    elsif indexPath.row == 7
       @delegate.smartBaule
+    elsif indexPath.row == 8
+      @delegate.reload
     end   
   end
 end

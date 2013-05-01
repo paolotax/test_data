@@ -26,7 +26,9 @@ class Cliente < NSManagedObject
     { name: 'partita_iva',      type: NSStringAttributeType, default: '', optional: true, transient: false, indexed: false},
     { name: 'appunti_da_fare',    type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
     { name: 'appunti_in_sospeso', type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
-    { name: 'nel_baule',          type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false}
+    { name: 'nel_baule',          type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false},
+    { name: 'fatto',              type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false}
+  
   ]
 
   @relationships = [
@@ -45,7 +47,7 @@ class Cliente < NSManagedObject
     else
       Store.shared.backend.putObject(self, path:nil, parameters:nil, 
                           success:lambda do |operation, result|
-                                    Store.shared.persist  
+                                    Store.shared.persist
                                   end, 
                           failure:lambda do |operation, error|
                                   end)
@@ -126,16 +128,16 @@ class Cliente < NSManagedObject
     pred = NSCompoundPredicate.andPredicateWithSubpredicates(predicates)
     request.predicate = pred
 
-    keyPathExpression = NSExpression.expressionForKeyPath "appunti.righe.quantita" 
-    earliestExpression = NSExpression.expressionForFunction("sum:", arguments:NSArray.arrayWithObject(keyPathExpression))
+    keyPathExpression = NSExpression.expressionForKeyPath "appunti" 
+    countExpression = NSExpression.expressionForFunction("count:", arguments:NSArray.arrayWithObject(keyPathExpression))
 
 
-    earliestExpressionDescription = NSExpressionDescription.alloc.init
-    earliestExpressionDescription.setName("earliestDate")
-    earliestExpressionDescription.setExpression(earliestExpression)
-    earliestExpressionDescription.setExpressionResultType(NSInteger32AttributeType)
+    expressionDescription = NSExpressionDescription.alloc.init
+    expressionDescription.setName("sum")
+    expressionDescription.setExpression(countExpression)
+    expressionDescription.setExpressionResultType(NSInteger32AttributeType)
 
-    request.setPropertiesToFetch NSArray.arrayWithObject(earliestExpressionDescription)
+    request.setPropertiesToFetch NSArray.arrayWithObject(expressionDescription)
 
     # request.sortDescriptors = ["provincia", "comune", "nome"].collect { |sortKey|
     #   NSSortDescriptor.alloc.initWithKey(sortKey, ascending:true)

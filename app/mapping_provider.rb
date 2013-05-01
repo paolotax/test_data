@@ -134,7 +134,8 @@ class MappingProvider
                                      codice_fiscale: "codice_fiscale",
                                     appunti_da_fare: "appunti_da_fare",
                                  appunti_in_sospeso: "appunti_in_sospeso",
-                                          nel_baule: "nel_baule"
+                                          nel_baule: "nel_baule",
+                                              fatto: "fatto"
                                                  )
       # mapping.addPropertyMapping(RKRelationshipMapping.relationshipMappingFromKeyPath("appunti", 
       #                                 toKeyPath:"appunti", withMapping:appunto_mapping))

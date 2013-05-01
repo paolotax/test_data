@@ -4,7 +4,7 @@ class Store
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga, Classe, Adozione]
   
   BASE_URL = "http://youpropa.com"
-  #BASE_URL = "http://192.168.1.128:3000"
+  #BASE_URL = "http://localhost:3000"
 
   USERNAME = 'paolotax'
   PASSWORD = 'sisboccia'
@@ -49,7 +49,26 @@ class Store
     end
   end
 
+  def client
+    self.backend.HTTPClient
+  end
 
+
+  def setupReachability
+    client.operationQueue.maxConcurrentOperationCount = 1
+    client.operationQueue.suspended = true
+
+    @reachability = Reachability.reachabilityWithHostname(BASE_URL)
+    @reachability.reachableBlock = lambda do |reachable| 
+      client.operationQueue.suspended = false
+      puts "reachable"
+    end    
+    @reachability.unreachableBlock = lambda do |reachable| 
+      client.operationQueue.suspended = true
+      puts "unreachable"
+    end
+    @reachability.startNotifier
+  end
 
 
 
@@ -144,8 +163,8 @@ class Store
     store_path = RKApplicationDataDirectory().stringByAppendingPathComponent(DB)
 
     #elimina il db
-    # error = Pointer.new(:object)
-    # NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
+    #error = Pointer.new(:object)
+    #NSFileManager.defaultManager.removeItemAtPath(store_path, error:error)
 
     error_ptr = Pointer.new(:object)
     unless @store.addSQLitePersistentStoreAtPath(store_path,
@@ -164,7 +183,7 @@ class Store
     @persistent_context = @store.persistentStoreManagedObjectContext
     @context = @store.mainQueueManagedObjectContext
 
-    #RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
+    RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
     #RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
 
     MappingProvider.shared.init_mappings(@store, @backend)

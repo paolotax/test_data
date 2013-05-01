@@ -96,7 +96,8 @@ class MainController < UIViewController
     unless @pippo
       annotation.nel_baule == 0 ? annotation.nel_baule = 1 : annotation.nel_baule = 0 
       annotation.update
-      Store.shared.persist
+      annotation.save_to_backend
+      annotation.persist
       self.map.removeAnnotation(annotation)
       self.map.addAnnotation(annotation)
       @annotationPopover.dismissPopoverAnimated(true) if @annotationPopover
@@ -132,7 +133,10 @@ class MainController < UIViewController
       searchPredicates.addObject(NSPredicate.predicateWithFormat("nel_baule = 1"))
     end
     if @filterClienti.include?("switch_scuole_primarie")
-      searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo = 'Scuola Primaria'"))
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo = 'Scuola Primaria' and fatto != 1"))
+    end
+    if @filterClienti.include?("switch_scuole_primarie_fatte")
+      searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo = 'Scuola Primaria' and fatto = 1"))
     end
     if @filterClienti.include?("switch_altri_clienti")
       searchPredicates.addObject(NSPredicate.predicateWithFormat("cliente_tipo != 'Scuola Primaria'"))
@@ -178,7 +182,13 @@ class MainController < UIViewController
     elsif annotation.appunti_in_sospeso && annotation.appunti_in_sospeso > 0
       view.image = "pin-green".uiimage
     elsif annotation.cliente_tipo == "Scuola Primaria"
-      view.image = "pin-orange".uiimage
+      
+      if annotation.fatto == 1
+        view.image = "pin-black".uiimage
+      else
+        view.image = "pin-orange".uiimage
+      end
+      
     else
       view.image = "pin-gray".uiimage
     end
@@ -283,6 +293,7 @@ class MainController < UIViewController
       visibleAnnotations.allObjects.each do |c|
         c.nel_baule = 1
         c.update
+        c.save_to_backend
       end 
       Store.shared.persist
     end
@@ -295,6 +306,7 @@ class MainController < UIViewController
       if c.nel_baule == 1
         c.nel_baule = 0
         c.update
+        c.save_to_backend
       end
     end 
     Store.shared.persist
