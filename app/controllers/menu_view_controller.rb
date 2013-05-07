@@ -48,37 +48,28 @@ class MenuViewController < UITableViewController
 
   def esegui_importazione
     self.activityIndicator.startAnimating
-    importer = DataImporter.default
     
-    importer.importa_clienti do |result|
+    Store.shared.clear
+
+    @importer = DataImporter.default
+    
+    @importer.importa_clienti do |result|
       
       main_queue = Dispatch::Queue.main
       main_queue.async do
         "reload_annotations".post_notification
       end
-      Store.shared.persist
-      importer = DataImporter.default
-      importer.importa_classi do |result|
-        Store.shared.persist
-        importer = DataImporter.default
-        importer.importa_libri do |result|
-          Store.shared.persist
-          importer = DataImporter.default
-          importer.importa_adozioni do |result|
-            Store.shared.persist
-            importer = DataImporter.default
-            importer.importa_appunti do |result|
-              Store.shared.persist
-              importer = DataImporter.default
-              importer.importa_righe do |result|
-                
-                
+      @importer.importa_classi do |result|
+        @importer.importa_libri do |result|
+          @importer.importa_adozioni do |result|
+            @importer.importa_appunti do |result|
+               @importer.importa_righe do |result|               
                 Store.shared.persist
                 puts "finito"
                 self.activityIndicator.stopAnimating
-
-                # importer = DataImporter.default
-                # importer.importa_clienti do |result|
+                @importer = nil
+                # @importer = Data@Importer.default
+                # @importer.importa_clienti do |result|
                 #   puts "ari finito"
                 #   Store.shared.persist
                 #   puts "finito"

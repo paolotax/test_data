@@ -157,19 +157,39 @@ class AppuntiController < UIViewController
   private
 
     def loadFromBackend
-      Store.shared.login do
-        Store.shared.backend.getObjectsAtPath("api/v1/appunti",
-                                    parameters: nil,
-                                    success: lambda do |operation, result|
-                                                      "appuntiListDidLoadBackend".post_notification
-                                                      "reload_appunti_collections".post_notification
-                                                      @refreshControl.endRefreshing
-                                                    end,
-                                    failure: lambda do |operation, error|
-                                                      "appuntiListErrorLoadBackend".post_notification
-                                                      App.alert("#{error.localizedDescription}")
-                                                    end)
+
+      @importer = DataImporter.default
+
+      @importer.importa_libri do |result|
+        @importer.importa_appunti do |result|
+          @importer.importa_righe do |result|
+            @importer.importa_clienti do |result|
+              Store.shared.persist
+              "appuntiListDidLoadBackend".post_notification
+              "reload_appunti_collections".post_notification
+              "reload_annotations".post_notification
+              @refreshControl.endRefreshing                              
+              puts "finito"
+            end
+          end
+        end
       end
+
+
+
+      # Store.shared.login do
+      #   Store.shared.backend.getObjectsAtPath("api/v1/appunti",
+      #                               parameters: nil,
+      #                               success: lambda do |operation, result|
+      #                                                 "appuntiListDidLoadBackend".post_notification
+      #                                                 "reload_appunti_collections".post_notification
+      #                                                 @refreshControl.endRefreshing
+      #                                               end,
+      #                               failure: lambda do |operation, error|
+      #                                                 "appuntiListErrorLoadBackend".post_notification
+      #                                                 App.alert("#{error.localizedDescription}")
+      #                                               end)
+      # end
     end
 
 

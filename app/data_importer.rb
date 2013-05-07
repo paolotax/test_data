@@ -7,7 +7,6 @@ class DataImporter
   end
 
   def importa_clienti(&block)
-    Store.shared.clear
     Store.shared.login do
       puts "loggato"
       Store.shared.backend.getObjectsAtPath("api/v1/clienti",

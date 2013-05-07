@@ -11,9 +11,24 @@ class SetPinController < UITableViewController
   outlet :switch_scuole_primarie_fatte
   outlet :switch_altri_clienti
 
+  outlet :label_da_fare
+  outlet :label_in_sospeso
+  outlet :label_nel_baule
+  outlet :label_scuole_primarie
+  outlet :label_scuole_primarie_fatte
+  outlet :label_altri_clienti
+
   def viewDidLoad
     super
     self.navigationItem.title = "Scegli Clienti"
+
+    self.label_da_fare.text = "#{Cliente.con_appunti_da_fare[0]['con_appunti_da_fare']} #{self.label_da_fare.text}"
+    self.label_in_sospeso.text = "#{Cliente.con_appunti_in_sospeso[0]['con_appunti_in_sospeso']} #{self.label_in_sospeso.text}"
+  
+    self.label_scuole_primarie.text = "#{Cliente.scuole_da_fare[0]['scuole_da_fare']} #{self.label_scuole_primarie.text}"
+    self.label_scuole_primarie_fatte.text = "#{Cliente.scuole_fatte[0]['scuole_fatte']} #{self.label_scuole_primarie_fatte.text}"
+    self.label_nel_baule.text = "#{Cliente.clienti_nel_baule[0]['clienti_nel_baule']} #{self.label_nel_baule.text}"
+  
   end
 
   def viewWillAppear(animated)
@@ -31,7 +46,7 @@ class SetPinController < UITableViewController
       self.switch_scuole_primarie.on = true  
     end
     if self.selectedPins.include? "switch_scuole_primarie_fatte"
-      self.switch_scuole_primarie.on = true  
+      self.switch_scuole_primarie_fatte.on = true  
     end
     if self.selectedPins.include? "switch_altri_clienti"  
       self.switch_altri_clienti.on = true

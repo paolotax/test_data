@@ -183,7 +183,7 @@ class Store
     @persistent_context = @store.persistentStoreManagedObjectContext
     @context = @store.mainQueueManagedObjectContext
 
-    RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
+    #RKlcl_configure_by_name("RestKit/Network", RKLogLevelTrace)
     #RKlcl_configure_by_name("RestKit/ObjectMapping", RKLogLevelTrace)
 
     MappingProvider.shared.init_mappings(@store, @backend)
