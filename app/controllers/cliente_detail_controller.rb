@@ -182,7 +182,7 @@ class ClienteDetailController < UIViewController
       else
         controller = segue.destinationViewController
       end  
-      if Device.ipad? && sender.class == Appunto_Appunto_
+      if Device.ipad? && sender.class.to_s == "Appunto_Appunto_"
         appunto = sender
         controller.appunto = appunto
       else

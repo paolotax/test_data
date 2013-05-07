@@ -25,10 +25,11 @@ class SetPinController < UITableViewController
     self.label_da_fare.text = "#{Cliente.con_appunti_da_fare[0]['con_appunti_da_fare']} #{self.label_da_fare.text}"
     self.label_in_sospeso.text = "#{Cliente.con_appunti_in_sospeso[0]['con_appunti_in_sospeso']} #{self.label_in_sospeso.text}"
   
-    self.label_scuole_primarie.text = "#{Cliente.scuole_da_fare[0]['scuole_da_fare']} #{self.label_scuole_primarie.text}"
-    self.label_scuole_primarie_fatte.text = "#{Cliente.scuole_fatte[0]['scuole_fatte']} #{self.label_scuole_primarie_fatte.text}"
     self.label_nel_baule.text = "#{Cliente.clienti_nel_baule[0]['clienti_nel_baule']} #{self.label_nel_baule.text}"
   
+    self.label_scuole_primarie.text = "#{Cliente.scuole_da_fare[0]['scuole_da_fare']} #{self.label_scuole_primarie.text}"
+    self.label_scuole_primarie_fatte.text = "#{Cliente.scuole_fatte[0]['scuole_fatte']} #{self.label_scuole_primarie_fatte.text}"
+    
   end
 
   def viewWillAppear(animated)

@@ -9,7 +9,7 @@ class EditReminderController < UIViewController
   #outlet :dateText  
   #outlet :datePicker
 
-  attr_accessor :appunto, :reminderChangedBlock, :date_picker#, :dateFormatter, :eventKitManager
+  attr_accessor :appunto, :reminderChangedBlock, :date_picker
 
   SUGGESTIONS = ["ricordati", "telefona", "spedisci", "controlla", "fattura", "appuntamento"]
 
@@ -48,11 +48,6 @@ class EditReminderController < UIViewController
     NSNotificationCenter.defaultCenter.removeObserver(self)
   end
 
-  # def disablesAutomaticKeyboardDismissal
-  #   self.topViewController.disablesAutomaticKeyboardDismissal 
-  # end 
-
-
   def handleReminderCompletion
 
     @text = titleText.text
@@ -68,11 +63,11 @@ class EditReminderController < UIViewController
   end
 
   def performEventOperations
-    puts "event granted"
+    #puts "event granted"
   end
 
   def performReminderOperations
-    puts "reminder granted"
+    #puts "reminder granted"
     @eventKitManager.addReminderWithTitle(@text, dueTime:@date)
     error = Pointer.new(:object)
     success = @reminderChangedBlock.call(@text, @date, error)
@@ -98,33 +93,17 @@ class EditReminderController < UIViewController
     @keyboard_view.slide :up
   end
 
-  def done_modal
+  def pick_date
     self.dateButton.setTitle(@dateFormatter.stringFromDate(@date_picker.date), forState:UIControlStateNormal)
-    cancel_modal
+    close_date_picker
   end
   
-  def cancel_modal
+  def close_date_picker
     @modal_view.fade_out
     @keyboard_view.slide :down
   end
     
-  #pragma mark - UITextFieldDelegate
-
-  # def textFieldShouldReturn(textField)
-  #   #return self.handleTextCompletion
-  # end
-
-  # def textFieldShouldBeginEditing(textField)
-  #   if textField == @dateText
-  #     textField.resignFirstResponder
-  #     self.titleText.endEditing(true)
-  #     show_date_picker
-  #     false
-  #   else
-  #     true
-  #   end
-  # end
-
+  #pragma mark - UITableView delegate
 
   def numberOfSectionsInTableView(tableView)
     1
@@ -162,38 +141,34 @@ class EditReminderController < UIViewController
       @modal_view.backgroundColor = :black.uicolor(0.5)
       @modal_view.alpha = 0.0
       @modal_view.on :touch do
-        cancel_modal
+        close_date_picker
       end
       self.view << @modal_view
 
-      @keyboard_view = UIView.alloc.initWithFrame([[0, self.view.bounds.height], [320, 260]])
+      @keyboard_view = UIView.alloc.initWithFrame([[0, self.view.bounds.height], [self.view.bounds.width, 260]])
       self.view << @keyboard_view
 
       nav_bar = UINavigationBar.alloc.initWithFrame([[0, 0], [self.view.bounds.width, 44]])
+      
       item = UINavigationItem.new
       item.leftBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
           UIBarButtonSystemItemCancel,
           target: self,
-          action: :cancel_modal)
+          action: :close_date_picker)
 
       item.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
           UIBarButtonSystemItemDone,
           target: self,
-          action: :done_modal)
+          action: :pick_date)
+      
       nav_bar.items = [item]
+      
       @keyboard_view << nav_bar
 
-      #@picker_delegate = AwesomeDatePickerDelegate.new
       @date_picker = UIDatePicker.alloc.initWithFrame([[0, 44], [self.view.bounds.width, 216]])
-      #@date_picker.addTarget(self, action:"change_deadline", forControlEvents:UIControlEventValueChanged )
-      #@date_picker.showsSelectionIndicator = true
-      #@date_picker.delegate = @date_picker.dataSource = @picker_delegate
-      #@date_picker.selectRow(@awesomeness, inComponent:0, animated:false)
+      @date_picker.minuteInterval = 5
       @keyboard_view << @date_picker
     end
 
-    def  change_deadline
-      self.dateButton.setTitle("myTitle", forState:UIControlStateNormal)
-    end
 
 end
