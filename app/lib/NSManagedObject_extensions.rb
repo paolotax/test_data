@@ -78,6 +78,33 @@ class NSManagedObject
   end
 
 
+  def self.aggregateOperation(function, onAttribute:attributeName, withPredicate:predicate, inManagedObjectContext:context)
+
+    ex = NSExpression.expressionForFunction(function,arguments:NSArray.arrayWithObject(NSExpression.expressionForKeyPath(attributeName)))
+
+    ed = NSExpressionDescription.alloc.init
+    ed.setName("result")
+    ed.setExpression(ex)
+    ed.setExpressionResultType(NSInteger64AttributeType)
+
+    properties = NSArray.arrayWithObject(ed)
+
+    request = NSFetchRequest.alloc.init
+    request.setPropertiesToFetch(properties)
+    request.setResultType(NSDictionaryResultType)
+ 
+    request.setPredicate(predicate) unless predicate.nil?
+
+    entity = NSEntityDescription.entityForName(name, inManagedObjectContext:context)
+    request.setEntity(entity)
+
+    results = context.executeFetchRequest(request, error:nil)
+    resultsDictionary = results.objectAtIndex(0)
+    resultValue = resultsDictionary.objectForKey("result")
+    resultValue
+  end
+
+
 
   
   def self.reset

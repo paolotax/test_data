@@ -305,7 +305,7 @@
                                         </constraints>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="4JR-MD-iw1">
-                                        <rect key="frame" x="0.0" y="363" width="330" height="44"/>
+                                        <rect key="frame" x="0.0" y="363" width="330" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="290" height="43"/>
@@ -432,6 +432,166 @@
             </objects>
             <point key="canvasLocation" x="-1115" y="164"/>
         </scene>
+        <!--Adozioni Controller-->
+        <scene sceneID="sNb-WZ-Bsn">
+            <objects>
+                <viewController id="Fi7-eM-PoK" customClass="AdozioniController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="V0J-iq-0F2">
+                        <rect key="frame" x="0.0" y="64" width="320" height="704"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="zCO-WX-wCt">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="622" id="qfe-KB-4I5"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" id="ZU8-MQ-o6C">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Fi7-eM-PoK" id="y2b-sA-oPt"/>
+                                    <outlet property="delegate" destination="Fi7-eM-PoK" id="Egc-3T-NQK"/>
+                                </connections>
+                            </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bordered" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="s76-Qf-b8w">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="110" id="EoD-ha-dCf"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="" image="96-book-black.png"/>
+                                    <segment title="" image="38-house-black.png"/>
+                                </segments>
+                                <connections>
+                                    <action selector="groupSegmentSwitch:" destination="7kz-HZ-wh3" eventType="valueChanged" id="4mV-Xm-gj4"/>
+                                    <action selector="groupSegmentSwitch:" destination="Fi7-eM-PoK" eventType="valueChanged" id="K6O-TH-Wyo"/>
+                                </connections>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bordered" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="K8R-HQ-H3B">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="166" id="vmj-PJ-7Cl"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="tutti"/>
+                                    <segment title="no kit"/>
+                                    <segment title="kit"/>
+                                </segments>
+                                <connections>
+                                    <action selector="statusSegmentSwitch:" destination="7kz-HZ-wh3" eventType="valueChanged" id="YW0-pH-znH"/>
+                                    <action selector="statusSegmentSwitch:" destination="Fi7-eM-PoK" eventType="valueChanged" id="lEK-N8-CeU"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="zCO-WX-wCt" firstAttribute="trailing" secondItem="V0J-iq-0F2" secondAttribute="trailing" type="default" id="8tk-ri-Oox"/>
+                            <constraint firstItem="zCO-WX-wCt" firstAttribute="bottom" secondItem="V0J-iq-0F2" secondAttribute="bottom" type="default" id="biv-Uj-ape"/>
+                            <constraint firstAttribute="trailing" secondItem="K8R-HQ-H3B" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="d8r-vr-G5H"/>
+                            <constraint firstItem="K8R-HQ-H3B" firstAttribute="top" secondItem="V0J-iq-0F2" secondAttribute="top" constant="20" symbolic="YES" type="default" id="duN-Hw-VtO"/>
+                            <constraint firstItem="s76-Qf-b8w" firstAttribute="leading" secondItem="V0J-iq-0F2" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="hfW-wS-rK7"/>
+                            <constraint firstItem="zCO-WX-wCt" firstAttribute="leading" secondItem="V0J-iq-0F2" secondAttribute="leading" type="default" id="ntQ-DT-0Lk"/>
+                            <constraint firstItem="s76-Qf-b8w" firstAttribute="top" secondItem="V0J-iq-0F2" secondAttribute="top" constant="20" symbolic="YES" type="default" id="ruo-MX-mx8"/>
+                        </constraints>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="gAD-1I-j9S"/>
+                    <connections>
+                        <outlet property="tableView" destination="zCO-WX-wCt" id="CBA-Je-opD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Mh-dx-u6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1584" y="-3679"/>
+        </scene>
+        <!--Vendite Controller-->
+        <scene sceneID="Mkn-jJ-Oih">
+            <objects>
+                <viewController id="7kz-HZ-wh3" customClass="VenditeController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="s7X-nr-RPQ">
+                        <rect key="frame" x="0.0" y="64" width="320" height="704"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="tNL-YA-MWy">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="622" id="Jof-P4-Hbl"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" id="4Fq-b8-l2h">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="7kz-HZ-wh3" id="PMA-1h-Tt9"/>
+                                    <outlet property="delegate" destination="7kz-HZ-wh3" id="gQU-po-PuX"/>
+                                </connections>
+                            </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bordered" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="QaL-nP-m5k">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="110" id="f7z-hp-DSD"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="" image="96-book-black.png"/>
+                                    <segment title="" image="38-house-black.png"/>
+                                </segments>
+                                <connections>
+                                    <action selector="groupSegmentSwitch:" destination="7kz-HZ-wh3" eventType="valueChanged" id="MdL-af-F57"/>
+                                </connections>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bordered" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Iv3-GU-n2L">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="166" id="NNA-Wf-g5E"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="" image="task-da_fare.png"/>
+                                    <segment title="" image="257-box3-black.png"/>
+                                    <segment title="" image="euro-black.png"/>
+                                </segments>
+                                <connections>
+                                    <action selector="statusSegmentSwitch:" destination="7kz-HZ-wh3" eventType="valueChanged" id="kp9-SW-cj0"/>
+                                </connections>
+                            </segmentedControl>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="tNL-YA-MWy" firstAttribute="trailing" secondItem="s7X-nr-RPQ" secondAttribute="trailing" type="default" id="9pm-mg-IDY"/>
+                            <constraint firstItem="Iv3-GU-n2L" firstAttribute="top" secondItem="s7X-nr-RPQ" secondAttribute="top" constant="20" symbolic="YES" type="default" id="Fy7-Wy-LUq"/>
+                            <constraint firstItem="tNL-YA-MWy" firstAttribute="bottom" secondItem="s7X-nr-RPQ" secondAttribute="bottom" type="default" id="OGt-6y-mMY"/>
+                            <constraint firstItem="QaL-nP-m5k" firstAttribute="leading" secondItem="s7X-nr-RPQ" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="OUk-YU-EWS"/>
+                            <constraint firstItem="QaL-nP-m5k" firstAttribute="top" secondItem="s7X-nr-RPQ" secondAttribute="top" constant="20" symbolic="YES" type="default" id="h03-N6-t7P"/>
+                            <constraint firstItem="tNL-YA-MWy" firstAttribute="leading" secondItem="s7X-nr-RPQ" secondAttribute="leading" type="default" id="lBu-H8-V6z"/>
+                            <constraint firstAttribute="trailing" secondItem="Iv3-GU-n2L" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="qQg-dt-LaK"/>
+                        </constraints>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="uqI-Fi-kbL">
+                        <barButtonItem key="rightBarButtonItem" title="esandi" id="COC-23-vY3">
+                            <connections>
+                                <action selector="toggle_esandi:" destination="7kz-HZ-wh3" id="Fwd-lC-eve"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="tNL-YA-MWy" id="gC6-vz-h9V"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZZg-8S-tVK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1576" y="-2784"/>
+        </scene>
         <!--Popover Cliente Controller-->
         <scene sceneID="JHr-tx-m2k">
             <objects>
@@ -519,7 +679,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="mEX-Bf-Fqz" style="IBUITableViewCellStyleDefault" id="OFt-U9-6Qp">
-                                        <rect key="frame" x="0.0" y="99" width="320" height="45"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="0.0" width="280" height="43"/>
@@ -535,12 +695,52 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Auv-jd-C7R" style="IBUITableViewCellStyleDefault" id="2sr-tz-RLY">
+                                        <rect key="frame" x="0.0" y="143" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Vendite" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Auv-jd-C7R">
+                                                    <rect key="frame" x="10" y="0.0" width="260" height="43"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <connections>
+                                            <segue destination="7kz-HZ-wh3" kind="push" id="uwp-wI-rng"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Tnu-p1-dhh" style="IBUITableViewCellStyleDefault" id="qUe-88-9L5">
+                                        <rect key="frame" x="0.0" y="187" width="320" height="45"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="10" y="0.0" width="280" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Adozioni" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Tnu-p1-dhh">
+                                                    <rect key="frame" x="10" y="0.0" width="260" height="43"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <connections>
+                                            <segue destination="Fi7-eM-PoK" kind="push" id="wmW-dK-gC1"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection id="6wl-gQ-nFM">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="44" id="jOD-04-Ka8">
-                                        <rect key="frame" x="0.0" y="164" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="252" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -577,7 +777,7 @@
                             <tableViewSection id="ccW-Nm-vr8">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="44" id="MaW-y2-WlP">
-                                        <rect key="frame" x="0.0" y="230" width="320" height="46"/>
+                                        <rect key="frame" x="0.0" y="318" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="10" y="1" width="300" height="43"/>
@@ -1387,7 +1587,7 @@
             <objects>
                 <viewController id="7r3-i7-cLW" customClass="EditTextViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oWb-ne-Ulq">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="axl-oN-LAO">
@@ -1441,7 +1641,7 @@
             <objects>
                 <viewController id="8R2-B8-WJn" customClass="EditTextViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Rkp-lM-ygB">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RHg-sV-GIY">
@@ -1489,7 +1689,7 @@
             <objects>
                 <tableViewController id="Kts-a4-Qbr" customClass="EditStatoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="xOa-nI-RrI">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -1663,7 +1863,7 @@
             <objects>
                 <tableViewController id="G59-di-2Be" customClass="LibriTableViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="yPs-dp-ibk">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <searchBar key="tableHeaderView" contentMode="redraw" id="DIu-eC-wkK">
@@ -1732,7 +1932,7 @@
             <objects>
                 <tableViewController id="NpQ-dn-eYb" customClass="RigaFormViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="zdE-xD-ync">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -1914,7 +2114,7 @@
             <objects>
                 <tableViewController id="VJz-Yn-VBG" customClass="EditPrezzoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="5dj-fw-0Mx">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -2163,7 +2363,7 @@
             <objects>
                 <viewController id="W5x-0x-FJC" customClass="EditTextViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="o2a-di-H7w">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="right" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="rSw-Dg-hiw">
@@ -2218,7 +2418,7 @@
             <objects>
                 <viewController id="GH0-pv-L0R" customClass="EditTextViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vHx-np-3Fb">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8vg-Gl-kFM">
@@ -2272,7 +2472,7 @@
             <objects>
                 <viewController id="XS3-8G-8bf" customClass="EditTextViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gGq-3o-EUZ">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qqq-Fj-Q54">
@@ -2326,7 +2526,7 @@
             <objects>
                 <viewController id="27J-sr-Oih" customClass="EditReminderController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LqX-t2-oI9">
-                        <rect key="frame" x="0.0" y="64" width="320" height="436"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="436"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="aSK-eX-XKH">
@@ -2412,14 +2612,34 @@
     <resources>
         <image name="07-map-marker.png" width="26" height="26"/>
         <image name="246-route.png" width="38" height="33"/>
+        <image name="257-box3-black.png" width="16" height="16"/>
+        <image name="38-house-black.png" width="18" height="17"/>
+        <image name="96-book-black.png" width="18" height="26"/>
+        <image name="euro-black.png" width="25" height="25"/>
         <image name="pin-black.png" width="32" height="39"/>
         <image name="pin-gray.png" width="32" height="39"/>
         <image name="pin-green.png" width="32" height="39"/>
         <image name="pin-orange.png" width="32" height="39"/>
         <image name="pin-purple.png" width="32" height="39"/>
         <image name="pin-red.png" width="32" height="39"/>
+        <image name="task-da_fare.png" width="22" height="22"/>
     </resources>
     <classes>
+        <class className="AdozioniController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/AdozioniController.h"/>
+            <relationships>
+                <relationship kind="action" name="fetchControllerForTableView:"/>
+                <relationship kind="action" name="groupSegmentSwitch:"/>
+                <relationship kind="action" name="numberOfSectionsInTableView:"/>
+                <relationship kind="action" name="reload"/>
+                <relationship kind="action" name="statusSegmentSwitch:"/>
+                <relationship kind="action" name="toggle_esandi:"/>
+                <relationship kind="action" name="viewDidLoad"/>
+                <relationship kind="action" name="viewWillAppear:"/>
+                <relationship kind="action" name="viewWillDisappear:"/>
+                <relationship kind="outlet" name="tableView"/>
+            </relationships>
+        </class>
         <class className="AppuntiCollectionController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/AppuntiCollectionController.h"/>
             <relationships>
@@ -2598,14 +2818,14 @@
         <class className="EditReminderController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/EditReminderController.h"/>
             <relationships>
-                <relationship kind="action" name="cancel_modal"/>
+                <relationship kind="action" name="close_date_picker"/>
                 <relationship kind="action" name="dismiss"/>
-                <relationship kind="action" name="done_modal"/>
                 <relationship kind="action" name="handleReminderCompletion"/>
                 <relationship kind="action" name="init"/>
                 <relationship kind="action" name="numberOfSectionsInTableView:"/>
                 <relationship kind="action" name="performEventOperations"/>
                 <relationship kind="action" name="performReminderOperations"/>
+                <relationship kind="action" name="pick_date"/>
                 <relationship kind="action" name="setup_date_picker"/>
                 <relationship kind="action" name="show_date_picker"/>
                 <relationship kind="action" name="viewDidLoad"/>
@@ -2692,7 +2912,7 @@
         <class className="ModalNavigationController" superclassName="UINavigationController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/ModalNavigationController.h"/>
             <relationships>
-                <relationship kind="action" name="init"/>
+                <relationship kind="action" name="disablesAutomaticKeyboardDismissal"/>
             </relationships>
         </class>
         <class className="NSLayoutConstraint">
@@ -2852,22 +3072,16 @@
         <class className="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UIView.h"/>
             <relationships>
-                <relationship kind="action" name="add_uniq_constraints:"/>
-                <relationship kind="action" name="animate_to_style:"/>
-                <relationship kind="action" name="apply_constraints"/>
                 <relationship kind="action" name="controller"/>
                 <relationship kind="action" name="firstResponder"/>
                 <relationship kind="action" name="first_responder"/>
-                <relationship kind="action" name="get_ns_constraints"/>
                 <relationship kind="action" name="handle_gesture:"/>
                 <relationship kind="action" name="hide"/>
                 <relationship kind="action" name="show"/>
                 <relationship kind="action" name="style:"/>
-                <relationship kind="action" name="stylesheet"/>
+                <relationship kind="action" name="teacup_animation:"/>
                 <relationship kind="action" name="top_level_view"/>
                 <relationship kind="action" name="unshift:"/>
-                <relationship kind="action" name="viewWithStylename:"/>
-                <relationship kind="action" name="viewsWithStylename:"/>
             </relationships>
         </class>
         <class className="UIViewController">
@@ -2876,12 +3090,26 @@
                 <relationship kind="action" name="autorotateMask"/>
                 <relationship kind="action" name="autorotateToOrientation:"/>
                 <relationship kind="action" name="content_frame"/>
-                <relationship kind="action" name="layoutDidLoad"/>
                 <relationship kind="action" name="pop"/>
                 <relationship kind="action" name="push:"/>
                 <relationship kind="action" name="to_s"/>
                 <relationship kind="action" name="top_level_view"/>
                 <relationship kind="action" name="viewDidLoad"/>
+            </relationships>
+        </class>
+        <class className="VenditeController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/VenditeController.h"/>
+            <relationships>
+                <relationship kind="action" name="fetchControllerForTableView:"/>
+                <relationship kind="action" name="groupSegmentSwitch:"/>
+                <relationship kind="action" name="numberOfSectionsInTableView:"/>
+                <relationship kind="action" name="reload"/>
+                <relationship kind="action" name="statusSegmentSwitch:"/>
+                <relationship kind="action" name="toggle_esandi:"/>
+                <relationship kind="action" name="viewDidLoad"/>
+                <relationship kind="action" name="viewWillAppear:"/>
+                <relationship kind="action" name="viewWillDisappear:"/>
+                <relationship kind="outlet" name="tableView"/>
             </relationships>
         </class>
     </classes>

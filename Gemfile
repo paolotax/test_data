@@ -11,6 +11,7 @@ gem 'bubble-wrap'
 gem 'sugarcube'
 gem 'afmotion'
 gem 'teacup'
+gem 'sweettea'
 gem 'rubymotion_generators'
 gem 'geomotion'
 

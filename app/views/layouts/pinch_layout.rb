@@ -10,7 +10,6 @@ class PinchLayout < UICollectionViewFlowLayout
   def isDeletionModeOn
     # correggere conformsToProtocol con respond_to?
     # if (self.collectionView.delegate.class.conformsToProtocol(SpringboardLayoutDelegate)
-    puts "PinchLayout isDeletionModeOn"
     return self.collectionView.delegate.isDeletionModeActiveForCollectionView(self.collectionView, layout:self)
     # end      
     # return false

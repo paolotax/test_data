@@ -1,4 +1,5 @@
 class NSFetchRequest
+  
   def self.requestForEntityForName(entityName, withSortKeys:sortKeys, ascending:sortOrders, withsearchKey:searchKey, withSearchString:searchString, inManagedObjectContext:context)
     # Fetch all entityName from the model, filtering by searchKey and sorting by sortKey
     request = self.alloc.init

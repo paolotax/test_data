@@ -6,9 +6,11 @@ class Store
   BASE_URL = "http://youpropa.com"
   #BASE_URL = "http://localhost:3000"
 
+  #USERNAME = 'polso'
+  #PASSWORD = 'polso14'
   USERNAME = 'paolotax'
   PASSWORD = 'sisboccia'
-
+  
   #server 
   APP_ID = "36e1b9ed802dc7ee45e375bf318924dc3ae0f0f842c690611fde8336687960eb"
   SECRET = "11ab577f8fabf2ac33bdd75e951fc6507ef7bc21ef993c2a77a1383bed438224"

@@ -1,26 +1,28 @@
 class MenuViewController < UITableViewController
 
   extend IB
-
-  #attr_accessor :detailViewController
   
   outlet :activityIndicator
   
   def viewDidLoad
     super
-    # if Device.ipad?
-    #   self.detailViewController = self.splitViewController.viewControllers.lastObject
-    # end
     true
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+
     if indexPath.section == 0 && indexPath.row == 2
       controller = NelBauleController.new
       self.navigationController.pushViewController(
         controller,
         animated: true
       )
+    # elsif indexPath.section == 0 && indexPath.row == 4
+    #   controller = AdozioniController.new
+    #   self.navigationController.pushViewController(
+    #     controller,
+    #     animated: true
+    #   )
     end
   end
 

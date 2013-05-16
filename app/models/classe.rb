@@ -106,4 +106,29 @@ class Classe < NSManagedObject
     data
   end
 
+
+  def self.nel_baule
+    
+    context = Store.shared.context
+    request = NSFetchRequest.alloc.init
+    request.entity = NSEntityDescription.entityForName(name, inManagedObjectContext:context)
+
+    pred = nil
+    predicates = [] 
+    predicates.addObject(NSPredicate.predicateWithFormat("cliente.nel_baule = 1"))
+    pred = NSCompoundPredicate.andPredicateWithSubpredicates(predicates)
+    request.predicate = pred
+
+    request.sortDescriptors = ["remote_cliente_id", "num_classe"].collect { |sortKey|
+      NSSortDescriptor.alloc.initWithKey(sortKey, ascending:true)
+    }
+    
+    error_ptr = Pointer.new(:object)
+    data = context.executeFetchRequest(request, error:error_ptr)
+    if data == nil
+      raise "Error when fetching data: #{error_ptr[0].description}"
+    end
+    data
+  end
+
 end

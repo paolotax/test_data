@@ -19,6 +19,7 @@ class ClienteAppuntoCell < UICollectionViewCell
       cell.contentView.addSubview(insetView)
 
       cell.deleteButton = UIButton.alloc.initWithFrame(CGRectMake(0, 0, 35, 35))
+      
       unless deleteButtonImg
         buttonFrame = self.deleteButton.frame
         
@@ -153,6 +154,18 @@ class ClienteAppuntoCell < UICollectionViewCell
          insetView.addSubview(label)
       end
 
+      @telefono_label = UILabel.alloc.initWithFrame([[15, 180], [170, 15]]).tap do |label|
+         #label.translatesAutoresizingMaskIntoConstraints = false
+         label.numberOfLines = 0
+         label.setFont(UIFont.fontWithName("Trebuchet MS", size:13.0))
+         label.textAlignment   = UITextAlignmentLeft
+         label.backgroundColor = UIColor.clearColor
+         label.textColor       = UIColor.darkGrayColor
+         # label.shadowOffset = CGSizeMake(0, 1);
+         label.backgroundColor = UIColor.clearColor
+         insetView.addSubview(label)
+      end
+
       @updated_at = UILabel.alloc.initWithFrame([[-15, 92], [230, 15]]).tap do |label|
         
         label.numberOfLines = 0
@@ -182,7 +195,8 @@ class ClienteAppuntoCell < UICollectionViewCell
       @note_text.text = format_appunto
       #@note_text.sizeToFit
       
-      @importo_label.text = @appunto.righe.count == 0 ? "" : "copie #{appunto.totale_copie} € #{@appunto.totale_importo.string_with_style(:currency)}" 
+      @importo_label.text = @appunto.righe.count == 0 ? "" : "#{appunto.totale_copie} cp. #{@appunto.totale_importo.string_with_style(:currency)}" 
+      @telefono_label.text = @appunto.telefono
       @data_label.text = format_date @appunto.created_at
       @status_image.setImage UIImage.imageNamed("task-#{@appunto.status}")
 

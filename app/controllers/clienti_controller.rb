@@ -138,7 +138,8 @@ class ClientiController < UIViewController
                                     parameters: nil,
                                     success: lambda do |operation, result|
                                                       "clientiListDidLoadBackend".post_notification
-                                                      @refreshControl.endRefreshing
+                                                      "reload_annotations".post_notification
+                                                      @refreshControl.endRefreshing unless @refreshControl.nil?
                                                     end,
                                     failure: lambda do |operation, error|
                                                       "clientiListErrorLoadBackend".post_notification

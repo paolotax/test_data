@@ -53,6 +53,31 @@ Teacup::Stylesheet.new(:appunto_style) do
     frame: CGRectMake(240, 6, 50, 15),
     textAlignment: UITextAlignmentRight
 
+  # riga header view
+
+  style :disclosure_button,
+    frame: CGRectMake(0, 4, 36, 36),
+    normal: { image: 'carat' },
+    selected: { image: 'carat-open' },
+    userInteractionEnabled: false
+
+  style :titolo_header,
+    backgroundColor: UIColor.clearColor,
+    #font: 'Cassannet Regular'.uifont(15),
+    textColor: UIColor.whiteColor,
+    text: '',
+    frame: CGRectMake(40, 0, 241, 44),
+    textAlignment: UITextAlignmentLeft,
+    adjustsFontSizeToFitWidth: true
+
+  style :quantita_header,
+    #font: 'Cassannet Regular'.uifont(14),
+    textColor: UIColor.whiteColor,
+    backgroundColor: UIColor.clearColor,
+    frame: CGRectMake(281, 0, 33, 44),
+    textAlignment: UITextAlignmentRight
+
+
   # totali cell
 
   style :importo,

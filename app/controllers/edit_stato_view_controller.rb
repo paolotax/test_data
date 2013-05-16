@@ -1,6 +1,6 @@
 class EditStatoViewController < UITableViewController
 
-  STATUSES = ['da fare', 'in sospeso', 'completato']
+  STATUSES = ['da fare', 'in sospeso', 'preparato', 'completato']
 
   attr_accessor :appunto, :delegate
 
