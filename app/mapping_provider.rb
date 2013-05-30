@@ -94,6 +94,7 @@ class MappingProvider
       mapping.addAttributeMappingsFromDictionary(id: "LibroId",
                                                  titolo: "titolo",
                                                  settore: "settore",
+                                                 sigla: "sigla",
                                                  prezzo_copertina: "prezzo_copertina",
                                                  prezzo_consigliato: "prezzo_consigliato"
                                                 )
@@ -105,6 +106,7 @@ class MappingProvider
       mapping = RKEntityMapping.mappingForEntityForName("Libro",
                                        inManagedObjectStore:@store)
       mapping.addAttributeMappingsFromDictionary(titolo: "titolo",
+                                                 sigla: "sigla",
                                                  prezzo_copertina: "prezzo_copertina", 
                                                  prezzo_consigliato: "prezzo_consigliato",
                                                  settore: "settore" 

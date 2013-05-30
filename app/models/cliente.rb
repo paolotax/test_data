@@ -27,14 +27,21 @@ class Cliente < NSManagedObject
     { name: 'appunti_da_fare',    type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
     { name: 'appunti_in_sospeso', type: NSInteger16AttributeType, default: nil, optional: true, transient: false, indexed: false},
     { name: 'nel_baule',          type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false},
-    { name: 'fatto',              type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false}
-  
+    { name: 'fatto',              type: NSBooleanAttributeType, default: 0, optional: true, transient: false, indexed: false},
+    { name: 'provincia_e_comune', type: NSStringAttributeType,  default: nil, optional: true, transient: true,  indexed: false}  
   ]
 
   @relationships = [
     { name: 'appunti', destination: 'Appunto', inverse: 'cliente', json: 'appunti', optional: true, transient: false, indexed: false, ordered: true, min: 0, max: NSIntegerMax, del: NSCascadeDeleteRule },
     { name: 'classi', destination: 'Classe', inverse: 'cliente', json: 'classi', optional: true, transient: false, indexed: false, ordered: true, min: 0, max: NSIntegerMax, del: NSCascadeDeleteRule }
   ]
+
+  def provincia_e_comune
+    self.willAccessValueForKey("provincia_e_comune")
+    tmp = "#{self.provincia} #{self.comune}"
+    self.didAccessValueForKey("provincia_e_comune")
+    tmp
+  end
 
   def save_to_backend
     if self.ClienteId == 0  

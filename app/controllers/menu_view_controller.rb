@@ -33,7 +33,7 @@ class MenuViewController < UITableViewController
                                         destructiveButtonTitle:"Importa",
                                         otherButtonTitles:nil)
 
-    @actionSheet.showFromRect(sender.frame, inView:self.view, animated:true)
+    @actionSheet.showFromRect(sender.frame, inView:sender, animated:true)
   end
 
 

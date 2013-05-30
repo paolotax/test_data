@@ -57,8 +57,10 @@ class AppuntoFormController < UITableViewController
 
     unless isNew?
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+        print_appunto
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
+
       }
     end
 
@@ -131,8 +133,9 @@ class AppuntoFormController < UITableViewController
         "pushClienteController".post_notification(self, cliente: @appunto.cliente)
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+        print_appunto
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
       }
     end
   end
@@ -168,8 +171,10 @@ class AppuntoFormController < UITableViewController
         "pushClienteController".post_notification(self, cliente: @appunto.cliente)
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+
+        print_appunto
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
       }
     end
   end
@@ -235,11 +240,43 @@ class AppuntoFormController < UITableViewController
         "pushClienteController".post_notification(self, cliente: @appunto.cliente)
       }
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.action {
-        url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
-        UIApplication.sharedApplication.openURL(url)
+
+        print_appunto
+        # url = NSURL.URLWithString("http://youpropa.com/appunti/#{@appunto.remote_id}.pdf")
+        # UIApplication.sharedApplication.openURL(url)
       }
     end 
   end
+
+
+  def print_appunto
+
+    data = { appunto_ids: ["#{@appunto.remote_id}"] }
+
+    AFMotion::Client.shared.setDefaultHeader("Accept", value:"application/pdf")
+    AFMotion::Client.shared.setDefaultHeader("Authorization", value: "Bearer #{Store.shared.token}")
+    
+    AFMotion::Client.shared.put("/api/v1/appunti/print_multiple", data) do |result|
+      if result.success?
+        
+        resourceDocPath = NSString.alloc.initWithString(NSBundle.mainBundle.resourcePath.stringByDeletingLastPathComponent.stringByAppendingPathComponent("Documents"))
+        filePath = resourceDocPath.stringByAppendingPathComponent("Sovrapacchi.pdf")
+        result.object.writeToFile(filePath, atomically:true)
+        url = NSURL.fileURLWithPath(filePath)
+        if (url) 
+          @documentInteractionController = UIDocumentInteractionController.interactionControllerWithURL(url)
+          @documentInteractionController.setDelegate(self)
+          @documentInteractionController.presentPreviewAnimated(true)
+        end
+      else
+
+        App.alert("babbeo")
+      end
+    end
+    Store.shared.login {} 
+  end
+
+
 
   def cancel(sender)
 
@@ -309,6 +346,11 @@ class AppuntoFormController < UITableViewController
 
 
 
+  #pragma mark -
+  #pragma mark Document Interaction Controller Delegate Methods
+  def documentInteractionControllerViewControllerForPreview(controller)
+    self
+  end
 
 
 

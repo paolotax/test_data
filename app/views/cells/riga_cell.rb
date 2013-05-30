@@ -36,7 +36,7 @@ class RigaCell < UITableViewCell
 
       cell.contentView.autoresizesSubviews = true
 
-      cell.backgroundColor = UIColor.clearColor
+      cell.contentView.backgroundColor = UIColor.whiteColor
 
       cell.clipsToBounds = false
     end

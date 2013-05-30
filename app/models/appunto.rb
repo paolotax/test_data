@@ -1,5 +1,8 @@
 class Appunto < NSManagedObject
 
+
+  attr_accessor :primitiveData, :setPrimitiveCreatedAt
+
   @sortKeys = ['created_at']
   @sortOrders = [false]
   
@@ -18,7 +21,8 @@ class Appunto < NSManagedObject
     { name: 'created_at',   type: NSDateAttributeType,    default: nil,  optional: true, transient: false, indexed: false},
     { name: 'updated_at',   type: NSDateAttributeType,    default: nil,  optional: true, transient: false, indexed: false},
     { name: 'totale_copie', type: NSInteger32AttributeType, default: 0,   optional: true, transient: false, indexed: false},
-    { name: 'totale_importo', type: NSDecimalAttributeType, default: 0.0, optional: true, transient: false, indexed: false}
+    { name: 'totale_importo', type: NSDecimalAttributeType, default: 0.0, optional: true, transient: false, indexed: false},
+    { name: 'data',           type: NSStringAttributeType,  default: nil, optional: true, transient: true,  indexed: false}
   ]
 
   @relationships = [
@@ -30,6 +34,44 @@ class Appunto < NSManagedObject
     [nil, ['Destinatario', 'destinatario', :text, 'Stato', 'status', :text]],
     ['Note', ['Note', 'note', :longtext]]
   ]
+
+
+  def data
+    # self.willAccessValueForKey("data")
+    # tmp = @primitiveData
+    # self.didAccessValueForKey("data")
+    # puts tmp
+    # if tmp.blank?
+    #   calendar = NSCalendar.currentCalendar        
+    #   components = calendar.components((NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit), fromDate:self.created_at)
+    #   tmp = "#{(components.year * 10000) + (components.month * 100) + components.day}"
+    #   @primitiveData = tmp
+    # end
+    # tmp
+        
+    "#{(self.created_at.year * 10000) + (self.created_at.month * 100) + self.created_at.day}"
+  end
+
+
+  # #pragma mark -
+  # #pragma mark Time stamp setter
+
+  # def created_at=(newDate)
+      
+  #   self.willChangeValueForKey("created_at")
+  #   @primitiveCreatedAt = newDate
+  #   self.didChangeValueForKey("created_at")
+    
+  #   @primitiveData = nil
+  # end
+
+
+  # #pragma mark -
+  # #pragma mark Key path dependencies
+
+  # def self.keyPathsForValuesAffectingSectionIdentifier
+  #   NSSet.setWithObject("created_at")
+  # end
 
   def remove
 

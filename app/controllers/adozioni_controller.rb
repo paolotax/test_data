@@ -3,19 +3,31 @@ class AdozioniController < UIViewController
   extend IB
 
   outlet :tableView
+  outlet :btnEsandi
 
 
-  PER_TITOLO = ["libro.titolo", 
-                 "classe.cliente.provincia", 
-                 "classe.cliente.comune", 
-                 "classe.cliente.ClienteId",
-                 "classe.num_classe",
-                 "classe.sezione"]
+  ORDER_TITOLO = ["libro.titolo", 
+                  "classe.cliente.provincia", 
+                  "classe.cliente.comune", 
+                  "classe.cliente.ClienteId",
+                  "classe.num_classe",
+                  "classe.sezione"]
   
-  PER_CLIENTE = ["classe.cliente.nome", 
-                 "libro.titolo",
-                 "classe.num_classe",
-                 "classe.sezione"]
+  ORDER_CLIENTE = ["classe.cliente.nome", 
+                   "libro.titolo",
+                   "classe.num_classe",
+                   "classe.sezione"]
+
+  ORDER_COMUNE  = ["classe.cliente.provincia",
+                   "classe.cliente.comune",
+                   "classe.cliente.ClienteId", 
+                   "libro.titolo",
+                   "classe.num_classe",
+                   "classe.sezione"]
+  
+  GROUP_TITOLO  = ["libro.titolo"]
+  GROUP_CLIENTE = ["classe.cliente.nome"]
+  GROUP_COMUNE  = ["classe.cliente.provincia_e_comune"]
 
 
   def viewDidLoad
@@ -34,11 +46,11 @@ class AdozioniController < UIViewController
     @tableView.sectionHeaderHeight = 44
     
     @esandi   = false
-    @group_by = PER_TITOLO
-
-    #@status   = "da_fare"
+    @group_by = GROUP_TITOLO
+    @order_by = ORDER_TITOLO
 
     @sectionsOpened = []
+    
     true
   end
 
@@ -47,18 +59,7 @@ class AdozioniController < UIViewController
     super
     reload
   end
-
-  def viewWillDisappear(animated)
-    super
-  end
   
-  def reload
-    @controller = nil
-    @sectionsOpened.clear
-    @tableView.reloadData
-    self.title = "Adozioni: #{@controller.fetchedObjects.valueForKeyPath("@count")}"
-  end
-
   def fetchControllerForTableView(tableView)
     
     @controller ||= begin
@@ -81,7 +82,7 @@ class AdozioniController < UIViewController
 
       request.predicate = pred
 
-      request.sortDescriptors = @group_by.collect { |sortKey|
+      request.sortDescriptors = @order_by.collect { |sortKey|
         NSSortDescriptor.alloc.initWithKey(sortKey, ascending:true)
       }
       
@@ -94,14 +95,34 @@ class AdozioniController < UIViewController
     end    
   end
 
+  def reload
+    @controller = nil
+    @tableView.reloadData
+    self.title = "Adozioni: #{@controller.fetchedObjects.valueForKeyPath("@count")}"
+  end
+
   def toggle_esandi(sender)
-    @esandi = @esandi == true ? false : true
-    if @esandi == true
-      sender.title = 'contrai'
+    
+    if @esandi == false
+      setEsandiTutto
     else
-      sender.title = 'esandi'
+      setComprimiTutto
     end
-    reload
+
+    reload  
+  end
+
+  def setEsandiTutto
+    @esandi = true
+    self.btnEsandi.title = 'contrai'
+    @sectionsOpened.clear
+    @controller.sections.each_with_index {|s, i| @sectionsOpened << i }
+  end
+
+  def setComprimiTutto
+    @esandi = false
+    self.btnEsandi.title = 'esandi'
+    @sectionsOpened.clear
   end
 
   def groupSegmentSwitch(sender)
@@ -109,10 +130,16 @@ class AdozioniController < UIViewController
     segmentedControl = sender
     selectedSegment = segmentedControl.selectedSegmentIndex
     if (selectedSegment == 0)
-      @group_by = PER_TITOLO
+      @group_by = GROUP_TITOLO
+      @order_by = ORDER_TITOLO
     elsif (selectedSegment == 1)
-      @group_by = PER_CLIENTE
+      @group_by = GROUP_CLIENTE
+      @order_by = ORDER_CLIENTE
+    elsif (selectedSegment == 2)
+      @group_by = GROUP_COMUNE
+      @order_by = ORDER_COMUNE
     end
+    setComprimiTutto
     reload
   end
 
@@ -128,6 +155,7 @@ class AdozioniController < UIViewController
     elsif (selectedSegment == 2)
       @status = "consegnato"
     end
+    setComprimiTutto
     reload
   end
 
@@ -144,7 +172,7 @@ class AdozioniController < UIViewController
   
   def tableView(tableView, numberOfRowsInSection:section) 	
     isOpened = @sectionsOpened.include? section
-    if isOpened == true || @esandi == true
+    if isOpened == true
       self.fetchControllerForTableView(tableView).sections[section].numberOfObjects
     else
       0
@@ -154,10 +182,12 @@ class AdozioniController < UIViewController
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
     cell = tableView.dequeueReusableCellWithIdentifier("rigaCell")
     
-    if @group_by == PER_TITOLO
+    if @group_by == GROUP_TITOLO
       cell.label = @controller.objectAtIndexPath(indexPath).classe.cliente.nome
-    else
+    elsif @group_by == GROUP_CLIENTE
       cell.label = @controller.objectAtIndexPath(indexPath).libro.titolo
+    elsif @group_by == GROUP_COMUNE
+      cell.label = "#{@controller.objectAtIndexPath(indexPath).classe.cliente.nome} #{@controller.objectAtIndexPath(indexPath).libro.sigla}"
     end
 
     classe = @controller.objectAtIndexPath(indexPath).classe

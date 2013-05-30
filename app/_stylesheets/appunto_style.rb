@@ -43,7 +43,8 @@ Teacup::Stylesheet.new(:appunto_style) do
     textColor: '#6a6a6a'.uicolor,
     text: '',
     frame: CGRectMake(50, 6, 190, 15),
-    textAlignment: UITextAlignmentLeft
+    textAlignment: UITextAlignmentLeft,
+    adjustsFontSizeToFitWidth: true
 
   style :quantita,
     font: 'Cassannet Regular'.uifont(14),

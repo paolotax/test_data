@@ -24,6 +24,7 @@ class MainController < UIViewController
   end
 
   def viewWillAppear(animated)
+    puts "main willAppear"
     super
     @can_dismiss_popover = true
 
@@ -33,10 +34,10 @@ class MainController < UIViewController
     end
 
     # codice per ricordarmi pointer polyline
-    if clienti.count > 3
-      clienti_group = [clienti[1].coordinate, clienti[2].coordinate, clienti[3].coordinate]
-      ptr = clienti_group.to_pointer(CLLocationCoordinate2D.type)
-    end
+    # if clienti.count > 3
+    #   clienti_group = [clienti[1].coordinate, clienti[2].coordinate, clienti[3].coordinate]
+    #   ptr = clienti_group.to_pointer(CLLocationCoordinate2D.type)
+    # end
 
     "reload_annotations".add_observer(self, :reload)
     "annotation_did_change".add_observer(self, "change_annotation:", nil)
@@ -48,12 +49,17 @@ class MainController < UIViewController
   end
 
   def viewWillDisappear(animated)
-    "reload_annotations".remove_observer(self, :reload)
-    "annotation_did_change".remove_observer(self, "change_annotation:")
-    "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
-    "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
-    "pushClienteController".remove_observer(self, "pushClienteTapped:")
-    "pushAppuntoController".remove_observer(self, "pushAppuntoTapped:", nil)
+    puts "main willDisappear"
+    NSNotificationCenter.defaultCenter.removeObserver self
+    
+    # "reload_annotations".remove_observer(self, :reload)
+    # "annotation_did_change".remove_observer(self, "change_annotation:")
+    # "allow_dismiss_popover".remove_observer(self, "allow_dismiss")
+    # "unallow_dismiss_popover".remove_observer(self, "unallow_dismiss")
+    
+    # queste non si rimuovono
+    # "pushClienteController".remove_observer(self, "pushClienteTapped:")
+    # "pushAppuntoController".remove_observer(self, "pushAppuntoTapped:")
   end
 
   def allow_dismiss

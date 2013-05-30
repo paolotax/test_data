@@ -4,7 +4,7 @@ class Store
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga, Classe, Adozione]
   
   BASE_URL = "http://youpropa.com"
-  #BASE_URL = "http://localhost:3000"
+  #BASE_URL = "http://192.168.1.132:3000"
 
   #USERNAME = 'polso'
   #PASSWORD = 'polso14'
@@ -19,6 +19,7 @@ class Store
   #APP_ID = "9aa427dcda89ebd5b3c9015dcd507242b70bac2a4d6e736589f6be35849474ff"
   #SECRET = "a5d78f0c32ba25fcbc1a679e03b110724497684263c1f4d9f645444cbf80a832"
 
+  attr_accessor :token
 
   # login
 
@@ -39,8 +40,9 @@ class Store
     AFMotion::Client.shared.post("oauth/token", data) do |result|
       if result.success?
 
-        token = result.object['access_token']
-        puts "#{token}"
+        token = result.object['access_token']        
+        @token = token
+
         self.backend.HTTPClient.setDefaultHeader("Authorization", value: "Bearer #{token}")
 
         block.call
