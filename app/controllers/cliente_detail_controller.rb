@@ -284,8 +284,8 @@ class ClienteDetailController < UIViewController
   # popover delegates and rotation
 
   def popoverControllerDidDismissPopover(popoverController)
-    @popoverController.delegate = nil
-    @popoverController = nil
+    popoverController.delegate = nil
+    popoverController = nil
     @searchBar.resignFirstResponder
   end 
 

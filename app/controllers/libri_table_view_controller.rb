@@ -39,9 +39,16 @@ class LibriTableViewController < UITableViewController
       r.libro_id = libro.LibroId
       r.titolo   = libro.titolo
       r.prezzo_copertina    = libro.prezzo_copertina
-      r.prezzo_unitario     = libro.prezzo_consigliato
       r.prezzo_consigliato  = libro.prezzo_consigliato
-      r.sconto   = 0
+
+      if r.appunto.cliente.cliente_tipo == "Cartolibreria"
+        r.prezzo_unitario  = libro.prezzo_copertina
+        r.sconto   = 20
+      else
+        r.prezzo_unitario  = libro.prezzo_consigliato
+        r.sconto   = 0
+      end 
+
       r.quantita = 1
     end
     
