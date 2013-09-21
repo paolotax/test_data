@@ -23,10 +23,10 @@ class Classe < NSManagedObject
     { name: 'libro_2',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
     { name: 'libro_3',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
     { name: 'libro_4',           type: NSStringAttributeType,    default: "",  optional: true, transient: false, indexed: false},
+    { name: 'anno',              type: NSStringAttributeType,    default: nil,  optional: true, transient: false, indexed: false},
     { name: 'created_at',        type: NSDateAttributeType,      default: nil,  optional: true, transient: false, indexed: false},
     { name: 'updated_at',        type: NSDateAttributeType,      default: nil,  optional: true, transient: false, indexed: false},
     { name: 'giornoSection',     type: NSStringAttributeType,    default: nil,  optional: true, transient: true, indexed: false}
-
   ]
 
   @relationships = [

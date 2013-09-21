@@ -4,7 +4,7 @@ class Store
   ManagedObjectClasses = [Libro, Cliente, Appunto, Riga, Classe, Adozione]
   
   BASE_URL = "http://youpropa.com"
-  #BASE_URL = "http://192.168.1.132:3000"
+  #BASE_URL = "http://localhost:3000"
 
   #USERNAME = 'polso'
   #PASSWORD = 'polso14'

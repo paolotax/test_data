@@ -249,6 +249,7 @@ class MappingProvider
                                              libro_2: "libro_2",
                                              libro_3: "libro_3",
                                              libro_4: "libro_4",
+                                                anno: "anno",
                                           created_at: "created_at",
                                           updated_at: "updated_at"
                                                  )
@@ -266,6 +267,7 @@ class MappingProvider
                                              libro_2: "libro_2",
                                              libro_3: "libro_3",
                                              libro_4: "libro_4",
+                                                anno: "anno",
                                           created_at: "created_at",
                                           updated_at: "updated_at")
 
