@@ -5,14 +5,14 @@ class NSFetchRequest
     request = self.alloc.init
     request.entity = NSEntityDescription.entityForName(entityName, inManagedObjectContext:context)
 
-    if searchKey 
-      predicates = []
-      searchKey.each do |sk|
-        predicates.addObject(NSPredicate.predicateWithFormat("#{sk} contains[cd] %@", argumentArray:[searchString]))
+      if searchKey 
+        predicates = []
+        searchKey.each do |sk|
+          predicates.addObject(NSPredicate.predicateWithFormat("#{sk} contains[cd] %@", argumentArray:[searchString]))
+        end
+        request.predicate = NSCompoundPredicate.orPredicateWithSubpredicates(predicates)
+        # request.predicate = NSPredicate.predicateWithFormat("#{searchKey} contains[cd] %@", argumentArray:[searchString]) if searchKey
       end
-      request.predicate = NSCompoundPredicate.orPredicateWithSubpredicates(predicates)
-      # request.predicate = NSPredicate.predicateWithFormat("#{searchKey} contains[cd] %@", argumentArray:[searchString]) if searchKey
-    end
       
     request.sortDescriptors = sortKeys.collect { |sortKey|
       NSSortDescriptor.alloc.initWithKey(sortKey, ascending:sortOrders[sortKeys.indexOfObject(sortKey)])
@@ -28,7 +28,7 @@ class NSFetchRequest
 
     pred = nil
     
-    if searchKey
+    if searchKey && searchString
       searchPredicates = [] 
       searchKey.each do |sk|
         searchPredicates.addObject(NSPredicate.predicateWithFormat("#{sk} contains[cd] %@", argumentArray:[searchString]))
